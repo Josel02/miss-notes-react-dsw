@@ -1,0 +1,33 @@
+
+  /* Ajustamos el tamaño de los botones sin cambiar el tamaño de la fuente */
+.custom-btn-lg {
+    padding: 0.5rem 1rem; 
+    font-size: 1rem; 
+    line-height: 1.5;
+  }
+  
+  /* Estilo para los iconos para asegurar que se ajusten al tamaño deseado */
+  .icon-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem 1rem; 
+  }
+  
+  .icon-button svg {
+    width: 2em;
+    height: 2em; 
+  }
+  
+  
+  .icon-button .bi { /* Personalización de los iconos */
+    font-size: 1.5rem; 
+  }
+  
+  /* Personalización del título */
+  .title-input {
+    font-weight: bold;
+    font-size: 1.25rem; 
+  }
+  
+  
