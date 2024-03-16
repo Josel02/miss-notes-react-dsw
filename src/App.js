@@ -1,5 +1,5 @@
 import React from 'react';
-import NoteForm from './NoteForm'; // Asegúrate de que la ruta de importación sea correcta
+import NoteForm from './components/NoteForm'; 
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 function App() {
