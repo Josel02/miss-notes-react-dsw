@@ -1,12 +1,18 @@
+// App.js
 import React from 'react';
-import NoteForm from './components/NoteForm'; 
-import 'bootstrap/dist/css/bootstrap.min.css';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import HomePage from './views/HomePage';
+import NotePage from './views/NotePage';
 
 function App() {
   return (
-    <div className="App">
-      <NoteForm />
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/notes" element={<NotePage />} />
+        // Añadir más rutas aquí si es necesario
+      </Routes>
+    </Router>
   );
 }
 
