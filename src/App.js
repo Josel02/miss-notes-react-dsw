@@ -10,7 +10,6 @@ function App() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/notes" element={<NotePage />} />
-        // Añadir más rutas aquí si es necesario
       </Routes>
     </Router>
   );

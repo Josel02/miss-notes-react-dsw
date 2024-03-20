@@ -7,16 +7,13 @@
     opacity: 0;
     transition: opacity 0.5s ease;
     display: flex;
-    justify-content: space-between;
-    padding: 10px;
+    justify-content: space-evenly;
   }
 
   .note-card {
     width: 100%; /* O el ancho que prefieras */
-    margin: 10px auto; /* Centrar las tarjetas con margen automático */
     box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); /* Añadir sombra */
     transition: 0.3s; /* Suavizar la transición de la sombra */
-    min-height: 200px; /* O la altura mínima que prefieras */
   }
   
   .note-card:hover {
