@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { CiSquareCheck, CiImageOn, CiText } from "react-icons/ci";
 import { Tooltip, OverlayTrigger } from 'react-bootstrap';
-import ListInput from './ListInput'; // Asegúrate de que la ruta sea correcta
-import TextInput from './TextInput'; // Asegúrate de que la ruta sea correcta
-import '../styles/NoteForm.css'; // Asegúrate de que la ruta sea correcta
+import ListInput from './ListInput';
+import TextInput from './TextInput';
+import '../styles/NoteForm.css';
 
 const NoteForm = () => {
     const [isExpanded, setIsExpanded] = useState(false);
