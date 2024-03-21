@@ -25,5 +25,20 @@
     font-weight: bold;
     font-size: 1.25rem; 
   }
+
+  .image-preview-container {
+    display: flex; /* Activa Flexbox para este contenedor */
+    flex-wrap: wrap; /* Permite que los elementos se pasen a la siguiente línea si no hay espacio */
+    gap: 10px; /* Espacio entre imágenes */
+    justify-content: flex-start; /* Alinea los elementos al inicio del contenedor */
+    align-items: center; /* Alinea los elementos verticalmente en el centro */
+}
+
+.image-preview {
+    width: 250px; /* Ajusta el ancho de la imagen */
+    height: auto; /* Mantiene la proporción de la imagen */
+    border-radius: 5px; /* Opcional: bordes redondeados para un aspecto más suave */
+}
+
   
   
