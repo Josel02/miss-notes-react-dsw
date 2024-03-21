@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { CiSquareCheck, CiImageOn, CiText } from "react-icons/ci";
-import { Tooltip, OverlayTrigger } from 'react-bootstrap';
 import ListInput from './ListInput';
 import TextInput from './TextInput';
+import ImageAndListModeButtons from './buttons/ImageAndListModeButtons';
+import SaveCancelButtons from './buttons/SaveCancelButtons';
 import '../../styles/NoteForm.css';
 
 const NoteForm = () => {
@@ -29,8 +29,6 @@ const NoteForm = () => {
         setIsList(false);
     };
 
-    const renderTooltip = (message) => (<Tooltip>{message}</Tooltip>);
-
     return (
         <div className="container mt-5">
             <div className={`card shadow-sm p-3 mb-5 bg-white rounded ${!isExpanded ? "clickable" : ""}`} onClick={() => setIsExpanded(true)}>
@@ -39,19 +37,7 @@ const NoteForm = () => {
                         <div className="d-flex justify-content-between align-items-center mb-3">
                             <span className="text-muted">Añade una nota...</span>
                             <div>
-                                <OverlayTrigger placement="top" overlay={renderTooltip("Subir imagen")}>
-                                    <button className="btn icon-button" onClick={(e) => e.stopPropagation()}>
-                                        <CiImageOn size="2em" />
-                                    </button>
-                                </OverlayTrigger>
-                                <OverlayTrigger placement="top" overlay={renderTooltip(isList ? "Texto" : "Nueva lista")}>
-                                    <button className="btn icon-button ms-2" onClick={(e) => {
-                                        e.stopPropagation();
-                                        toggleListMode();
-                                    }}>
-                                        {isList ? <CiText size="2em" /> : <CiSquareCheck size="2em" />}
-                                    </button>
-                                </OverlayTrigger>
+                                <ImageAndListModeButtons toggleListMode={toggleListMode} isList={isList} />
                             </div>
                         </div>
                     )}
@@ -66,9 +52,13 @@ const NoteForm = () => {
                                 ) : (
                                     <ListInput items={items} setItems={setItems} />
                                 )}
-                                <div className="d-flex justify-content-end align-items-center mt-3">
-                                    <button type="submit" className="btn btn-primary">Guardar</button>
-                                    <button type="button" className="btn btn-secondary ms-2" onClick={() => setIsExpanded(false)}>Cancelar</button>
+                                <div className="d-flex justify-content-between align-items-center mt-3">
+                                    <div>
+                                        <ImageAndListModeButtons toggleListMode={toggleListMode} isList={isList} />
+                                    </div>
+                                    <div>
+                                        <SaveCancelButtons onSave={handleSubmit} onCancel={() => setIsExpanded(false)} />
+                                    </div>
                                 </div>
                             </form>
                         </>
