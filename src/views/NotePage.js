@@ -1,7 +1,7 @@
 // NoteListPage.js
 import React, { useState, useEffect } from 'react';
 import Masonry from '@mui/lab/Masonry';
-import NoteForm from '../components/NoteForm';
+import NoteForm from '../components//addNewNote/NoteForm';
 import NoteCard from '../components/NoteCard';
 import { Alert } from 'react-bootstrap';
 import Layout from '../layouts/Layout';
