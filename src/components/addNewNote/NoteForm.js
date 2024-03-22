@@ -6,12 +6,12 @@ import SaveCancelButtons from './buttons/SaveCancelButtons';
 import ImagePreview from './ImagePreview';
 import '../../styles/NoteForm.css';
 import useNoteFormState from './hooks/useNoteFormState'; 
-const NoteForm = () => {
+const NoteForm = ({ onAddNewNote, setMessage }) => {
     const {
         isExpanded, title, content, items, isList, images,
         setTitle, setContent, setItems,
         toggleListMode, handleSubmit, handleCancel, handleImageChange, handleExpansionClick
-    } = useNoteFormState();
+    } = useNoteFormState({ onAddNewNote, setMessage });
 
     return (
         <div className="container mt-5">

@@ -11,6 +11,7 @@ const NoteListPage = () => {
   const [notes, setNotes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editNote, setEditNote] = useState(null);
+  const [message, setMessage] = useState({ text: '', type: '' }); // type podría ser 'success' o 'error'
 
   const handleEditNote = (note) => {
     setEditNote(note);
@@ -18,6 +19,10 @@ const NoteListPage = () => {
   
   const handleCloseModal = () => {
     setEditNote(null);
+  };
+
+  const addNewNote = (newNote) => {
+    setNotes(prevNotes => [...prevNotes, newNote]);
   };
 
   const saveNote = (updatedNote) => {
@@ -49,7 +54,12 @@ const NoteListPage = () => {
 
   return (
     <Layout>
-      <NoteForm />
+      <NoteForm onAddNewNote={addNewNote} setMessage={setMessage} />
+      {message.text && (
+        <Alert variant={message.type === 'success' ? 'success' : 'danger'}>
+          {message.text}
+        </Alert>
+      )}
       {loading ? (
         <div>Cargando notas...</div>
       ) : notes.length > 0 ? (

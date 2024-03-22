@@ -2,7 +2,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import HomePage from './views/HomePage';
-import NotePage from './views/NotePage';
+import NotePage from './views/NoteListPage';
 
 function App() {
   return (
