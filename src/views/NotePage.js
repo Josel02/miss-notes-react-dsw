@@ -1,7 +1,6 @@
-// NoteListPage.js
 import React, { useState, useEffect } from 'react';
 import Masonry from '@mui/lab/Masonry';
-import NoteForm from '../components//addNewNote/NoteForm';
+import NoteForm from '../components/addNewNote/NoteForm';
 import NoteCard from '../components/NoteCard';
 import { Alert } from 'react-bootstrap';
 import Layout from '../layouts/Layout';
@@ -9,7 +8,6 @@ import axios from 'axios';
 import EditNoteModal from './EditNoteModal';
 
 const NoteListPage = () => {
-
   const [notes, setNotes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editNote, setEditNote] = useState(null);
@@ -31,17 +29,23 @@ const NoteListPage = () => {
     const fetchNotes = async () => {
       try {
         const response = await axios.get('http://localhost:3000/notes');
-        setNotes(response.data);
+        // Asegúrate de que cada nota tiene contenido que pueda ser renderizado directamente
+        const preparedNotes = response.data.map(note => ({
+          ...note,
+          // Aquí asumimos que el contenido de la nota ya es un objeto.
+          // Ajusta según sea necesario, por ejemplo, parseando JSON si el contenido es una cadena JSON.
+          content: typeof note.content === 'string' ? note.content : JSON.stringify(note.content)
+        }));
+        setNotes(preparedNotes);
       } catch (error) {
         console.error('Error fetching notes', error);
-      }
-      finally{
-      setLoading(false);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchNotes();
-    }, []);
+  }, []);
 
   return (
     <Layout>

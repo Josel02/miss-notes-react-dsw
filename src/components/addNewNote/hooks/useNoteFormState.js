@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import axios from 'axios';
 
 const useNoteFormState = () => {
     const [isExpanded, setIsExpanded] = useState(false);
@@ -24,12 +25,41 @@ const useNoteFormState = () => {
         setImages([]);
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log('Nota creada:', { title, content, items, images });
+    
+        // Estructura inicial del content de la nota
+        let contentObject = isList ? { items } : { text: content };
+    
+        // Asumiendo que 'images' contiene rutas de imágenes como strings y solo te interesa la primera
+        if (images.length > 0) {
+            // Añadir la ruta de la primera imagen al objeto contentObject
+            contentObject.imagePath = images[0];
+        }
+    
+        // Completar la estructura del noteData incorporando el contentObject
+        let noteData = {
+            title,
+            userId: 1, // ID de usuario estático para la demostración
+            content: JSON.stringify(contentObject), // Convertir el objeto JavaScript a cadena JSON para el almacenamiento
+            isList // Indicar si la nota es una lista o no
+        };
+    
+        try {
+            // Enviar la solicitud POST al servidor para guardar la nueva nota
+            const response = await axios.post('http://localhost:3000/notes', noteData);
+    
+            // Mostrar una confirmación o actualizar la UI según sea necesario
+            console.log('Nota creada con éxito:', response.data);
+        } catch (error) {
+            // Manejar cualquier error que ocurra durante la solicitud
+            console.error('Error al crear la nota:', error);
+        }
+    
+        // Resetear el formulario después de enviar
         resetForm();
     };
-
+    
     const handleCancel = () => resetForm();
 
     const handleImageChange = (e) => {

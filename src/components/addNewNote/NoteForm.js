@@ -3,10 +3,9 @@ import ListInput from './ListInput';
 import TextInput from './TextInput';
 import ImageAndListModeButtons from './buttons/ImageAndListModeButtons';
 import SaveCancelButtons from './buttons/SaveCancelButtons';
-import ImagePreview from './ImagePreview'; // Asegúrate de importar el nuevo componente
+import ImagePreview from './ImagePreview';
 import '../../styles/NoteForm.css';
-import useNoteFormState from './hooks/useNoteFormState'; // Asumiendo que el hook está en una carpeta 'hooks'
-
+import useNoteFormState from './hooks/useNoteFormState'; 
 const NoteForm = () => {
     const {
         isExpanded, title, content, items, isList, images,
