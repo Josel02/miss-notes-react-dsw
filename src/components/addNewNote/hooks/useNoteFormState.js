@@ -1,20 +1,34 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const useNoteFormState = ({ onAddNewNote, setMessage }) => { // onAddNewNote viene como argumento
-    const [isExpanded, setIsExpanded] = useState(false);
+const useNoteFormState = ({ onAddNewNote, onUpdateNote, setMessage, editNote }) => {
+    const [isExpanded, setIsExpanded] = useState(!!editNote);
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
     const [items, setItems] = useState([]);
     const [isList, setIsList] = useState(false);
     const [images, setImages] = useState([]);
 
-    const toggleListMode = () => {
-        setIsList(!isList);
-        if (!isList && items.length === 0) {
-            setItems([{ id: Date.now(), text: '', checked: false }]);
+    // Efecto para prellenar el formulario cuando se está editando una nota
+    useEffect(() => {
+        if (editNote) {
+            setTitle(editNote.title);
+            setIsList(editNote.isList);
+            if (editNote.content) {
+                // Aquí asumimos que el contenido ya está parseado como objeto
+                // Ajusta esta lógica si el contenido se guarda de otra manera
+                if (editNote.isList) {
+                    setItems(editNote.content.items || []);
+                } else {
+                    setContent(editNote.content.text || '');
+                }
+            }
+            // Si hay imágenes, también debes ajustar esto para reflejar cómo manejas las imágenes
+            setIsExpanded(true);
+        } else {
+            resetForm();
         }
-    };
+    }, [editNote]);
 
     const resetForm = () => {
         setIsExpanded(false);
@@ -27,32 +41,40 @@ const useNoteFormState = ({ onAddNewNote, setMessage }) => { // onAddNewNote vie
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-    
+
         let contentObject = isList ? { items } : { text: content };
-    
+
         if (images.length > 0) {
-            contentObject.imagePath = images[0];
+            contentObject.imagePath = images[0]; // Ajustar según cómo manejas las imágenes
         }
-    
+
         let noteData = {
             title,
             userId: 1, // Suponiendo que tienes una manera de obtener el ID del usuario
             content: JSON.stringify(contentObject),
             isList
         };
-    
+
         try {
-            const response = await axios.post('http://localhost:3000/notes', noteData);
-            console.log('Nota creada con éxito:', response.data);
-            onAddNewNote(response.data);
-            setMessage({ text: 'Nota añadida con éxito.', type: 'success' });
+            let response;
+            if (editNote) {
+                // Lógica para actualizar una nota existente
+                response = await axios.put(`http://localhost:3000/notes/${editNote.id}`, noteData);
+                onUpdateNote && onUpdateNote(response.data);
+            } else {
+                // Lógica para añadir una nueva nota
+                response = await axios.post('http://localhost:3000/notes', noteData);
+                onAddNewNote(response.data);
+            }
+            setMessage({ text: 'Nota procesada con éxito.', type: 'success' });
             resetForm();
         } catch (error) {
-            console.error('Error al crear la nota:', error);
-            setMessage({ text: 'Error al añadir la nota.', type: 'error' });
+            console.error('Error al procesar la nota:', error);
+            setMessage({ text: 'Error al procesar la nota.', type: 'error' });
         }
+
     };
-    
+
     const handleCancel = () => resetForm();
 
     const handleImageChange = (e) => {
@@ -63,6 +85,13 @@ const useNoteFormState = ({ onAddNewNote, setMessage }) => { // onAddNewNote vie
     const handleExpansionClick = () => {
         if (!isExpanded) {
             setIsExpanded(true);
+        }
+    };
+
+    const toggleListMode = () => {
+        setIsList(!isList);
+        if (!isList && items.length === 0) {
+            setItems([{ id: Date.now(), text: '', checked: false }]);
         }
     };
 

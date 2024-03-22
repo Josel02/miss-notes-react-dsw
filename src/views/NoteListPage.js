@@ -1,24 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import Masonry from '@mui/lab/Masonry';
-import NoteForm from '../components/addNewNote/NoteForm';
 import NoteCard from '../components/NoteCard';
 import { Alert } from 'react-bootstrap';
 import Layout from '../layouts/Layout';
 import axios from 'axios';
-import EditNoteModal from './EditNoteModal';
+import EditNoteModal from './EditNoteModal'; // Asegúrate de que este componente está correctamente importado
+import NoteForm from '../components/addNewNote/NoteForm'; // Asegúrate de que este componente está correctamente importado
 
 const NoteListPage = () => {
   const [notes, setNotes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editNote, setEditNote] = useState(null);
-  const [message, setMessage] = useState({ text: '', type: '' }); // type podría ser 'success' o 'error'
+  const [message, setMessage] = useState({ text: '', type: '' });
+  const [editNoteKey, setEditNoteKey] = useState(0);
 
   const handleEditNote = (note) => {
+    setEditNoteKey(prevKey => prevKey + 1); // Incrementa la key
     setEditNote(note);
   };
-  
+
   const handleCloseModal = () => {
     setEditNote(null);
+    document.body.focus();
   };
 
   const addNewNote = (newNote) => {
@@ -26,22 +29,15 @@ const NoteListPage = () => {
   };
 
   const saveNote = (updatedNote) => {
-    // Lógica para guardar la nota actualizada
-    // Esto incluiría una llamada a la API para actualizar la nota en el backend
+    setNotes(prevNotes => prevNotes.map(note => note.id === updatedNote.id ? updatedNote : note));
+    handleCloseModal();
   };
 
   useEffect(() => {
     const fetchNotes = async () => {
       try {
         const response = await axios.get('http://localhost:3000/notes');
-        // Asegúrate de que cada nota tiene contenido que pueda ser renderizado directamente
-        const preparedNotes = response.data.map(note => ({
-          ...note,
-          // Aquí asumimos que el contenido de la nota ya es un objeto.
-          // Ajusta según sea necesario, por ejemplo, parseando JSON si el contenido es una cadena JSON.
-          content: typeof note.content === 'string' ? note.content : JSON.stringify(note.content)
-        }));
-        setNotes(preparedNotes);
+        setNotes(response.data);
       } catch (error) {
         console.error('Error fetching notes', error);
       } finally {
@@ -72,15 +68,15 @@ const NoteListPage = () => {
         </Masonry>
       ) : (
         <Alert variant="info">Todavía no hay ninguna nota, ¿Por qué no añades una?</Alert>
-      )} 
-      {editNote && (
-        <EditNoteModal
-          show={Boolean(editNote)}
-          handleClose={handleCloseModal}
-          note={editNote}
-          saveNote={saveNote}
-        />
       )}
+      <EditNoteModal
+        key={editNoteKey}
+        show={!!editNote}
+        handleClose={handleCloseModal}
+        note={editNote}
+        onSave={saveNote}
+        setMessage={setMessage}
+      />
     </Layout>
   );
 };

@@ -24,7 +24,7 @@ const NoteCard = ({ note, onEdit }) => {
         </ListGroup>
       );
     } else if (content.text) {
-      return <p>{content.text}</p>;
+      return <span>{content.text}</span>; // Cambiado de <p> a <span>
     }
     return null;
   };
@@ -40,10 +40,10 @@ const NoteCard = ({ note, onEdit }) => {
     <Card className="note-card" style={{ margin: '10px' }}>
       <Card.Body>
         <Card.Title>{note.title}</Card.Title>
-        <Card.Text>
+        <div>
           {renderContent(content)}
           {content.imagePath ? renderImage(content.imagePath) : null}
-        </Card.Text>
+        </div>
         <div className="action-buttons">
           <Button variant="primary" onClick={() => onEdit(note)}>Editar</Button>
           <Button variant="danger">Eliminar</Button>

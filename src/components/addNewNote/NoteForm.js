@@ -6,12 +6,39 @@ import SaveCancelButtons from './buttons/SaveCancelButtons';
 import ImagePreview from './ImagePreview';
 import '../../styles/NoteForm.css';
 import useNoteFormState from './hooks/useNoteFormState'; 
-const NoteForm = ({ onAddNewNote, setMessage }) => {
+
+// Asegúrate de incluir todas las nuevas props necesarias para el componente
+const NoteForm = ({ onAddNewNote, setMessage, isEditing, editNote, onSaveNote, handleCloseModal }) => {
     const {
         isExpanded, title, content, items, isList, images,
-        setTitle, setContent, setItems,
+        setTitle, setContent, setItems, setImages,
         toggleListMode, handleSubmit, handleCancel, handleImageChange, handleExpansionClick
-    } = useNoteFormState({ onAddNewNote, setMessage });
+    } = useNoteFormState({ onAddNewNote, onUpdateNote: onSaveNote, setMessage, editNote });
+
+    // Modificar handleSubmit para manejar correctamente tanto la adición de nuevas notas como la edición
+    const handleFormSubmit = async (e) => {
+        e.preventDefault();
+        await handleSubmit(e); // Esta función ya debe estar preparada para manejar ambas acciones
+        if (isEditing) {
+            // Si se está editando, llamar a onSaveNote con los datos actualizados y cerrar el modal
+            onSaveNote({
+                id: editNote.id, // Asume que editNote incluye el ID
+                title,
+                content: isList ? { items } : { text: content },
+                isList,
+                images,
+            });
+            handleCloseModal();
+        }
+    };
+
+    // Ajuste para manejar la cancelación en el contexto de edición
+    const handleFormCancel = () => {
+        handleCancel(); // Restablece el formulario a su estado inicial
+        if (isEditing) {
+            handleCloseModal(); // Cierra el modal si se está editando
+        }
+    };
 
     return (
         <div className="container mt-5">
@@ -22,30 +49,48 @@ const NoteForm = ({ onAddNewNote, setMessage }) => {
                             <span className="text-muted" onClick={handleExpansionClick}>Añade una nota...</span>
                             <div>
                                 <ImageAndListModeButtons 
-                                    toggleListMode={toggleListMode} isList={isList} handleImageChange={handleImageChange}     
-                                    handleExpansionClick={handleExpansionClick} //Para poder expandir el formulario
+                                    toggleListMode={toggleListMode} 
+                                    isList={isList} 
+                                    handleImageChange={handleImageChange}
+                                    handleExpansionClick={handleExpansionClick} 
                                 />
                             </div>
                         </div>
                     )}
                     {isExpanded && (
-                        <form onSubmit={handleSubmit}>
+                        <form onSubmit={handleFormSubmit}>
                             <div className="form-group mb-3">
-                                <input type="text" className="form-control form-control-lg" placeholder="Título de la nota" value={title} onChange={(e) => setTitle(e.target.value)} required />
+                                <input 
+                                    type="text" 
+                                    className="form-control form-control-lg" 
+                                    placeholder="Título de la nota" 
+                                    value={title} 
+                                    onChange={(e) => setTitle(e.target.value)} 
+                                    required 
+                                />
                             </div>
                             {!isList ? (
-                                <TextInput content={content} setContent={setContent} />
+                                <TextInput 
+                                    content={content} 
+                                    setContent={setContent} 
+                                />
                             ) : (
-                                <ListInput items={items} setItems={setItems} />
+                                <ListInput 
+                                    items={items} 
+                                    setItems={setItems} 
+                                />
                             )}
-                            <ImagePreview images={images} />
+                            <ImagePreview images={images} setImages={setImages} />
                             <div className="d-flex justify-content-between align-items-center mt-3">
-                                <div>
-                                    <ImageAndListModeButtons toggleListMode={toggleListMode} handleImageChange={handleImageChange} handleExpansionClick={handleExpansionClick}  />
-                                </div>
-                                <div>
-                                    <SaveCancelButtons onSave={handleSubmit} onCancel={handleCancel} />
-                                </div>
+                                <ImageAndListModeButtons 
+                                    toggleListMode={toggleListMode} 
+                                    handleImageChange={handleImageChange} 
+                                    handleExpansionClick={handleExpansionClick}  
+                                />
+                                <SaveCancelButtons 
+                                    onSave={handleFormSubmit} 
+                                    onCancel={handleFormCancel} 
+                                />
                             </div>
                         </form>
                     )}
