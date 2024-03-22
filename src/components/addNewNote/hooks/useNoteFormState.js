@@ -67,7 +67,12 @@ const useNoteFormState = () => {
         setImages([...images, ...files]);
     };
 
-    const handleExpansionClick = () => setIsExpanded(!isExpanded);
+    const handleExpansionClick = () => {
+        if (!isExpanded) {
+            setIsExpanded(true);
+        }
+    };
+    
 
     return {
         isExpanded, title, content, items, isList, images,

@@ -21,7 +21,10 @@ const NoteForm = () => {
                         <div className="d-flex justify-content-between align-items-center mb-3">
                             <span className="text-muted" onClick={handleExpansionClick}>Añade una nota...</span>
                             <div>
-                                <ImageAndListModeButtons toggleListMode={toggleListMode} isList={isList} handleImageChange={handleImageChange} />
+                                <ImageAndListModeButtons 
+                                    toggleListMode={toggleListMode} isList={isList} handleImageChange={handleImageChange}     
+                                    handleExpansionClick={handleExpansionClick} //Para poder expandir el formulario
+                                />
                             </div>
                         </div>
                     )}
@@ -38,7 +41,7 @@ const NoteForm = () => {
                             <ImagePreview images={images} />
                             <div className="d-flex justify-content-between align-items-center mt-3">
                                 <div>
-                                    <ImageAndListModeButtons toggleListMode={toggleListMode} handleImageChange={handleImageChange} />
+                                    <ImageAndListModeButtons toggleListMode={toggleListMode} handleImageChange={handleImageChange} handleExpansionClick={handleExpansionClick}  />
                                 </div>
                                 <div>
                                     <SaveCancelButtons onSave={handleSubmit} onCancel={handleCancel} />
