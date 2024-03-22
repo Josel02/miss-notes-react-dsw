@@ -41,20 +41,20 @@ const useNoteFormState = ({ onAddNewNote, onUpdateNote, setMessage, editNote }) 
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
+        console.log('Form submission started. isList:', isList, 'Title:', title, 'Content:', content);
+    
         let contentObject = isList ? { items } : { text: content };
-
         if (images.length > 0) {
             contentObject.imagePath = images[0]; // Ajustar según cómo manejas las imágenes
         }
-
+    
         let noteData = {
             title,
             userId: 1, // Suponiendo que tienes una manera de obtener el ID del usuario
             content: JSON.stringify(contentObject),
             isList
         };
-
+    
         try {
             let response;
             if (editNote) {
@@ -64,7 +64,7 @@ const useNoteFormState = ({ onAddNewNote, onUpdateNote, setMessage, editNote }) 
             } else {
                 // Lógica para añadir una nueva nota
                 response = await axios.post('http://localhost:3000/notes', noteData);
-                onAddNewNote(response.data);
+                onAddNewNote && onAddNewNote(response.data);
             }
             setMessage({ text: 'Nota procesada con éxito.', type: 'success' });
             resetForm();
@@ -72,12 +72,15 @@ const useNoteFormState = ({ onAddNewNote, onUpdateNote, setMessage, editNote }) 
             console.error('Error al procesar la nota:', error);
             setMessage({ text: 'Error al procesar la nota.', type: 'error' });
         }
-
+    
+        console.log('Form submission ended.');
     };
+    
 
     const handleCancel = () => resetForm();
 
     const handleImageChange = (e) => {
+        console.log('Handling image change');
         const files = Array.from(e.target.files).map(file => URL.createObjectURL(file));
         setImages([...images, ...files]);
     };
@@ -89,6 +92,8 @@ const useNoteFormState = ({ onAddNewNote, onUpdateNote, setMessage, editNote }) 
     };
 
     const toggleListMode = () => {
+        console.log('Toggling list mode. Current mode:', isList);
+
         setIsList(!isList);
         if (!isList && items.length === 0) {
             setItems([{ id: Date.now(), text: '', checked: false }]);

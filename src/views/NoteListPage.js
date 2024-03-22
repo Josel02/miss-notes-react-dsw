@@ -12,16 +12,23 @@ const NoteListPage = () => {
   const [loading, setLoading] = useState(true);
   const [editNote, setEditNote] = useState(null);
   const [message, setMessage] = useState({ text: '', type: '' });
-  const [editNoteKey, setEditNoteKey] = useState(0);
+
 
   const handleEditNote = (note) => {
-    setEditNoteKey(prevKey => prevKey + 1); // Incrementa la key
-    setEditNote(note);
+    console.log('Opening modal for note:', note)
+    if (!editNote || editNote.id !== note.id) {
+      setEditNote(note);
+    }
   };
+  
 
   const handleCloseModal = () => {
+    if (editNote === null) {
+      console.log('Modal is already closed.');
+      return;
+    }
+    console.log('Closing modal');
     setEditNote(null);
-    document.body.focus();
   };
 
   const addNewNote = (newNote) => {
@@ -29,12 +36,14 @@ const NoteListPage = () => {
   };
 
   const saveNote = (updatedNote) => {
+    console.log('Saving note:', updatedNote);
     setNotes(prevNotes => prevNotes.map(note => note.id === updatedNote.id ? updatedNote : note));
     handleCloseModal();
   };
 
   const deleteNote = async (noteId) => {
     try {
+      console.log('Deleting note with id:', noteId);
       // Llamada API para eliminar la nota
       await axios.delete(`http://localhost:3000/notes/${noteId}`);
       
@@ -87,7 +96,6 @@ const NoteListPage = () => {
         <Alert variant="info">Todavía no hay ninguna nota, ¿Por qué no añades una?</Alert>
       )}
       <EditNoteModal
-        key={editNoteKey}
         show={!!editNote}
         handleClose={handleCloseModal}
         note={editNote}

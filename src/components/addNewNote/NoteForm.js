@@ -18,18 +18,24 @@ const NoteForm = ({ onAddNewNote, setMessage, isEditing, editNote, onSaveNote, h
     // Modificar handleSubmit para manejar correctamente tanto la adición de nuevas notas como la edición
     const handleFormSubmit = async (e) => {
         e.preventDefault();
-        await handleSubmit(e); // Esta función ya debe estar preparada para manejar ambas acciones
-        if (isEditing) {
-            // Si se está editando, llamar a onSaveNote con los datos actualizados y cerrar el modal
-            onSaveNote({
-                id: editNote.id, // Asume que editNote incluye el ID
-                title,
-                content: isList ? { items } : { text: content },
-                isList,
-                images,
-            });
-            handleCloseModal();
+        try {
+            await handleSubmit(e); // Esta función ya debe estar preparada para manejar ambas acciones
+            if (isEditing) {
+                // Si se está editando, llamar a onSaveNote con los datos actualizados y cerrar el modal
+                onSaveNote({
+                    id: editNote.id, // Asume que editNote incluye el ID
+                    title,
+                    content: isList ? { items } : { text: content },
+                    isList,
+                    images,
+                });
+                handleCloseModal();
+            }
         }
+        catch (error) {
+            console.error('Error al procesar la nota:', error);
+        }
+
     };
 
     // Ajuste para manejar la cancelación en el contexto de edición
