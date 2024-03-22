@@ -33,6 +33,22 @@ const NoteListPage = () => {
     handleCloseModal();
   };
 
+  const deleteNote = async (noteId) => {
+    try {
+      // Llamada API para eliminar la nota
+      await axios.delete(`http://localhost:3000/notes/${noteId}`);
+      
+      // Actualizar el estado para remover la nota eliminada
+      setNotes(prevNotes => prevNotes.filter(note => note.id !== noteId));
+      
+      setMessage({ text: 'Nota eliminada con éxito.', type: 'success' });
+    } catch (error) {
+      console.error('Error al eliminar la nota:', error);
+      setMessage({ text: 'Error al eliminar la nota.', type: 'error' });
+    }
+  };
+  
+
   useEffect(() => {
     const fetchNotes = async () => {
       try {
@@ -62,7 +78,8 @@ const NoteListPage = () => {
         <Masonry columns={{ xs: 1, sm: 2, md: 3, lg: 4 }} spacing={2}>
           {notes.map(note => (
             <div key={note.id}>
-              <NoteCard note={note} onEdit={() => handleEditNote(note)} />
+              <NoteCard note={note} onEdit={() => handleEditNote(note)} onDelete={() => deleteNote(note.id)} />
+
             </div>
           ))}
         </Masonry>

@@ -2,7 +2,7 @@ import React from 'react';
 import { Card, Button, ListGroup } from 'react-bootstrap';
 import '../styles/NoteCard.css';
 
-const NoteCard = ({ note, onEdit }) => {
+const NoteCard = ({ note, onEdit, onDelete }) => {
   // Asumiendo que note.content podría ser una cadena JSON, intentamos parsearla
   let content;
   try {
@@ -46,7 +46,7 @@ const NoteCard = ({ note, onEdit }) => {
         </div>
         <div className="action-buttons">
           <Button variant="primary" onClick={() => onEdit(note)}>Editar</Button>
-          <Button variant="danger">Eliminar</Button>
+          <Button variant="danger" onClick={onDelete}>Eliminar</Button>
         </div>
       </Card.Body>
     </Card>
