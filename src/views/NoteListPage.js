@@ -10,35 +10,20 @@ import NoteForm from '../components/addNewNote/NoteForm'; // Asegúrate de que e
 const NoteListPage = () => {
   const [notes, setNotes] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [editNote, setEditNote] = useState(null);
   const [message, setMessage] = useState({ text: '', type: '' });
-
-
-  const handleEditNote = (note) => {
-    console.log('Opening modal for note:', note)
-    if (!editNote || editNote.id !== note.id) {
-      setEditNote(note);
-    }
-  };
+  const [editingNote, setEditingNote] = useState(null);
   
-
-  const handleCloseModal = () => {
-    if (editNote === null) {
-      console.log('Modal is already closed.');
-      return;
-    }
-    console.log('Closing modal');
-    setEditNote(null);
-  };
-
   const addNewNote = (newNote) => {
     setNotes(prevNotes => [...prevNotes, newNote]);
   };
 
+  const handleEditNote = (note) => {
+    setEditingNote(note);
+  }
+
   const saveNote = (updatedNote) => {
     console.log('Saving note:', updatedNote);
     setNotes(prevNotes => prevNotes.map(note => note.id === updatedNote.id ? updatedNote : note));
-    handleCloseModal();
   };
 
   const deleteNote = async (noteId) => {
@@ -88,20 +73,21 @@ const NoteListPage = () => {
           {notes.map(note => (
             <div key={note.id}>
               <NoteCard note={note} onEdit={() => handleEditNote(note)} onDelete={() => deleteNote(note.id)} />
-
             </div>
           ))}
         </Masonry>
       ) : (
         <Alert variant="info">Todavía no hay ninguna nota, ¿Por qué no añades una?</Alert>
       )}
+      {editingNote && (
       <EditNoteModal
-        show={!!editNote}
-        handleClose={handleCloseModal}
-        note={editNote}
-        onSave={saveNote}
-        setMessage={setMessage}
+        show={!!editingNote}
+        handleClose={() => setEditingNote(null)}
+        note={editingNote}
+        onSave={null}
       />
+)}
+
     </Layout>
   );
 };
