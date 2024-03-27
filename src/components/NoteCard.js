@@ -3,37 +3,38 @@ import { Card, Button, ListGroup } from 'react-bootstrap';
 import '../styles/NoteCard.css';
 
 const NoteCard = ({ note, onEdit, onDelete }) => {
-  // Asumiendo que note.content podría ser una cadena JSON, intentamos parsearla
-  let content;
-  try {
-    content = typeof note.content === 'string' ? JSON.parse(note.content) : note.content;
-  } catch (error) {
-    console.error('Error parsing note content', error);
-    content = {}; // Si hay un error en el parseo, asumimos contenido vacío
-  }
 
-  const renderContent = (content) => {
-    if (content.items && Array.isArray(content.items)) {
-      return (
-        <ListGroup>
-          {content.items.map((item) => (
-            <ListGroup.Item key={item.id} variant={item.checked ? 'success' : ''}>
-              {item.text}
+  const renderNoteContent = (content) => {
+    switch (content.type){
+      case 'text':
+        return <p key={content._id}>{content.data}</p>
+      case 'list':
+        return (
+          <ListGroup key={content._id}>
+            {content.data.map((item, index) => (
+              <ListGroup.Item key={index}>{item}</ListGroup.Item>
+            ))}
+          </ListGroup>
+        );
+      case 'checked list':
+        return (
+        <ListGroup key={content._id}>
+          {content.data.map((item, index) => (
+            <ListGroup.Item key={index} className={item.checked ? 'checked' : ''}>
+              {item.checked && (
+                <span className="check-icon">✓</span>
+              )}
+              <span className="item-text">{item.text}</span> 
             </ListGroup.Item>
           ))}
         </ListGroup>
-      );
-    } else if (content.text) {
-      return <span>{content.text}</span>; // Cambiado de <p> a <span>
+        );
+      case 'image':
+        // Por ahora no renderizamos nada para imágenes
+        return null;
+      default:
+        return null;
     }
-    return null;
-  };
-
-  const renderImage = (imagePath) => {
-    if (imagePath) {
-      return <img src={imagePath} alt="Nota" className="img-thumbnail" />;
-    }
-    return null;
   };
 
   return (
@@ -41,8 +42,7 @@ const NoteCard = ({ note, onEdit, onDelete }) => {
       <Card.Body>
         <Card.Title>{note.title}</Card.Title>
         <div>
-          {renderContent(content)}
-          {content.imagePath ? renderImage(content.imagePath) : null}
+          {note.content.map(renderNoteContent)}
         </div>
         <div className="action-buttons">
           <Button variant="primary" onClick={() => onEdit(note)}>Editar</Button>

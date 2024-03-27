@@ -19,4 +19,35 @@
   .note-card:hover {
     box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2); 
   }
+
+  .note-card .list-group {
+    list-style: none;
+  }
   
+  .note-card .list-group-item {
+    padding: 0.1rem 1rem; 
+    border: none; 
+    display: flex;
+    align-items: center; 
+    gap: 0.5rem; 
+  }
+  
+  .note-card .list-group-item.checked:before {
+    content: ''; 
+    color: #28a745;
+  }
+
+  .note-card .list-group-item:before {
+    content: '•';
+    color: #595959; 
+    font-size: 1.5rem; 
+  }
+  
+  .note-card .list-group-item.checked .item-text {
+    text-decoration: line-through; /* Aplicar tachado solo al texto */
+    color: #6c757d; /* Color más suave para el texto tachado */
+  }
+  
+  .note-card .list-group-item .check-icon {
+    color: #28a745; /* Color del ícono de verificación */
+  }
