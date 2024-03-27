@@ -20,9 +20,9 @@ const NoteCard = ({ note, onEdit, onDelete }) => {
         return (
         <ListGroup key={content._id}>
           {content.data.map((item, index) => (
-            <ListGroup.Item key={index} className={item.checked ? 'checked' : ''}>
+            <ListGroup.Item key={index} className={item.checked ? 'checked' : 'unchecked'}>
               {item.checked && (
-                <span className="check-icon">✓</span>
+                <span className="check-icon"></span>
               )}
               <span className="item-text">{item.text}</span> 
             </ListGroup.Item>
