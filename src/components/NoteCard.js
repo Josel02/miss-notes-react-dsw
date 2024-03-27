@@ -7,7 +7,7 @@ const NoteCard = ({ note, onEdit, onDelete }) => {
   const renderNoteContent = (content) => {
     switch (content.type){
       case 'text':
-        return <p key={content._id}>{content.data}</p>
+        return <p key={content._id} className='text'>{content.data}</p>
       case 'list':
         return (
           <ListGroup key={content._id}>
