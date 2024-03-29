@@ -1,7 +1,7 @@
 import ListSection from './NoteSections/ListSection';
 import TextSection from './NoteSections/TextSection';
 import CheckedListSection from './NoteSections/CheckedListSection';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 
 
 const EditContentSection = ({ content, onSave }) => {
@@ -11,16 +11,12 @@ const EditContentSection = ({ content, onSave }) => {
     setLocalContent(content);
   }, [content]);
 
-  const onChangeText = (index, text) => { 
-    console.log('onChangeText', index, text);
-  }
-
-  const updateLocalContent = (index, updatedData, itemIndex = null) => {
+  const updateLocalContent = useCallback((index, updatedData, itemIndex = null) => {
     const newContent  = [...localContent];
     newContent[index].data = updatedData;
 
     setLocalContent(newContent);
-  }
+  }, [localContent]);
 
   const renderContentByType = (content, index) => {
     switch (content.type) {
@@ -33,12 +29,12 @@ const EditContentSection = ({ content, onSave }) => {
         );
       case 'list':
         return (
-          <ListSection 
+          <ListSection
             items={content.data} 
-            onChangeItem={(itemIndex, itemValue) => updateLocalContent(index, 'list', itemIndex, itemValue)}
+            onBlur={(items) => updateLocalContent(index, items)}
           />
         );
-      case 'checked list': 
+      case 'checked list':
         return (
           <CheckedListSection 
             items={content.data}
@@ -46,6 +42,8 @@ const EditContentSection = ({ content, onSave }) => {
             onToggleChecked={(checkedIndex) => updateLocalContent(index, 'checked list', checkedIndex)}
           />
         );
+      case 'image':
+          return null
       // ... otros casos como 'image'
       default:
         return null;

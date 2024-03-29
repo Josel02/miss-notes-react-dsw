@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Form } from 'react-bootstrap';
 
-const TextSection = ({ text, onBlur }) => {
+const TextSection = React.memo(({ text, onBlur }) => {
   const [updatedText, setText] = useState(text);
   
   const handleChange = (e) => {
@@ -20,6 +20,6 @@ const TextSection = ({ text, onBlur }) => {
       />
     </Form.Group>
   );
-};
+});
 
 export default TextSection;
