@@ -1,80 +1,52 @@
-import React, {useEffect, useState} from 'react';
-import { Form, ListGroup } from 'react-bootstrap';
+import ListSection from './NoteSections/ListSection';
+import TextSection from './NoteSections/TextSection';
+import CheckedListSection from './NoteSections/CheckedListSection';
+import React, { useEffect, useState } from 'react';
 
-const EditContentSection = ({ content, onChange }) => {
+
+const EditContentSection = ({ content, onSave }) => {
   const [localContent, setLocalContent] = useState(content);
 
   useEffect(() => {
-    setLocalContent(content); // Actualiza el contenido local cuando el prop `content` cambia
+    setLocalContent(content);
   }, [content]);
 
-  // Manejador para cambios en el texto
-  const handleTextChange = (e, index) => {
-    // Actualiza el estado de la nota aquí
-  };
+  const onChangeText = (index, text) => { 
+    console.log('onChangeText', index, text);
+  }
 
-  // Manejador para cambios en los elementos de la lista
-  const handleListItemChange = (e, index) => {
-    // Actualiza el estado de la nota aquí
-  };
+  const updateLocalContent = (index, updatedData, itemIndex = null) => {
+    const newContent  = [...localContent];
+    newContent[index].data = updatedData;
 
-  const handleCheckedChange = (item, index, checkedIndex) => {
-    const newContent = [...localContent];
-    newContent[index].data[checkedIndex].checked = !newContent[index].data[checkedIndex].checked;
-    setLocalContent(newContent); 
-    //onChange(newContent); 
-  };
+    setLocalContent(newContent);
+  }
 
-  // Renderiza la sección de texto
-  const renderTextSection = (text, index) => (
-    <Form.Control
-      as="textarea"
-      value={text}
-      onChange={(e) => handleTextChange(e, index)}
-    />
-  );
-
-  // Renderiza la sección de lista
-  const renderListSection = (list, index) => (
-    <ListGroup>
-      {list.map((item, idx) => (
-        <ListGroup.Item key={idx}>
-          <Form.Control
-            type="text"
-            value={item}
-            onChange={(e) => handleListItemChange(e, idx)}
-          />
-        </ListGroup.Item>
-      ))}
-    </ListGroup>
-  );
-
-  const renderCheckedListSection = (list, index) => (
-    <ListGroup>
-      {list.map((item, checkedIdx) =>(
-        <ListGroup.Item key={checkedIdx} className={item.checked ? 'checked' : ''}>
-          <Form.Check 
-            type="checkbox"
-            checked={item.checked}
-            onChange={() => handleCheckedChange(item, index, checkedIdx)}
-          />
-          <span className="item-text">{item.text}</span>
-        </ListGroup.Item>
-      ))}
-    </ListGroup>
-  );
-
-  // Renderiza la sección correspondiente basada en el tipo de contenido
   const renderContentByType = (content, index) => {
     switch (content.type) {
       case 'text':
-        return renderTextSection(content.data, index);
+        return (
+          <TextSection 
+            text={content.data} 
+            onBlur={(text) => updateLocalContent(index, text)}
+          />
+        );
       case 'list':
-        return renderListSection(content.data, index);
+        return (
+          <ListSection 
+            items={content.data} 
+            onChangeItem={(itemIndex, itemValue) => updateLocalContent(index, 'list', itemIndex, itemValue)}
+          />
+        );
       case 'checked list': 
-        return renderCheckedListSection(content.data, index);
-      case 'image':
-        return <img src={content.data} alt="Imagen de la nota" />;
+        return (
+          <CheckedListSection 
+            items={content.data}
+            onChangeItem={(itemIndex, itemValue) => updateLocalContent(index, 'checked list', itemIndex, itemValue)}
+            onToggleChecked={(checkedIndex) => updateLocalContent(index, 'checked list', checkedIndex)}
+          />
+        );
+      // ... otros casos como 'image'
       default:
         return null;
     }
