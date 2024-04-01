@@ -11,12 +11,19 @@ const ListSection = React.memo(({ items, onBlur }) => {
     setUpdatedItems(newItems);
   }
 
+  const handleRemoveItem = (idx) => {
+    const newItems = updatedItems.filter((_, index) => index !== idx);
+    setUpdatedItems(newItems);
+    handleBlur();
+  }
+
   const handleAddItem = () => {
     setUpdatedItems([...updatedItems, '']);
   }
 
   const handleBlur = () => {
     const cleanedItems = updatedItems.filter((item) => item.trim() !== '');
+    console.log("blureado")
     onBlur(cleanedItems);
   }
 
@@ -33,7 +40,7 @@ const ListSection = React.memo(({ items, onBlur }) => {
     <div className="list-section">
       <ListGroup>
         {updatedItems.map((item, idx) => (
-          <ListGroup.Item key={idx}>
+          <ListGroup.Item key={idx} className="list-content">
             <Form.Control
               type="text"
               value={item}
@@ -41,6 +48,10 @@ const ListSection = React.memo(({ items, onBlur }) => {
               onBlur={handleBlur}
               onKeyDown={(e) => handleKeyDown(e, idx)}
             />
+            <button 
+              onClick={() => handleRemoveItem(idx)} 
+              aria-label="Remove item"
+              className="remove-item-button ms-2">✖</button>
           </ListGroup.Item>
         ))}
       </ListGroup>
