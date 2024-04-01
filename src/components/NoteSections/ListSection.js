@@ -22,8 +22,10 @@ const ListSection = React.memo(({ items, onBlur }) => {
 
   const handleKeyDown = (e, idx) => {
     if (e.key === 'Tab' && idx === updatedItems.length - 1) {
-      e.preventDefault(); // Prevent default tab behavior
-      handleAddItem();
+      if (updatedItems[updatedItems.length - 1].trim() !== '') {
+        e.preventDefault();
+        handleAddItem();
+      }
     }
   };
 
