@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Form, ListGroup } from 'react-bootstrap';
+import { Form, ListGroup, Button } from 'react-bootstrap';
 import "../../styles/ListSection.css";
 
 const ListSection = React.memo(({ items, onBlur }) => {
@@ -60,28 +60,31 @@ const ListSection = React.memo(({ items, onBlur }) => {
     <div className="list-section" ref={listSectionRef}>
       <ListGroup>
         {updatedItems.map((item, idx) => (
-          <ListGroup.Item key={idx} className="list-content">
+          <ListGroup.Item key={idx} className="d-flex align-items-center list-content">
             <Form.Control
               as="textarea"
               value={item}
               onChange={(e) => handleChange(e, idx)}
               onBlur={handleBlur}
               onKeyDown={(e) => handleKeyDown(e, idx)}
-              onInput={handleInput}
-              className="auto-resize"
+              onInput={(e) => handleInput(e, idx)}
+              className="flex-grow-1 auto-resize"
               style={{ height: 'auto' }}
               ref={el => textAreaRef.current[idx] = el}
             />
-            <button 
+            <Button 
               onClick={() => handleRemoveItem(idx)} 
-              aria-label="Remove item"
-              className="remove-item-button ms-2">✖</button>
+              variant="outline-danger"
+              size="sm"
+              className="ms-2">
+              <i className="fas fa-trash"></i>
+              </Button>
           </ListGroup.Item>
         ))}
       </ListGroup>
-      <button className="add-item-button" onClick={handleAddItem}>
+      <Button className="mt-3 add-item-button" onClick={handleAddItem} size="sm">
         Add item
-      </button>   
+      </Button>   
     </div>
   );
 });
