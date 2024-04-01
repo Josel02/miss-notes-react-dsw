@@ -5,6 +5,7 @@ import "../../styles/ListSection.css";
 const ListSection = React.memo(({ items, onBlur }) => {
   const [updatedItems, setUpdatedItems] = useState(items);
   const textAreaRef = useRef([]);
+  const listSectionRef = useRef(null);
 
   useEffect(() => {
     textAreaRef.current.forEach(textArea => {
@@ -24,7 +25,7 @@ const ListSection = React.memo(({ items, onBlur }) => {
   const handleRemoveItem = (idx) => {
     const newItems = updatedItems.filter((_, index) => index !== idx);
     setUpdatedItems(newItems);
-    handleBlur();
+    onBlur(newItems);
   }
 
   const handleInput = (e, idx) => {
@@ -32,16 +33,18 @@ const ListSection = React.memo(({ items, onBlur }) => {
     e.target.style.height = `${e.target.scrollHeight}px`;
     textAreaRef.current[idx] = e.target;
   };
-  
 
   const handleAddItem = () => {
     setUpdatedItems([...updatedItems, '']);
   }
 
   const handleBlur = () => {
-    const cleanedItems = updatedItems.filter((item) => item.trim() !== '');
-    console.log("blureado")
-    onBlur(cleanedItems);
+    setTimeout(() => {
+      if (listSectionRef.current && !listSectionRef.current.contains(document.activeElement)) {
+        const cleanedItems = updatedItems.filter((item) => item.trim() !== '');
+        onBlur(cleanedItems); 
+      }
+    }, 0);
   }
 
   const handleKeyDown = (e, idx) => {
@@ -54,7 +57,7 @@ const ListSection = React.memo(({ items, onBlur }) => {
   };
 
   return (
-    <div className="list-section">
+    <div className="list-section" ref={listSectionRef}>
       <ListGroup>
         {updatedItems.map((item, idx) => (
           <ListGroup.Item key={idx} className="list-content">

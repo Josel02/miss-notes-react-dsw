@@ -50,4 +50,5 @@
   .auto-resize {
     min-height: 38px;
     overflow-y: hidden;
+    resize: none;
   }
