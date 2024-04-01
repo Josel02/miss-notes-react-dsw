@@ -1,9 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Form, ListGroup } from 'react-bootstrap';
 import "../../styles/ListSection.css";
 
 const ListSection = React.memo(({ items, onBlur }) => {
   const [updatedItems, setUpdatedItems] = useState(items);
+  const textAreaRef = useRef([]);
+
+  useEffect(() => {
+    textAreaRef.current.forEach(textArea => {
+      if (textArea) {
+        textArea.style.height = 'inherit'; // Reset height to recalculate
+        textArea.style.height = `${textArea.scrollHeight}px`; // Set to scroll height
+      }
+    });
+  }, [items]);
 
   const handleChange = (e, idx) => {
     const newItems = [...updatedItems];
@@ -16,6 +26,13 @@ const ListSection = React.memo(({ items, onBlur }) => {
     setUpdatedItems(newItems);
     handleBlur();
   }
+
+  const handleInput = (e, idx) => {
+    e.target.style.height = 'inherit';
+    e.target.style.height = `${e.target.scrollHeight}px`;
+    textAreaRef.current[idx] = e.target;
+  };
+  
 
   const handleAddItem = () => {
     setUpdatedItems([...updatedItems, '']);
@@ -42,11 +59,15 @@ const ListSection = React.memo(({ items, onBlur }) => {
         {updatedItems.map((item, idx) => (
           <ListGroup.Item key={idx} className="list-content">
             <Form.Control
-              type="text"
+              as="textarea"
               value={item}
               onChange={(e) => handleChange(e, idx)}
               onBlur={handleBlur}
               onKeyDown={(e) => handleKeyDown(e, idx)}
+              onInput={handleInput}
+              className="auto-resize"
+              style={{ height: 'auto' }}
+              ref={el => textAreaRef.current[idx] = el}
             />
             <button 
               onClick={() => handleRemoveItem(idx)} 

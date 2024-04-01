@@ -46,3 +46,8 @@
   .list-group-item:hover .remove-item-button {
     display: block;
   }
+
+  .auto-resize {
+    min-height: 38px;
+    overflow-y: hidden;
+  }
