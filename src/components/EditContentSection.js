@@ -3,7 +3,6 @@ import TextSection from './NoteSections/TextSection';
 import CheckedListSection from './NoteSections/CheckedListSection';
 import React, { useEffect, useState, useCallback } from 'react';
 
-
 const EditContentSection = ({ content, onSave }) => {
   const [localContent, setLocalContent] = useState(content);
 
@@ -14,7 +13,6 @@ const EditContentSection = ({ content, onSave }) => {
   const updateLocalContent = useCallback((index, updatedData, itemIndex = null) => {
     const newContent  = [...localContent];
     newContent[index].data = updatedData;
-
     setLocalContent(newContent);
   }, [localContent]);
 
@@ -38,7 +36,7 @@ const EditContentSection = ({ content, onSave }) => {
         return (
           <CheckedListSection 
             items={content.data}
-            onChangeItem={(itemIndex, itemValue) => updateLocalContent(index, 'checked list', itemIndex, itemValue)}
+            onBlur={(itemIndex, itemValue) => updateLocalContent(index, itemIndex, itemValue)}
             onToggleChecked={(checkedIndex) => updateLocalContent(index, 'checked list', checkedIndex)}
           />
         );
