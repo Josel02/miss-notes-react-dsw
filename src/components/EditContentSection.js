@@ -1,6 +1,7 @@
 import ListSection from './NoteSections/ListSection';
 import TextSection from './NoteSections/TextSection';
 import CheckedListSection from './NoteSections/CheckedListSection';
+import AddSectionButton from './NoteSections/AddSectionButton';
 import React, { useEffect, useState, useCallback } from 'react';
 
 const EditContentSection = ({ content, onSave }) => {
@@ -9,6 +10,10 @@ const EditContentSection = ({ content, onSave }) => {
   useEffect(() => {
     setLocalContent(content);
   }, [content]);
+
+  const addNewSection = (index, type) => {
+    console.log("adding new section")
+  }
 
   const updateLocalContent = useCallback((index, updatedData, itemIndex = null) => {
     const newContent  = [...localContent];
@@ -48,13 +53,18 @@ const EditContentSection = ({ content, onSave }) => {
   };
 
   return (
-    <div>
-      {content.map((item, index) => (
-        <div key={index} className="mb-3">
+  <div>
+    <hr/>
+    <AddSectionButton onAddClick={() => {/* Implement show dropdown/modal logic here */}} />
+    {localContent.map((item, index) => (
+      <React.Fragment key={index}>
+        <div className="mb-3">
           {renderContentByType(item, index)}
         </div>
-      ))}
-    </div>
+        <AddSectionButton onAddClick={() => {/* Implement show dropdown/modal logic here */}} />
+      </React.Fragment>
+    ))}
+  </div>
   );
 };
 
