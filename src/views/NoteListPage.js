@@ -4,8 +4,7 @@ import NoteCard from '../components/NoteCard';
 import { Alert } from 'react-bootstrap';
 import Layout from '../layouts/Layout';
 import axios from 'axios';
-import EditNoteModal from './EditNoteModal'; // Asegúrate de que este componente está correctamente importado
-import NoteForm from '../components/addNewNote/NoteForm'; // Asegúrate de que este componente está correctamente importado
+import EditNoteModal from './EditNoteModal';
 
 const NoteListPage = () => {
   const [notes, setNotes] = useState([]);
@@ -60,7 +59,6 @@ const NoteListPage = () => {
 
   return (
     <Layout>
-      <NoteForm onAddNewNote={addNewNote} setMessage={setMessage} />
       {message.text && (
         <Alert variant={message.type === 'success' ? 'success' : 'danger'}>
           {message.text}

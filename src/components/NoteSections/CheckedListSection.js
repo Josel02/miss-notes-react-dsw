@@ -2,13 +2,12 @@
 import React, {useState, useEffect, useRef} from 'react';
 import { Form, ListGroup, Button } from 'react-bootstrap';
 
-const CheckedListSection = ({ items, onBlur, onToggleChecked }) => {
+const CheckedListSection = ({ items, onBlur }) => {
   const [updatedItems, setUpdatedItems] = useState(items);
   const textAreaRef = useRef([]);
   const listSectionRef = useRef(null);
 
   useEffect(() => {
-    console.log('items', items);
     textAreaRef.current.forEach(textArea => {
       if (textArea) {
         textArea.style.height = 'inherit';
@@ -16,6 +15,13 @@ const CheckedListSection = ({ items, onBlur, onToggleChecked }) => {
       }
     });
   }, [items]);
+
+  const handleToggleChecked = (idx) => {
+    const newItems = updatedItems.map((item, index) =>
+      index === idx ? { ...item, checked: !item.checked } : item);
+    setUpdatedItems(newItems);
+    onBlur(newItems);
+  };
 
   const handleChange = (e, idx) => {
     const newItems = [...updatedItems];
@@ -68,7 +74,7 @@ const CheckedListSection = ({ items, onBlur, onToggleChecked }) => {
           <Form.Check 
             type="checkbox"
             checked={item.checked}
-            onChange={() => onToggleChecked(idx)}
+            onChange={() => handleToggleChecked(idx)}
             className="me-2"
           />
           <Form.Control

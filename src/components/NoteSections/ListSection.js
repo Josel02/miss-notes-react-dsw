@@ -10,8 +10,8 @@ const ListSection = React.memo(({ items, onBlur }) => {
   useEffect(() => {
     textAreaRef.current.forEach(textArea => {
       if (textArea) {
-        textArea.style.height = 'inherit'; // Reset height to recalculate
-        textArea.style.height = `${textArea.scrollHeight}px`; // Set to scroll height
+        textArea.style.height = 'inherit';
+        textArea.style.height = `${textArea.scrollHeight}px`;
       }
     });
   }, [items]);
