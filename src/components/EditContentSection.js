@@ -37,7 +37,6 @@ const EditContentSection = ({ content, onSave }) => {
           <CheckedListSection 
             items={content.data}
             onBlur={(itemIndex, itemValue) => updateLocalContent(index, itemIndex, itemValue)}
-            onToggleChecked={(checkedIndex) => updateLocalContent(index, 'checked list', checkedIndex)}
           />
         );
       case 'image':
