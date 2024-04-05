@@ -59,12 +59,12 @@ const EditContentSection = ({ content, onSave }) => {
       <AddSectionButton onAddClick={() => {/* Implement show dropdown/modal logic here */}} />
     </div>
     {localContent.map((item, index) => (
-      <div key={index} className="section-container"> {/* Replace React.Fragment with div and apply class */}
+      <React.Fragment key={index}>
         <div className="mb-3">
           {renderContentByType(item, index)}
         </div>
-        <AddSectionButton onAddClick={() => {/* logic here */}} />
-      </div>
+      </React.Fragment>
+
     ))}
   </div>
   );

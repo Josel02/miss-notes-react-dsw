@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Form } from 'react-bootstrap';
+import AddSectionButton from './AddSectionButton';
 
-const TextSection = React.memo(({ text, onBlur }) => {
+const TextSection = React.memo(({ text, onBlur, onAddSection=null }) => {
   const [updatedText, setText] = useState(text);
   
   const handleChange = (e) => {
@@ -11,14 +12,18 @@ const TextSection = React.memo(({ text, onBlur }) => {
   };
 
   return (
-    <Form.Group>
-      <Form.Control
-        as="textarea"
-        value={updatedText}
-        onChange={handleChange}
-        onBlur={(e) => onBlur(e.target.value)}
-      />
-    </Form.Group>
+    <div className="section-container">
+      <Form.Group>
+        <Form.Control
+          as="textarea"
+          value={updatedText}
+          onChange={handleChange}
+          onBlur={(e) => onBlur(e.target.value)}
+        />
+      </Form.Group>
+      {/* Positioned here to show the button below the text area; adjust as needed */}
+      <AddSectionButton onAddClick={onAddSection} />
+    </div>
   );
 });
 

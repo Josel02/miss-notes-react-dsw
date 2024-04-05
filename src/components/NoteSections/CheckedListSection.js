@@ -1,8 +1,9 @@
 // CheckedListSection.js
 import React, {useState, useEffect, useRef} from 'react';
 import { Form, ListGroup, Button } from 'react-bootstrap';
+import AddSectionButton from './AddSectionButton';
 
-const CheckedListSection = ({ items, onBlur }) => {
+const CheckedListSection = ({ items, onBlur, onAddSection=null }) => {
   const [updatedItems, setUpdatedItems] = useState(items);
   const textAreaRef = useRef([]);
   const listSectionRef = useRef(null);
@@ -67,7 +68,7 @@ const CheckedListSection = ({ items, onBlur }) => {
   };
 
   return (
-    <div className="checked-list-section" ref={listSectionRef}>
+    <div className="checked-list-section section-container" ref={listSectionRef}>
     <ListGroup>
       {updatedItems.map((item, idx) => (
         <ListGroup.Item key={idx} className="d-flex align-items-center">
@@ -96,6 +97,7 @@ const CheckedListSection = ({ items, onBlur }) => {
         </ListGroup.Item>
       ))}
     </ListGroup>
+    <AddSectionButton onAddClick={onAddSection} />
     </div>
   );
 };

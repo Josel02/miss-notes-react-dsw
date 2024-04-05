@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Form, ListGroup, Button } from 'react-bootstrap';
 import "../../styles/ListSection.css";
+import AddSectionButton from './AddSectionButton';
 
-const ListSection = React.memo(({ items, onBlur }) => {
+const ListSection = React.memo(({ items, onBlur, onAddSection=null }) => {
   const [updatedItems, setUpdatedItems] = useState(items);
   const textAreaRef = useRef([]);
   const listSectionRef = useRef(null);
@@ -57,7 +58,7 @@ const ListSection = React.memo(({ items, onBlur }) => {
   };
 
   return (
-    <div className="list-section" ref={listSectionRef}>
+    <div className="list-section section-container" ref={listSectionRef}>
       <ListGroup>
         {updatedItems.map((item, idx) => (
           <ListGroup.Item key={idx} className="d-flex align-items-center list-content">
@@ -84,7 +85,8 @@ const ListSection = React.memo(({ items, onBlur }) => {
       </ListGroup>
       <Button className="mt-3 add-item-button" onClick={handleAddItem} size="sm">
         Add item
-      </Button>   
+      </Button>
+      <AddSectionButton onAddClick={onAddSection} />
     </div>
   );
 });
