@@ -83,9 +83,6 @@ const ListSection = React.memo(({ items, onBlur, onAddSection=null }) => {
           </ListGroup.Item>
         ))}
       </ListGroup>
-      <Button className="mt-3 add-item-button" onClick={handleAddItem} size="sm">
-        Add item
-      </Button>
       <AddSectionButton onAddClick={onAddSection} />
     </div>
   );

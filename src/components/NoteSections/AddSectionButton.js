@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Dropdown } from 'react-bootstrap';
 import "../../styles/AddSectionButton.css";
 
@@ -22,7 +22,6 @@ const AddSectionButton = ({ onAddClick }) => {
   
   return (
     <div className="add-section-container">
-      <div className="add-section-line"></div>
       <Dropdown>
         <Dropdown.Toggle as={CustomToggle} id="dropdown-custom-components">
           +
