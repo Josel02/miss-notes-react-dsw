@@ -3,6 +3,7 @@ import TextSection from './NoteSections/TextSection';
 import CheckedListSection from './NoteSections/CheckedListSection';
 import AddSectionButton from './NoteSections/AddSectionButton';
 import React, { useEffect, useState, useCallback } from 'react';
+import "../styles/AddSectionButton.css";
 
 const EditContentSection = ({ content, onSave }) => {
   const [localContent, setLocalContent] = useState(content);
@@ -54,15 +55,16 @@ const EditContentSection = ({ content, onSave }) => {
 
   return (
   <div>
-    <hr/>
-    <AddSectionButton onAddClick={() => {/* Implement show dropdown/modal logic here */}} />
+    <div className="section-container">
+      <AddSectionButton onAddClick={() => {/* Implement show dropdown/modal logic here */}} />
+    </div>
     {localContent.map((item, index) => (
-      <React.Fragment key={index}>
+      <div key={index} className="section-container"> {/* Replace React.Fragment with div and apply class */}
         <div className="mb-3">
           {renderContentByType(item, index)}
         </div>
-        <AddSectionButton onAddClick={() => {/* Implement show dropdown/modal logic here */}} />
-      </React.Fragment>
+        <AddSectionButton onAddClick={() => {/* logic here */}} />
+      </div>
     ))}
   </div>
   );
