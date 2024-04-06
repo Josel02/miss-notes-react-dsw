@@ -14,7 +14,13 @@ const EditContentSection = ({ content, onSave }) => {
   }, [content]);
 
   const addNewSection = (index, type) => {
-    const newSection = { data: '', type, tempId: uuidv4() }
+    let newSection
+    if (type === 'text'){
+     newSection = { data: '', type, tempId: uuidv4() }
+    }
+    else if (type === 'list' || type === 'checked list'){
+      newSection = { data: [''], type, tempId: uuidv4() }
+    }
 
     const newContent = [
       ...localContent.slice(0, index + 1),
@@ -23,6 +29,7 @@ const EditContentSection = ({ content, onSave }) => {
     ];
   
     setLocalContent(newContent);
+    console.log(localContent)
   }
 
   const updateLocalContent = useCallback((index, updatedData) => {

@@ -11,9 +11,7 @@ const NoteCard = ({ note, onEdit, onDelete }) => {
       case 'list':
         return (
           <ListGroup key={content._id}>
-            {content.data.map((item, index) => (
-              <ListGroup.Item key={index}>{item}</ListGroup.Item>
-            ))}
+            <ListGroup.Item>{content.data[0]}</ListGroup.Item>
           </ListGroup>
         );
       case 'checked list':
