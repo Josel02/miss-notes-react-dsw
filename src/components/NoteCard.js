@@ -16,15 +16,13 @@ const NoteCard = ({ note, onEdit, onDelete }) => {
         );
       case 'checked list':
         return (
-        <ListGroup key={content._id}>
-          {content.data.map((item, index) => (
-            <ListGroup.Item key={index} className={item.checked ? 'checked' : 'unchecked'}>
-              {item.checked && (
-                <span className="check-icon"></span>
-              )}
-              <span className="item-text">{item.text}</span> 
-            </ListGroup.Item>
-          ))}
+          <ListGroup key={content._id}>
+          <ListGroup.Item className={content.data[0].checked ? 'checked' : 'unchecked'}>
+            {content.data[0].checked && (
+              <span className="check-icon"></span>
+            )}
+            <span className="item-text">{content.data[0].text}</span>
+          </ListGroup.Item>
         </ListGroup>
         );
       case 'image':

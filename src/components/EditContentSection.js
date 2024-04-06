@@ -18,8 +18,11 @@ const EditContentSection = ({ content, onSave }) => {
     if (type === 'text'){
      newSection = { data: '', type, tempId: uuidv4() }
     }
-    else if (type === 'list' || type === 'checked list'){
+    else if (type === 'list'){
       newSection = { data: [''], type, tempId: uuidv4() }
+    }
+    else if (type === 'checked list'){
+      newSection = { data: [{ text: '', checked: false }], type, tempId: uuidv4() }
     }
 
     const newContent = [

@@ -69,7 +69,7 @@ const NoteListPage = () => {
       ) : notes.length > 0 ? (
         <Masonry columns={{ xs: 1, sm: 2, md: 3, lg: 4 }} spacing={2}>
           {notes.map(note => (
-            <div key={note.id}>
+            <div key={note._id}>
               <NoteCard note={note} onEdit={() => handleEditNote(note)} onDelete={() => deleteNote(note.id)} />
             </div>
           ))}
