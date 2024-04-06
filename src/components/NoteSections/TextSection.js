@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Form } from 'react-bootstrap';
 import AddSectionButton from './AddSectionButton';
 
-const TextSection = React.memo(({ text, onBlur, onAddSection=null }) => {
+const TextSection = React.memo(({ text, onBlur, onAddSection }) => {
   const [updatedText, setText] = useState(text);
   
   const handleChange = (e) => {

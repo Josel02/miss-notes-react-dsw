@@ -3,6 +3,7 @@ import TextSection from './NoteSections/TextSection';
 import CheckedListSection from './NoteSections/CheckedListSection';
 import AddSectionButton from './NoteSections/AddSectionButton';
 import React, { useEffect, useState, useCallback } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 import "../styles/AddSectionButton.css";
 
 const EditContentSection = ({ content, onSave }) => {
@@ -13,10 +14,18 @@ const EditContentSection = ({ content, onSave }) => {
   }, [content]);
 
   const addNewSection = (index, type) => {
-    console.log("adding new section")
+    const newSection = { data: '', type, tempId: uuidv4() }
+
+    const newContent = [
+      ...localContent.slice(0, index + 1),
+      newSection,
+      ...localContent.slice(index + 1)
+    ];
+  
+    setLocalContent(newContent);
   }
 
-  const updateLocalContent = useCallback((index, updatedData, itemIndex = null) => {
+  const updateLocalContent = useCallback((index, updatedData) => {
     const newContent  = [...localContent];
     newContent[index].data = updatedData;
     setLocalContent(newContent);
@@ -29,6 +38,7 @@ const EditContentSection = ({ content, onSave }) => {
           <TextSection 
             text={content.data} 
             onBlur={(text) => updateLocalContent(index, text)}
+            onAddSection={(type) => addNewSection(index, type)}
           />
         );
       case 'list':
@@ -36,6 +46,7 @@ const EditContentSection = ({ content, onSave }) => {
           <ListSection
             items={content.data} 
             onBlur={(items) => updateLocalContent(index, items)}
+            onAddSection={(type) => addNewSection(index, type)}
           />
         );
       case 'checked list':
@@ -43,6 +54,7 @@ const EditContentSection = ({ content, onSave }) => {
           <CheckedListSection 
             items={content.data}
             onBlur={(itemIndex, itemValue) => updateLocalContent(index, itemIndex, itemValue)}
+            onAddSection={(type) => addNewSection(index, type)}
           />
         );
       case 'image':
@@ -56,10 +68,10 @@ const EditContentSection = ({ content, onSave }) => {
   return (
   <div>
     <div className="section-container">
-      <AddSectionButton onAddClick={() => {/* Implement show dropdown/modal logic here */}} />
+      <AddSectionButton onAddClick={(type) => addNewSection(-1, type)} />
     </div>
     {localContent.map((item, index) => (
-      <React.Fragment key={index}>
+      <React.Fragment key={item._id || item.tempId}>
         <div className="mb-3">
           {renderContentByType(item, index)}
         </div>

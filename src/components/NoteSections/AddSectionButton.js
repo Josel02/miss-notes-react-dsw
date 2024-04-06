@@ -17,7 +17,6 @@ const AddSectionButton = ({ onAddClick }) => {
     </button>
   ));
 
-  // since we use forwardRef, we should give it a propType
   CustomToggle.displayName = 'CustomToggle';
   
   return (
@@ -28,10 +27,10 @@ const AddSectionButton = ({ onAddClick }) => {
         </Dropdown.Toggle>
 
         <Dropdown.Menu>
-          <Dropdown.Item eventKey="text" onSelect={() => onAddClick('text')}>Text Section</Dropdown.Item>
-          <Dropdown.Item eventKey="list" onSelect={() => onAddClick('list')}>List Section</Dropdown.Item>
-          <Dropdown.Item eventKey="checked list" onSelect={() => onAddClick('checked list')}>Checked List Section</Dropdown.Item>
-          <Dropdown.Item eventKey="image" onSelect={() => onAddClick('image')}>Image Section</Dropdown.Item>
+          <Dropdown.Item eventKey="text" onClick={() => onAddClick('text')}>Text Section</Dropdown.Item>
+          <Dropdown.Item eventKey="list" onClick={() => onAddClick('list')}>List Section</Dropdown.Item>
+          <Dropdown.Item eventKey="checked list" onClick={() => onAddClick('checked list')}>Checked List Section</Dropdown.Item>
+          <Dropdown.Item eventKey="image" onClick={() => onAddClick('image')}>Image Section</Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown>
     </div>
