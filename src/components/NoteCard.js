@@ -7,16 +7,16 @@ const NoteCard = ({ note, onEdit, onDelete }) => {
   const renderNoteContent = (content) => {
     switch (content.type){
       case 'text':
-        return <p key={content._id} className='text'>{content.data}</p>
+        return <p key={content._id || content.tempId} className='text'>{content.data}</p>
       case 'list':
         return (
-          <ListGroup key={content._id}>
+          <ListGroup key={content._id || content.tempId}>
             <ListGroup.Item>{content.data[0]}</ListGroup.Item>
           </ListGroup>
         );
       case 'checked list':
         return (
-          <ListGroup key={content._id}>
+          <ListGroup key={content._id || content.tempId}>
           <ListGroup.Item className={content.data[0].checked ? 'checked' : 'unchecked'}>
             {content.data[0].checked && (
               <span className="check-icon"></span>

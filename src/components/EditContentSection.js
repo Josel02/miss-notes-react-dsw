@@ -2,16 +2,11 @@ import ListSection from './NoteSections/ListSection';
 import TextSection from './NoteSections/TextSection';
 import CheckedListSection from './NoteSections/CheckedListSection';
 import AddSectionButton from './NoteSections/AddSectionButton';
-import React, { useEffect, useState, useCallback } from 'react';
+import React from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import "../styles/AddSectionButton.css";
 
-const EditContentSection = ({ content, onSave }) => {
-  const [localContent, setLocalContent] = useState(content);
-
-  useEffect(() => {
-    setLocalContent(content);
-  }, [content]);
+const EditContentSection = ({ content, onSave, onBlur, addSection }) => {
 
   const addNewSection = (index, type) => {
     let newSection
@@ -25,21 +20,8 @@ const EditContentSection = ({ content, onSave }) => {
       newSection = { data: [{ text: '', checked: false }], type, tempId: uuidv4() }
     }
 
-    const newContent = [
-      ...localContent.slice(0, index + 1),
-      newSection,
-      ...localContent.slice(index + 1)
-    ];
-  
-    setLocalContent(newContent);
-    console.log(localContent)
+    addSection(index, newSection)
   }
-
-  const updateLocalContent = useCallback((index, updatedData) => {
-    const newContent  = [...localContent];
-    newContent[index].data = updatedData;
-    setLocalContent(newContent);
-  }, [localContent]);
 
   const renderContentByType = (content, index) => {
     switch (content.type) {
@@ -47,7 +29,7 @@ const EditContentSection = ({ content, onSave }) => {
         return (
           <TextSection 
             text={content.data} 
-            onBlur={(text) => updateLocalContent(index, text)}
+            onBlur={(text) => onBlur(index, text)}
             onAddSection={(type) => addNewSection(index, type)}
           />
         );
@@ -55,7 +37,7 @@ const EditContentSection = ({ content, onSave }) => {
         return (
           <ListSection
             items={content.data} 
-            onBlur={(items) => updateLocalContent(index, items)}
+            onBlur={(items) => onBlur(index, items)}
             onAddSection={(type) => addNewSection(index, type)}
           />
         );
@@ -63,7 +45,7 @@ const EditContentSection = ({ content, onSave }) => {
         return (
           <CheckedListSection 
             items={content.data}
-            onBlur={(itemIndex, itemValue) => updateLocalContent(index, itemIndex, itemValue)}
+            onBlur={(itemIndex, itemValue) => onBlur(index, itemIndex, itemValue)}
             onAddSection={(type) => addNewSection(index, type)}
           />
         );
@@ -80,7 +62,7 @@ const EditContentSection = ({ content, onSave }) => {
     <div className="section-container">
       <AddSectionButton onAddClick={(type) => addNewSection(-1, type)} />
     </div>
-    {localContent.map((item, index) => (
+    {content.map((item, index) => (
       <React.Fragment key={item._id || item.tempId}>
         <div className="mb-3">
           {renderContentByType(item, index)}

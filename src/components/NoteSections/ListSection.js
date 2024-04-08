@@ -35,27 +35,9 @@ const ListSection = React.memo(({ items, onBlur, onAddSection=null }) => {
     textAreaRef.current[idx] = e.target;
   };
 
-  const handleAddItem = () => {
-    setUpdatedItems([...updatedItems, '']);
-  }
-
   const handleBlur = () => {
-    setTimeout(() => {
-      if (listSectionRef.current && !listSectionRef.current.contains(document.activeElement)) {
-        const cleanedItems = updatedItems.filter((item) => item.trim() !== '');
-        onBlur(cleanedItems); 
-      }
-    }, 0);
+    onBlur(updatedItems); 
   }
-
-  const handleKeyDown = (e, idx) => {
-    if (e.key === 'Tab' && idx === updatedItems.length - 1) {
-      if (updatedItems[updatedItems.length - 1].trim() !== '') {
-        e.preventDefault();
-        handleAddItem();
-      }
-    }
-  };
 
   return (
     <div className="list-section section-container" ref={listSectionRef}>
@@ -67,7 +49,6 @@ const ListSection = React.memo(({ items, onBlur, onAddSection=null }) => {
               value={item}
               onChange={(e) => handleChange(e, idx)}
               onBlur={handleBlur}
-              onKeyDown={(e) => handleKeyDown(e, idx)}
               onInput={(e) => handleInput(e, idx)}
               className="flex-grow-1 auto-resize"
               style={{ height: 'auto' }}
