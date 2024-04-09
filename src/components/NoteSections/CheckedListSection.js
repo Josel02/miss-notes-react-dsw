@@ -79,7 +79,7 @@ const CheckedListSection = ({ items, onBlur, onAddSection=null, onRemoveSection 
             onBlur={handleBlur}
             onKeyDown={(e) => handleKeyDown(e, idx)}
             onInput={(e) => handleInput(e, idx)}
-            className={`flex-grow-1 ${item.checked ? 'checked' : ''}`}
+            className={`flex-grow-1 ${item.checked ? 'checked' : ''} me-2`}
           />
           <Button 
             variant="outline-danger" 

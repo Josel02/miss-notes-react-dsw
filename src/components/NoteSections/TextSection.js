@@ -18,6 +18,7 @@ const TextSection = React.memo(({ text, onBlur, onAddSection, onRemoveSection })
           value={updatedText}
           onChange={handleChange}
           onBlur={(e) => onBlur(e.target.value)}
+          className='me-2'
         />
         <Button 
           variant="outline-danger" 
