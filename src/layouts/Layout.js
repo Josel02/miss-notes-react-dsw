@@ -17,6 +17,9 @@ const Layout = ({ children }) => {
             <li className="nav-item">
               <Link className="nav-link" to="/notes">Notas</Link>
             </li>
+            <li className="nav-item">
+              <Link className="nav-link" to="/login">Iniciar Sesión</Link>
+            </li>
             {/* Agregar más elementos de navegación aquí si es necesario */}
           </ul>
         </div>

@@ -1,0 +1,77 @@
+/* Estilos de la Página de Login */
+.login-container {
+    width: 60%; /* Ajustamos el ancho como un porcentaje del contenedor padre para mayor flexibilidad */
+    max-width: 700px; /* Aumentamos el ancho máximo aún más */
+    min-height: 500px; /* Establecemos una altura mínima para asegurar que el formulario sea más alto */
+    margin: 0 auto; /* Centrado vertical y horizontal */
+    position: fixed; /* Cambiamos a posicionamiento fijo para asegurar el centrado */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 50px; /* Aumentamos el padding para más espacio interior */
+    border-radius: 20px; /* Esquinas más redondeadas */
+    box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+    background-color: #6CE0C9; /* Fondo del formulario */
+}
+
+.login-title {
+    text-align: center;
+    margin-bottom: 40px; /* Más espacio debajo del título */
+    color: #023047; /* Mantenemos el color original del título para contraste */
+    font-size: 28px; /* Hacemos el título un poco más grande */
+}
+
+.btn-primary {
+    background-color: #4C9D76; /* Un verde más oscuro para el botón, mejor contraste con el texto blanco */
+    color: #ffffff; /* Mantenemos el texto blanco para contraste */
+    border: none;
+    font-size: 18px; /* Aumentamos el tamaño del texto del botón */
+    padding: 10px 20px; /* Más padding para un botón más grande y fácil de clickear */
+    height: 50px;
+    width: auto; /* Cambio clave: ajustamos el ancho para que sea automático y no ocupe el 100% */
+    display: block; /* Asegura que el botón se muestre como un bloque */
+    margin: 20px auto 0; /* Centramos el botón horizontalmente */
+}
+
+.btn-primary:hover {
+    background-color: #367B58; /* Un verde aún más oscuro para el hover, manteniendo buen contraste */
+    color: #ffffff; /* Mantenemos el texto blanco también al pasar el mouse */
+}
+
+.form-label {
+    color: #023047; /* Mantenemos el color para el texto del formulario */
+    font-size: 20px; /* Aumentamos el tamaño del texto para las etiquetas */
+}
+
+.form-control {
+    background-color: #ffffff; /* Fondo blanco para los campos, mejor legibilidad */
+    border: 2px solid #6CD1E0; /* Borde suave azul */
+    border-radius: 5px; /* Bordes redondeados para los campos de entrada */
+    padding: 10px; /* Mayor padding para mayor facilidad de entrada */
+    height: 50px; 
+    font-size: 18px; 
+    margin-bottom: 20px; /* Más espacio debajo de los campos */
+}
+
+body {
+    background-color: #B6E0CA; /* Un fondo general más suave para la página */
+}
+
+.text-center {
+    text-align: center; /* Asegura que el texto esté centrado */
+}
+
+.text-decoration-underline {
+    text-decoration: underline; /* Subraya el texto para indicar que es un enlace */
+    color: #023047; /* Cambia esto según la paleta de colores de tu sitio */
+    font-weight: bold; /* Hace el texto un poco más grueso para destacarlo */
+    font-size: 16px; /* Ajusta el tamaño de la fuente para mejorar la legibilidad */
+    margin-top: 20px; /* Añade espacio arriba para separarlo del botón */
+    display: inline-block; /* Esto ayuda a aplicar el margen correctamente */
+}
+
+.text-decoration-underline:hover {
+    color: #4C9D76; /* Cambia el color al pasar el mouse para indicar interactividad */
+    cursor: pointer; /* Cambia el cursor a una mano para indicar que es clickeable */
+}
+
