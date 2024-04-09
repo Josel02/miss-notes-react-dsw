@@ -6,7 +6,7 @@ import React from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import "../styles/AddSectionButton.css";
 
-const EditContentSection = ({ content, onSave, onBlur, addSection }) => {
+const EditContentSection = ({ content, onSave, onBlur, addSection, onRemoveSection }) => {
 
   const addNewSection = (index, type) => {
     let newSection
@@ -31,6 +31,7 @@ const EditContentSection = ({ content, onSave, onBlur, addSection }) => {
             text={content.data} 
             onBlur={(text) => onBlur(index, text)}
             onAddSection={(type) => addNewSection(index, type)}
+            onRemoveSection={() => onRemoveSection(index)}
           />
         );
       case 'list':
@@ -39,6 +40,7 @@ const EditContentSection = ({ content, onSave, onBlur, addSection }) => {
             items={content.data} 
             onBlur={(items) => onBlur(index, items)}
             onAddSection={(type) => addNewSection(index, type)}
+            onRemoveSection={() => onRemoveSection(index)}
           />
         );
       case 'checked list':
@@ -47,6 +49,7 @@ const EditContentSection = ({ content, onSave, onBlur, addSection }) => {
             items={content.data}
             onBlur={(itemIndex, itemValue) => onBlur(index, itemIndex, itemValue)}
             onAddSection={(type) => addNewSection(index, type)}
+            onRemoveSection={() => onRemoveSection(index)}
           />
         );
       case 'image':

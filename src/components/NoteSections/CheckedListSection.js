@@ -3,7 +3,7 @@ import React, {useState, useEffect, useRef} from 'react';
 import { Form, ListGroup, Button } from 'react-bootstrap';
 import AddSectionButton from './AddSectionButton';
 
-const CheckedListSection = ({ items, onBlur, onAddSection=null }) => {
+const CheckedListSection = ({ items, onBlur, onAddSection=null, onRemoveSection }) => {
   const [updatedItems, setUpdatedItems] = useState(items);
   const textAreaRef = useRef([]);
   const listSectionRef = useRef(null);
@@ -31,12 +31,6 @@ const CheckedListSection = ({ items, onBlur, onAddSection=null }) => {
       text: e.target.value
     };
     setUpdatedItems(newItems);
-  }
-
-  const handleRemoveItem = (idx) => {
-    const newItems = updatedItems.filter((_, index) => index !== idx);
-    setUpdatedItems(newItems);
-    onBlur(newItems);
   }
 
   const handleAddItem = () => {
@@ -91,8 +85,8 @@ const CheckedListSection = ({ items, onBlur, onAddSection=null }) => {
             variant="outline-danger" 
             size="sm" 
             className="ms-2" 
-            onClick={() => handleRemoveItem()}>
-              <i className="fas fa-trash"></i>
+            onClick={onRemoveSection} >
+            <i className="fas fa-trash"></i>
           </Button>
         </ListGroup.Item>
       ))}

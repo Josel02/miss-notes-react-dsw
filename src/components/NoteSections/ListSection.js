@@ -3,7 +3,7 @@ import { Form, ListGroup, Button } from 'react-bootstrap';
 import "../../styles/ListSection.css";
 import AddSectionButton from './AddSectionButton';
 
-const ListSection = React.memo(({ items, onBlur, onAddSection=null }) => {
+const ListSection = React.memo(({ items, onBlur, onAddSection=null, onRemoveSection }) => {
   const [updatedItems, setUpdatedItems] = useState(items);
   const textAreaRef = useRef([]);
   const listSectionRef = useRef(null);
@@ -21,12 +21,6 @@ const ListSection = React.memo(({ items, onBlur, onAddSection=null }) => {
     const newItems = [...updatedItems];
     newItems[idx] = e.target.value;
     setUpdatedItems(newItems);
-  }
-
-  const handleRemoveItem = (idx) => {
-    const newItems = updatedItems.filter((_, index) => index !== idx);
-    setUpdatedItems(newItems);
-    onBlur(newItems);
   }
 
   const handleInput = (e, idx) => {
@@ -55,7 +49,7 @@ const ListSection = React.memo(({ items, onBlur, onAddSection=null }) => {
               ref={el => textAreaRef.current[idx] = el}
             />
             <Button 
-              onClick={() => handleRemoveItem(idx)} 
+              onClick={onRemoveSection} 
               variant="outline-danger"
               size="sm"
               className="ms-2">

@@ -16,6 +16,15 @@ const EditNoteModal = ({ show, handleClose, note, onSave}) => {
     setLocalContent(newContent);
   }, [localContent]);
 
+  const handleRemoveSection = useCallback((index) => {
+    const newContent = [
+      ...localContent.slice(0, index),
+      ...localContent.slice(index + 1)
+    ];
+    setLocalContent(newContent);
+    note.content = newContent;
+  }, [localContent, note]);
+
   const addSection = (index, newSection) => {
     const newContent = [
       ...localContent.slice(0, index + 1),
@@ -46,6 +55,7 @@ const EditNoteModal = ({ show, handleClose, note, onSave}) => {
                 onChange={onSave}
                 onBlur={updateLocalContent}
                 addSection={addSection}
+                onRemoveSection={handleRemoveSection}
               />
             </Modal.Body>
         </Modal>
