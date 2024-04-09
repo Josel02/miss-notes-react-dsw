@@ -80,3 +80,33 @@ body {
     margin-top: 5px;
 }
 
+.error-message {
+    color: #ff0000;
+    margin-top: 5px;
+}
+
+.password-field {
+    position: relative;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 10px;
+    top: 38px;
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.form-control {
+    padding-right: 40px; /* Asegura que el texto no se sobreponga al botón de mostrar/ocultar */
+}
+
+.form-control.error {
+    border: 2px solid #ff0000; /* Ajusta el color y el grosor del borde según prefieras */
+}
+
+
+
+
