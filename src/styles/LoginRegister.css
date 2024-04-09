@@ -75,3 +75,8 @@ body {
     cursor: pointer; /* Cambia el cursor a una mano para indicar que es clickeable */
 }
 
+.password-error {
+    color: #ff0000; /* Rojo para errores */
+    margin-top: 5px;
+}
+
