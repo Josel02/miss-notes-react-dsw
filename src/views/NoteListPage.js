@@ -18,21 +18,22 @@ const NoteListPage = () => {
 
   const saveEditedNote = (updatedNote, isCambios) => {
     if (isCambios){
-      updatedNote = removeTempIds(updatedNote);
-      saveNote(updatedNote);
+      let noteWithoutTempIds = processWithoutTempIds(updatedNote);
+      saveNote(noteWithoutTempIds);
     }
     setEditingNote(null)
   };
 
-  const removeTempIds = (jsonData) => { 
-    jsonData.content = jsonData.content.map(item => {
-      const newItem = { ...item };
-      delete newItem.tempId;
-      return newItem;
-  });
-
-  return jsonData;
-  }
+  const processWithoutTempIds = (jsonData) => {
+    const processedData = {
+      ...jsonData,
+      content: jsonData.content.map(item => {
+        const { tempId, ...newItem } = item;
+        return newItem;
+      })
+    };
+    return processedData;
+  };
 
   const handleEditNote = (note) => {
     setEditingNote(note);

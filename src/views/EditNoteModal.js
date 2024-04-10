@@ -14,7 +14,6 @@ const EditNoteModal = ({ show, handleClose, note, onSave}) => {
     if (!isCambios) {
       setisCambios(true);
     }
-    console.log("me actualiso")
     const newContent  = [...localContent];
     newContent[index].data = updatedData;
     setLocalContent(newContent);
