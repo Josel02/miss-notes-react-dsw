@@ -16,13 +16,37 @@ const NoteListPage = () => {
     setNotes(prevNotes => [...prevNotes, newNote]);
   };
 
+  const saveEditedNote = (updatedNote, isCambios) => {
+    if (isCambios){
+      updatedNote = removeTempIds(updatedNote);
+      saveNote(updatedNote);
+    }
+    setEditingNote(null)
+  };
+
+  const removeTempIds = (jsonData) => { 
+    jsonData.content = jsonData.content.map(item => {
+      const newItem = { ...item };
+      delete newItem.tempId;
+      return newItem;
+  });
+
+  return jsonData;
+  }
+
   const handleEditNote = (note) => {
     setEditingNote(note);
   }
 
-  const saveNote = (updatedNote) => {
-    console.log('Saving note:', updatedNote);
-    setNotes(prevNotes => prevNotes.map(note => note.id === updatedNote.id ? updatedNote : note));
+  const saveNote = async (updatedNote) => {
+    try{
+      const response = await axios.put(`http://localhost:3000/notes/${updatedNote._id}`, updatedNote);
+      console.log('Note saved:', response.data);
+    }
+    catch(error){
+      console.error('Error saving note:', error);
+    }
+
   };
 
   const deleteNote = async (noteId) => {
@@ -80,7 +104,7 @@ const NoteListPage = () => {
       {editingNote && (
       <EditNoteModal
         show={!!editingNote}
-        handleClose={() => setEditingNote(null)}
+        handleClose={(note, isCambios) => saveEditedNote(note, isCambios)}
         note={editingNote}
         onSave={null}
       />

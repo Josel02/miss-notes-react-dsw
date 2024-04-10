@@ -4,12 +4,16 @@ import EditContentSection from '../components/EditContentSection';
 
 const EditNoteModal = ({ show, handleClose, note, onSave}) => {
   const [localContent, setLocalContent] = useState(note.content);
+  const [isCambios, setisCambios] = useState(false);
 
    useEffect(() => {
      setLocalContent(note.content);
    }, [note.content]);
 
   const updateLocalContent = useCallback((index, updatedData) => {
+    if (!isCambios) {
+      setisCambios(true);
+    }
     console.log("me actualiso")
     const newContent  = [...localContent];
     newContent[index].data = updatedData;
@@ -17,6 +21,9 @@ const EditNoteModal = ({ show, handleClose, note, onSave}) => {
   }, [localContent]);
 
   const handleRemoveSection = useCallback((index) => {
+    if (!isCambios) {
+      setisCambios(true);
+    }
     const newContent = [
       ...localContent.slice(0, index),
       ...localContent.slice(index + 1)
@@ -41,7 +48,7 @@ const EditNoteModal = ({ show, handleClose, note, onSave}) => {
   const handleHide = () => {
     console.log('Hiding modal');
     console.log(note);
-    handleClose();
+    handleClose(note, isCambios);
   }
 
     return (
