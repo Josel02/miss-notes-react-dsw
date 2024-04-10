@@ -87,7 +87,6 @@ const RegisterPage = () => {
         }
     };
     
-
     return (
         <Container className="login-container">
             <h2 className="login-title">Registrarse</h2>
@@ -102,9 +101,7 @@ const RegisterPage = () => {
                         onChange={(e) => setName(e.target.value)} 
                         required 
                     />
-                    <Form.Control.Feedback type="invalid">
-                        {errors.name}
-                    </Form.Control.Feedback>
+                    {errors.name && <div className="error-message">{errors.name}</div>}
                 </Form.Group>
                 
                 <Form.Group className="mb-3">
@@ -116,46 +113,43 @@ const RegisterPage = () => {
                         onChange={handleEmailChange} 
                         required 
                     />
-                    <Form.Control.Feedback type="invalid">
-                        {errors.email}
-                    </Form.Control.Feedback>
+                    {errors.email && <div className="error-message">{errors.email}</div>}
                 </Form.Group>
     
                 <Form.Group className="mb-3">
-    <Form.Label>Contraseña</Form.Label>
-    <InputGroup className="password-input-group">
-        <FormControl 
-            type={passwordType}
-            className={errors.password ? 'is-invalid' : ''} // Usamos className para controlar la visualización del borde rojo
-            value={password} 
-            onChange={handlePasswordChange}
-            required 
-        />
-        <InputGroup.Text onClick={togglePasswordVisibility}>
-            {passwordType === 'password' ? <Eye /> : <EyeSlash />}
-        </InputGroup.Text>
-    </InputGroup>
-    {errors.password && <div className="error-message">{errors.password}</div>} {/* Mensaje de error personalizado */}
-</Form.Group>
-
-<Form.Group className="mb-3">
-    <Form.Label>Confirmar Contraseña</Form.Label>
-    <InputGroup className="password-input-group">
-        <FormControl 
-            type={confirmPasswordType}
-            className={errors.confirmPassword ? 'is-invalid' : ''} // Control visual para el estado de error
-            value={confirmPassword} 
-            onChange={handleConfirmPasswordChange}
-            required 
-        />
-        <InputGroup.Text onClick={toggleConfirmPasswordVisibility}>
-            {confirmPasswordType === 'password' ? <Eye /> : <EyeSlash />}
-        </InputGroup.Text>
-    </InputGroup>
-    {errors.confirmPassword && <div className="error-message">{errors.confirmPassword}</div>} {/* Mensaje de error personalizado */}
-</Form.Group>
-
-                
+                    <Form.Label>Contraseña</Form.Label>
+                    <InputGroup className="password-input-group">
+                        <FormControl 
+                            type={passwordType}
+                            isInvalid={!!errors.password}
+                            value={password} 
+                            onChange={handlePasswordChange}
+                            required 
+                        />
+                        <InputGroup.Text onClick={togglePasswordVisibility}>
+                            {passwordType === 'password' ? <Eye /> : <EyeSlash />}
+                        </InputGroup.Text>
+                    </InputGroup>
+                    {errors.password && <div className="error-message">{errors.password}</div>}
+                </Form.Group>
+    
+                <Form.Group className="mb-3">
+                    <Form.Label>Confirmar Contraseña</Form.Label>
+                    <InputGroup className="password-input-group">
+                        <FormControl 
+                            type={confirmPasswordType}
+                            isInvalid={!!errors.confirmPassword}
+                            value={confirmPassword} 
+                            onChange={handleConfirmPasswordChange}
+                            required 
+                        />
+                        <InputGroup.Text onClick={toggleConfirmPasswordVisibility}>
+                            {confirmPasswordType === 'password' ? <Eye /> : <EyeSlash />}
+                        </InputGroup.Text>
+                    </InputGroup>
+                    {errors.confirmPassword && <div className="error-message">{errors.confirmPassword}</div>}
+                </Form.Group>
+    
                 <Button variant="primary" type="submit">Registrarse</Button>
                 <div className="mt-3 text-center">
                     <Link to="/login" className="text-decoration-underline">¿Ya tienes cuenta? Inicia sesión</Link>
@@ -163,6 +157,7 @@ const RegisterPage = () => {
             </Form>
         </Container>
     );
+    
     
  
  
