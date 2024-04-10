@@ -1,14 +1,24 @@
 import React, {useState, useEffect, useCallback} from 'react';
-import { Modal } from 'react-bootstrap';
+import { Modal, Form } from 'react-bootstrap';
 import EditContentSection from '../components/EditContentSection';
 
 const EditNoteModal = ({ show, handleClose, note, onSave}) => {
   const [localContent, setLocalContent] = useState(note.content);
   const [isCambios, setisCambios] = useState(false);
+  const [localTitle, setLocalTitle] = useState(note.title);
 
    useEffect(() => {
      setLocalContent(note.content);
-   }, [note.content]);
+     setLocalTitle(note.title);
+   }, [note.content, note.title]);
+
+   const handleTitleChange = (e) => {
+    if (!isCambios) {
+      setisCambios(true);
+    }
+    setLocalTitle(e);
+    note.title = e;
+   }
 
   const updateLocalContent = useCallback((index, updatedData) => {
     if (!isCambios) {
@@ -56,6 +66,14 @@ const EditNoteModal = ({ show, handleClose, note, onSave}) => {
                 <Modal.Title>Editar nota</Modal.Title>
             </Modal.Header>
             <Modal.Body>
+            <Form.Group className="mb-3" controlId="noteTitle">
+          <Form.Label style={{ fontSize: '1rem', fontWeight: 'bold' }}>Título</Form.Label>
+          <Form.Control
+            type="text"
+            placeholder="Introduce el título de la nota"
+            value={localTitle}
+            onChange={(e) => handleTitleChange(e.target.value)}/>
+          </Form.Group>
               <EditContentSection 
                 content={note.content}
                 onChange={onSave}
