@@ -1,0 +1,13 @@
+:root {
+    --davys-gray: #595758;
+    --lavender-blush: #ffeef2;
+    --pale-purple: #ffe4f3;
+    --pink-lavender: #ffc8fb;
+    --amaranth-pink: #ff92c2;
+
+    /*Auxiliares*/
+    --white: #ffffff;
+
+    /*Error*/
+    --red: #ff0000;
+}

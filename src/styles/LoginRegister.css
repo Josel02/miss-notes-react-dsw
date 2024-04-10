@@ -1,0 +1,140 @@
+@import 'variables.css';
+
+
+/* Estilos de la Página de Login */
+.login-container {
+    width: 60%;
+    max-width: 700px;
+    min-height: 500px;
+    margin: 0 auto;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 50px;
+    border-radius: 20px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+    background-color: var(--lavender-blush);
+}
+
+.login-title {
+    text-align: center;
+    margin-bottom: 40px;
+    color: var(--davys-gray);
+    font-size: 28px;
+}
+
+.btn-primary {
+    background-color: var(--amaranth-pink);
+    color: var(--white);
+    font-weight: bold; /* Texto en negrita */
+    border: none;
+    font-size: 18px;
+    padding: 10px 20px;
+    height: 50px;
+    width: auto;
+    display: block;
+    margin: 20px auto 0;
+}
+
+.btn-primary:hover {
+    background-color: var(--pink-lavender);
+    color: var(--lavender-blush);
+}
+
+.form-label {
+    color: var(--davys-gray);
+    font-size: 20px;
+}
+
+.form-control {
+    background-color: var(--white);
+    border: 2px solid var(--pale-purple);
+    border-radius: 5px;
+    padding: 10px;
+    height: 50px;
+    font-size: 18px;
+    padding-right: 40px;
+}
+
+body {
+    background-color: var(--pale-purple);
+}
+
+.text-center {
+    text-align: center;
+}
+
+.text-decoration-underline {
+    text-decoration: underline;
+    color: var(--davys-gray);
+    font-weight: bold;
+    font-size: 16px;
+    margin-top: 20px;
+    display: inline-block;
+}
+
+.text-decoration-underline:hover {
+    color: var(--amaranth-pink);
+    cursor: pointer;
+}
+
+.password-error {
+    color: var(--amaranth-pink);
+    margin-top: 5px;
+}
+
+.error-message {
+    color: var(--red);
+    margin-top: 5px;
+    font-size: 0.8rem;
+}
+
+.password-field {
+    position: relative;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 10px;
+    top: 38px;
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.form-control {
+    padding-right: 40px;
+}
+
+.form-control.error {
+    border: 2px solid var(--amaranth-pink);
+}
+
+.error-border, 
+.error-border:focus {
+    border: 2px solid var(--red) !important;
+    box-shadow: none !important;
+}
+
+.input-group-text {
+    position: absolute;
+    right: 4px;
+    top: calc(50% - 14px);
+    background-color: white;
+    border:none;
+    z-index: 2000;
+}
+
+.input-group-text, .form-control {
+    border-radius: 0;
+}
+
+.form-control.is-invalid {
+    border: 2px solid var(--white);
+}
+
+.password-input-group {
+    position: relative;
+}
