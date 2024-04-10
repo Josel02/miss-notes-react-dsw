@@ -50,7 +50,8 @@
     padding: 10px; /* Mayor padding para mayor facilidad de entrada */
     height: 50px; 
     font-size: 18px; 
-    margin-bottom: 20px; /* Más espacio debajo de los campos */
+    padding-right: 40px; /* Asegura suficiente espacio para el ícono. Ajusta según el tamaño de tu ícono */
+
 }
 
 body {
@@ -83,6 +84,8 @@ body {
 .error-message {
     color: #ff0000;
     margin-top: 5px;
+    font-size: 0.8rem;
+
 }
 
 .password-field {
@@ -107,6 +110,36 @@ body {
     border: 2px solid #ff0000; /* Ajusta el color y el grosor del borde según prefieras */
 }
 
+.error-border, 
+.error-border:focus {
+    border: 2px solid #ff0000 !important; /* Asegúrate de que el borde rojo tenga prioridad */
+    box-shadow: none !important; /* Elimina el box-shadow si lo hay */
+}
+
+/* Asegura que el ícono para mostrar/ocultar contraseña no tenga fondo */
+.input-group-text {
+    position: absolute;
+    right: 4px;
+    top: calc(50% - 14px); /* Centra el ícono verticalmente. Ajusta según el tamaño de tu ícono */
+    background-color: white;
+    border:none;
+    z-index: 2000;
+}
+
+/* Ajuste para que el ícono no tenga un borde visible y se mezcle con el campo */
+.input-group-text, .form-control {
+    border-radius: 0; /* Puedes ajustar esto según tus preferencias */
+}
+
+/* Asegúrate de aplicar estos estilos directamente a los FormControl en lugar del InputGroup */
+
+.form-control.is-invalid {
+    border: 2px solid #ff0000; /* Ajusta el color y el grosor del borde según prefieras */
+}
+
+.password-input-group {
+    position: relative;
+}
 
 
 

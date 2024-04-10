@@ -2,6 +2,10 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import '../styles/LoginRegister.css';
+import { Container, Form, Button, Alert, InputGroup, FormControl } from 'react-bootstrap';
+import { EyeSlash, Eye } from 'react-bootstrap-icons'; // Importa los íconos de Bootstrap
+import 'bootstrap/dist/css/bootstrap.min.css'; // Importar estilos de Bootstrap
+
 
 const RegisterPage = () => {
     const [name, setName] = useState('');
@@ -85,43 +89,84 @@ const RegisterPage = () => {
     
 
     return (
-        <div className="login-container">
+        <Container className="login-container">
             <h2 className="login-title">Registrarse</h2>
-            {errors.form && <div className="alert alert-danger" role="alert">{errors.form}</div>}
-            <form onSubmit={handleRegister}>
-                <div className="mb-3">
-                    <label htmlFor="name" className="form-label">Nombre Completo</label>
-                    <input type="text" className={`form-control ${errors.name ? 'is-invalid' : ''}`} id="name" value={name} onChange={(e) => setName(e.target.value)} required />
-                    {errors.name && <div className="invalid-feedback">{errors.name}</div>}
-                </div>
-                <div className="mb-3">
-                    <label htmlFor="email" className="form-label">Correo Electrónico</label>
-                    <input type="email" className={`form-control ${errors.email ? 'is-invalid' : ''}`} id="email" value={email} onChange={handleEmailChange} required />
-                    {errors.email && <div className="invalid-feedback">{errors.email}</div>}
-                </div>
-                <div className="mb-3 password-field">
-                    <label htmlFor="password" className="form-label">Contraseña</label>
-                    <input type={passwordType} className={`form-control ${errors.password ? 'is-invalid' : ''}`} id="password" value={password} onChange={handlePasswordChange} required />
-                    <span className="toggle-password" onClick={togglePasswordVisibility}>
-                        {passwordType === 'password' ? <i className="fas fa-eye"></i> : <i className="fas fa-eye-slash"></i>}
-                    </span>
-                    {errors.password && <div className="invalid-feedback">{errors.password}</div>}
-                </div>
-                <div className="mb-3 password-field">
-                    <label htmlFor="confirmPassword" className="form-label">Confirmar Contraseña</label>
-                    <input type={confirmPasswordType} className={`form-control ${errors.confirmPassword ? 'is-invalid' : ''}`} id="confirmPassword" value={confirmPassword} onChange={handleConfirmPasswordChange} required />
-                    <span className="toggle-password" onClick={toggleConfirmPasswordVisibility}>
-                        {confirmPasswordType === 'password' ? <i className="fas fa-eye"></i> : <i className="fas fa-eye-slash"></i>}
-                    </span>
-                    {errors.confirmPassword && <div className="invalid-feedback">{errors.confirmPassword}</div>}
-                </div>
-                <button type="submit" className="btn btn-primary">Registrarse</button>
+            {errors.form && <Alert variant="danger">{errors.form}</Alert>}
+            <Form onSubmit={handleRegister}>
+                <Form.Group className="mb-3">
+                    <Form.Label>Nombre Completo</Form.Label>
+                    <FormControl 
+                        type="text" 
+                        isInvalid={!!errors.name}
+                        value={name} 
+                        onChange={(e) => setName(e.target.value)} 
+                        required 
+                    />
+                    <Form.Control.Feedback type="invalid">
+                        {errors.name}
+                    </Form.Control.Feedback>
+                </Form.Group>
+                
+                <Form.Group className="mb-3">
+                    <Form.Label>Correo Electrónico</Form.Label>
+                    <FormControl 
+                        type="email" 
+                        isInvalid={!!errors.email}
+                        value={email} 
+                        onChange={handleEmailChange} 
+                        required 
+                    />
+                    <Form.Control.Feedback type="invalid">
+                        {errors.email}
+                    </Form.Control.Feedback>
+                </Form.Group>
+    
+                <Form.Group className="mb-3">
+    <Form.Label>Contraseña</Form.Label>
+    <InputGroup className="password-input-group">
+        <FormControl 
+            type={passwordType}
+            className={errors.password ? 'is-invalid' : ''} // Usamos className para controlar la visualización del borde rojo
+            value={password} 
+            onChange={handlePasswordChange}
+            required 
+        />
+        <InputGroup.Text onClick={togglePasswordVisibility}>
+            {passwordType === 'password' ? <Eye /> : <EyeSlash />}
+        </InputGroup.Text>
+    </InputGroup>
+    {errors.password && <div className="error-message">{errors.password}</div>} {/* Mensaje de error personalizado */}
+</Form.Group>
+
+<Form.Group className="mb-3">
+    <Form.Label>Confirmar Contraseña</Form.Label>
+    <InputGroup className="password-input-group">
+        <FormControl 
+            type={confirmPasswordType}
+            className={errors.confirmPassword ? 'is-invalid' : ''} // Control visual para el estado de error
+            value={confirmPassword} 
+            onChange={handleConfirmPasswordChange}
+            required 
+        />
+        <InputGroup.Text onClick={toggleConfirmPasswordVisibility}>
+            {confirmPasswordType === 'password' ? <Eye /> : <EyeSlash />}
+        </InputGroup.Text>
+    </InputGroup>
+    {errors.confirmPassword && <div className="error-message">{errors.confirmPassword}</div>} {/* Mensaje de error personalizado */}
+</Form.Group>
+
+                
+                <Button variant="primary" type="submit">Registrarse</Button>
                 <div className="mt-3 text-center">
                     <Link to="/login" className="text-decoration-underline">¿Ya tienes cuenta? Inicia sesión</Link>
                 </div>
-            </form>
-        </div>
+            </Form>
+        </Container>
     );
+    
+ 
+ 
+    
 }
 
 export default RegisterPage;
