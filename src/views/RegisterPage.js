@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import axios from 'axios';
 import '../styles/LoginRegister.css';
 
 const RegisterPage = () => {
@@ -57,45 +58,62 @@ const RegisterPage = () => {
             setErrors(rest);
         }
     };
-
     const handleRegister = async (e) => {
         e.preventDefault();
-        if (Object.keys(errors).length === 0 && password === confirmPassword && validateEmail(email)) {
-            //lógica para manejar el registro, por ejemplo, una llamada a API
-            console.log('Registro exitoso'); // Simula un registro exitoso
-            // navigate('/login'); // Descomenta esta línea para redirigir al usuario después del registro exitoso
+        setErrors(prevErrors => ({ ...prevErrors, form: '' })); // Limpiar errores anteriores
+        
+        try {
+            await axios.post('http://localhost:3000/users/register', { name, email, password });
+            navigate('/login'); // Redirigir al usuario a la página de inicio de sesión después de un registro exitoso
+        } catch (error) {
+            let errorMessage = 'Error al conectar con el servidor. Por favor, intenta de nuevo más tarde.';
+            
+            // Verificar que los datos de la respuesta y el mensaje de error existan
+            if (error.response && error.response.data) {
+                // Aquí adaptamos para revisar si error.response.data.error es una cadena
+                const errorData = error.response.data.error || error.response.data.message;
+                if (typeof errorData === 'string' && errorData.includes('duplicate key error')) {
+                    errorMessage = 'Ya existe un usuario registrado con ese correo electrónico.';
+                } else {
+                    // Si no es un error de clave duplicada, usa el mensaje de error de la API si está disponible
+                    errorMessage = error.response.data.message || errorMessage;
+                }
+            }
+            setErrors(prevErrors => ({ ...prevErrors, form: errorMessage }));
         }
     };
+    
 
     return (
         <div className="login-container">
             <h2 className="login-title">Registrarse</h2>
+            {errors.form && <div className="alert alert-danger" role="alert">{errors.form}</div>}
             <form onSubmit={handleRegister}>
                 <div className="mb-3">
                     <label htmlFor="name" className="form-label">Nombre Completo</label>
-                    <input type="text" className={`form-control ${errors.name ? 'error' : ''}`} id="name" value={name} onChange={(e) => setName(e.target.value)} required />
-                    {errors.name && <div className="error-message">{errors.name}</div>}
+                    <input type="text" className={`form-control ${errors.name ? 'is-invalid' : ''}`} id="name" value={name} onChange={(e) => setName(e.target.value)} required />
+                    {errors.name && <div className="invalid-feedback">{errors.name}</div>}
                 </div>
                 <div className="mb-3">
                     <label htmlFor="email" className="form-label">Correo Electrónico</label>
-                    <input type="email" className={`form-control ${errors.email ? 'error' : ''}`} id="email" value={email} onChange={handleEmailChange} required />
-                    {errors.email && <div className="error-message">{errors.email}</div>}
+                    <input type="email" className={`form-control ${errors.email ? 'is-invalid' : ''}`} id="email" value={email} onChange={handleEmailChange} required />
+                    {errors.email && <div className="invalid-feedback">{errors.email}</div>}
                 </div>
                 <div className="mb-3 password-field">
                     <label htmlFor="password" className="form-label">Contraseña</label>
-                    <input type={passwordType} className={`form-control ${errors.password ? 'error' : ''}`} id="password" value={password} onChange={handlePasswordChange} required />
-                    <button type="button" onClick={togglePasswordVisibility} className="toggle-password" title={passwordType === 'password' ? "Mostrar contraseña" : "Ocultar contraseña"}>
+                    <input type={passwordType} className={`form-control ${errors.password ? 'is-invalid' : ''}`} id="password" value={password} onChange={handlePasswordChange} required />
+                    <span className="toggle-password" onClick={togglePasswordVisibility}>
                         {passwordType === 'password' ? <i className="fas fa-eye"></i> : <i className="fas fa-eye-slash"></i>}
-                    </button>
-                    {errors.password && <div className="error-message">{errors.password}</div>}
+                    </span>
+                    {errors.password && <div className="invalid-feedback">{errors.password}</div>}
                 </div>
                 <div className="mb-3 password-field">
                     <label htmlFor="confirmPassword" className="form-label">Confirmar Contraseña</label>
-                    <input type={confirmPasswordType} className={`form-control ${errors.confirmPassword ? 'error' : ''}`} id="confirmPassword" value={confirmPassword} onChange={handleConfirmPasswordChange} required />
-                    <button type="button" onClick={toggleConfirmPasswordVisibility} className="toggle-password" title={confirmPasswordType === 'password' ? "Mostrar contraseña" : "Ocultar contraseña"}>
+                    <input type={confirmPasswordType} className={`form-control ${errors.confirmPassword ? 'is-invalid' : ''}`} id="confirmPassword" value={confirmPassword} onChange={handleConfirmPasswordChange} required />
+                    <span className="toggle-password" onClick={toggleConfirmPasswordVisibility}>
                         {confirmPasswordType === 'password' ? <i className="fas fa-eye"></i> : <i className="fas fa-eye-slash"></i>}
-                    </button>
-                    {errors.confirmPassword && <div className="error-message">{errors.confirmPassword}</div>}
+                    </span>
+                    {errors.confirmPassword && <div className="invalid-feedback">{errors.confirmPassword}</div>}
                 </div>
                 <button type="submit" className="btn btn-primary">Registrarse</button>
                 <div className="mt-3 text-center">
@@ -104,6 +122,6 @@ const RegisterPage = () => {
             </form>
         </div>
     );
-};
+}
 
 export default RegisterPage;
