@@ -1,8 +1,9 @@
 // CheckedListSection.js
 import React, {useState, useEffect, useRef} from 'react';
 import { Form, ListGroup, Button } from 'react-bootstrap';
+import AddSectionButton from './AddSectionButton';
 
-const CheckedListSection = ({ items, onBlur }) => {
+const CheckedListSection = ({ items, onBlur, onAddSection=null, onRemoveSection }) => {
   const [updatedItems, setUpdatedItems] = useState(items);
   const textAreaRef = useRef([]);
   const listSectionRef = useRef(null);
@@ -30,12 +31,6 @@ const CheckedListSection = ({ items, onBlur }) => {
       text: e.target.value
     };
     setUpdatedItems(newItems);
-  }
-
-  const handleRemoveItem = (idx) => {
-    const newItems = updatedItems.filter((_, index) => index !== idx);
-    setUpdatedItems(newItems);
-    onBlur(newItems);
   }
 
   const handleAddItem = () => {
@@ -67,7 +62,7 @@ const CheckedListSection = ({ items, onBlur }) => {
   };
 
   return (
-    <div className="checked-list-section" ref={listSectionRef}>
+    <div className="checked-list-section section-container" ref={listSectionRef}>
     <ListGroup>
       {updatedItems.map((item, idx) => (
         <ListGroup.Item key={idx} className="d-flex align-items-center">
@@ -84,18 +79,19 @@ const CheckedListSection = ({ items, onBlur }) => {
             onBlur={handleBlur}
             onKeyDown={(e) => handleKeyDown(e, idx)}
             onInput={(e) => handleInput(e, idx)}
-            className={`flex-grow-1 ${item.checked ? 'checked' : ''}`}
+            className={`flex-grow-1 ${item.checked ? 'checked' : ''} me-2`}
           />
           <Button 
             variant="outline-danger" 
             size="sm" 
             className="ms-2" 
-            onClick={() => handleRemoveItem()}>
-              <i className="fas fa-trash"></i>
+            onClick={onRemoveSection} >
+            <i className="fas fa-trash"></i>
           </Button>
         </ListGroup.Item>
       ))}
     </ListGroup>
+    <AddSectionButton onAddClick={onAddSection} />
     </div>
   );
 };

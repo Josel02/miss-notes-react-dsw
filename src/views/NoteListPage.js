@@ -16,13 +16,38 @@ const NoteListPage = () => {
     setNotes(prevNotes => [...prevNotes, newNote]);
   };
 
+  const saveEditedNote = (updatedNote, isCambios) => {
+    if (isCambios){
+      let noteWithoutTempIds = processWithoutTempIds(updatedNote);
+      saveNote(noteWithoutTempIds);
+    }
+    setEditingNote(null)
+  };
+
+  const processWithoutTempIds = (jsonData) => {
+    const processedData = {
+      ...jsonData,
+      content: jsonData.content.map(item => {
+        const { tempId, ...newItem } = item;
+        return newItem;
+      })
+    };
+    return processedData;
+  };
+
   const handleEditNote = (note) => {
     setEditingNote(note);
   }
 
-  const saveNote = (updatedNote) => {
-    console.log('Saving note:', updatedNote);
-    setNotes(prevNotes => prevNotes.map(note => note.id === updatedNote.id ? updatedNote : note));
+  const saveNote = async (updatedNote) => {
+    try{
+      const response = await axios.put(`http://localhost:3000/notes/${updatedNote._id}`, updatedNote);
+      console.log('Note saved:', response.data);
+    }
+    catch(error){
+      console.error('Error saving note:', error);
+    }
+
   };
 
   const deleteNote = async (noteId) => {
@@ -69,7 +94,7 @@ const NoteListPage = () => {
       ) : notes.length > 0 ? (
         <Masonry columns={{ xs: 1, sm: 2, md: 3, lg: 4 }} spacing={2}>
           {notes.map(note => (
-            <div key={note.id}>
+            <div key={note._id}>
               <NoteCard note={note} onEdit={() => handleEditNote(note)} onDelete={() => deleteNote(note.id)} />
             </div>
           ))}
@@ -80,7 +105,7 @@ const NoteListPage = () => {
       {editingNote && (
       <EditNoteModal
         show={!!editingNote}
-        handleClose={() => setEditingNote(null)}
+        handleClose={(note, isCambios) => saveEditedNote(note, isCambios)}
         note={editingNote}
         onSave={null}
       />

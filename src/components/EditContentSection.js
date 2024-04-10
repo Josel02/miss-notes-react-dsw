@@ -2,24 +2,26 @@ import ListSection from './NoteSections/ListSection';
 import TextSection from './NoteSections/TextSection';
 import CheckedListSection from './NoteSections/CheckedListSection';
 import AddSectionButton from './NoteSections/AddSectionButton';
-import React, { useEffect, useState, useCallback } from 'react';
+import React from 'react';
+import { v4 as uuidv4 } from 'uuid';
+import "../styles/AddSectionButton.css";
 
-const EditContentSection = ({ content, onSave }) => {
-  const [localContent, setLocalContent] = useState(content);
-
-  useEffect(() => {
-    setLocalContent(content);
-  }, [content]);
+const EditContentSection = ({ content, onSave, onBlur, addSection, onRemoveSection }) => {
 
   const addNewSection = (index, type) => {
-    console.log("adding new section")
-  }
+    let newSection
+    if (type === 'text'){
+     newSection = { data: '', type, tempId: uuidv4() }
+    }
+    else if (type === 'list'){
+      newSection = { data: [''], type, tempId: uuidv4() }
+    }
+    else if (type === 'checked list'){
+      newSection = { data: [{ text: '', checked: false }], type, tempId: uuidv4() }
+    }
 
-  const updateLocalContent = useCallback((index, updatedData, itemIndex = null) => {
-    const newContent  = [...localContent];
-    newContent[index].data = updatedData;
-    setLocalContent(newContent);
-  }, [localContent]);
+    addSection(index, newSection)
+  }
 
   const renderContentByType = (content, index) => {
     switch (content.type) {
@@ -27,21 +29,27 @@ const EditContentSection = ({ content, onSave }) => {
         return (
           <TextSection 
             text={content.data} 
-            onBlur={(text) => updateLocalContent(index, text)}
+            onBlur={(text) => onBlur(index, text)}
+            onAddSection={(type) => addNewSection(index, type)}
+            onRemoveSection={() => onRemoveSection(index)}
           />
         );
       case 'list':
         return (
           <ListSection
             items={content.data} 
-            onBlur={(items) => updateLocalContent(index, items)}
+            onBlur={(items) => onBlur(index, items)}
+            onAddSection={(type) => addNewSection(index, type)}
+            onRemoveSection={() => onRemoveSection(index)}
           />
         );
       case 'checked list':
         return (
           <CheckedListSection 
             items={content.data}
-            onBlur={(itemIndex, itemValue) => updateLocalContent(index, itemIndex, itemValue)}
+            onBlur={(itemIndex, itemValue) => onBlur(index, itemIndex, itemValue)}
+            onAddSection={(type) => addNewSection(index, type)}
+            onRemoveSection={() => onRemoveSection(index)}
           />
         );
       case 'image':
@@ -54,15 +62,16 @@ const EditContentSection = ({ content, onSave }) => {
 
   return (
   <div>
-    <hr/>
-    <AddSectionButton onAddClick={() => {/* Implement show dropdown/modal logic here */}} />
-    {localContent.map((item, index) => (
-      <React.Fragment key={index}>
+    <div className="section-container">
+      <AddSectionButton onAddClick={(type) => addNewSection(-1, type)} />
+    </div>
+    {content.map((item, index) => (
+      <React.Fragment key={item._id || item.tempId}>
         <div className="mb-3">
           {renderContentByType(item, index)}
         </div>
-        <AddSectionButton onAddClick={() => {/* Implement show dropdown/modal logic here */}} />
       </React.Fragment>
+
     ))}
   </div>
   );
