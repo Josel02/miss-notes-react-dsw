@@ -5,10 +5,17 @@ import HomePage from './views/HomePage';
 import NotePage from './views/NoteListPage';
 import LoginPage from './views/LoginPage';
 import RegisterPage from './views/RegisterPage';
+import { SnackbarProvider } from 'notistack';
 import './styles/Bootstrap.css';
 
 function App() {
   return (
+    <SnackbarProvider
+    maxSnack={3}
+    anchorOrigin={{
+      vertical: 'bottom',
+      horizontal: 'center',
+    }}>
     <Router>
       <Routes>
         <Route path="/" element={<HomePage />} />
@@ -17,6 +24,7 @@ function App() {
         <Route path="/register" element={<RegisterPage />} />
       </Routes>
     </Router>
+    </SnackbarProvider>
   );
 }
 

@@ -1,6 +1,7 @@
 import ListSection from './NoteSections/ListSection';
 import TextSection from './NoteSections/TextSection';
 import CheckedListSection from './NoteSections/CheckedListSection';
+import ImageSection from './NoteSections/ImageSection';
 import AddSectionButton from './NoteSections/AddSectionButton';
 import React from 'react';
 import { v4 as uuidv4 } from 'uuid';
@@ -18,6 +19,9 @@ const EditContentSection = ({ content, onSave, onBlur, addSection, onRemoveSecti
     }
     else if (type === 'checked list'){
       newSection = { data: [{ text: '', checked: false }], type, tempId: uuidv4() }
+    }
+    else if (type === 'image'){
+      newSection = { data: '', type, tempId: uuidv4() }
     }
 
     addSection(index, newSection)
@@ -53,8 +57,14 @@ const EditContentSection = ({ content, onSave, onBlur, addSection, onRemoveSecti
           />
         );
       case 'image':
-          return null
-      // ... otros casos como 'image'
+        return (
+          <ImageSection 
+            image={content.data}
+            onBlur={(image) => onBlur(index, image)}
+            onAddSection={(type) => addNewSection(index, type)}
+            onRemoveSection={() => onRemoveSection(index)}
+          />
+        );
       default:
         return null;
     }
