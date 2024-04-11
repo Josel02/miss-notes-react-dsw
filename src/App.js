@@ -5,6 +5,7 @@ import HomePage from './views/HomePage';
 import NotePage from './views/NoteListPage';
 import LoginPage from './views/LoginPage';
 import RegisterPage from './views/RegisterPage';
+import './styles/Bootstrap.css';
 
 function App() {
   return (

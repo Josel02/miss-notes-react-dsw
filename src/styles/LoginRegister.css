@@ -1,7 +1,5 @@
 @import 'variables.css';
 
-
-/* Estilos de la Página de Login */
 .login-container {
     width: 60%;
     max-width: 700px;
@@ -24,33 +22,20 @@
     font-size: 28px;
 }
 
-.btn-primary {
-    background-color: var(--amaranth-pink);
-    color: var(--white);
-    font-weight: bold; /* Texto en negrita */
-    border: none;
+.btn-login-register{
     font-size: 18px;
     padding: 10px 20px;
     height: 50px;
-    width: auto;
-    display: block;
     margin: 20px auto 0;
+    display: block;
 }
 
-.btn-primary:hover {
-    background-color: var(--pink-lavender);
-    color: var(--lavender-blush);
-}
-
-.form-label {
+.form-label-login-register {
     color: var(--davys-gray);
     font-size: 20px;
 }
 
-.form-control {
-    background-color: var(--white);
-    border: 2px solid var(--pale-purple);
-    border-radius: 5px;
+.form-control-login-register {
     padding: 10px;
     height: 50px;
     font-size: 18px;
@@ -61,20 +46,13 @@ body {
     background-color: var(--pale-purple);
 }
 
-.text-center {
-    text-align: center;
-}
-
-.text-decoration-underline {
-    text-decoration: underline;
-    color: var(--davys-gray);
-    font-weight: bold;
-    font-size: 16px;
+.text-decoration-underline-login-register {
+    font-size: 14px;
     margin-top: 20px;
     display: inline-block;
 }
 
-.text-decoration-underline:hover {
+.text-decoration-underline-login-register:hover {
     color: var(--amaranth-pink);
     cursor: pointer;
 }
@@ -90,35 +68,7 @@ body {
     font-size: 0.8rem;
 }
 
-.password-field {
-    position: relative;
-}
-
-.toggle-password {
-    position: absolute;
-    right: 10px;
-    top: 38px;
-    background: none;
-    border: none;
-    font-size: 20px;
-    cursor: pointer;
-}
-
-.form-control {
-    padding-right: 40px;
-}
-
-.form-control.error {
-    border: 2px solid var(--amaranth-pink);
-}
-
-.error-border, 
-.error-border:focus {
-    border: 2px solid var(--red) !important;
-    box-shadow: none !important;
-}
-
-.input-group-text {
+.password-visibility {
     position: absolute;
     right: 4px;
     top: calc(50% - 14px);
@@ -127,7 +77,7 @@ body {
     z-index: 2000;
 }
 
-.input-group-text, .form-control {
+.password-visibility {
     border-radius: 0;
 }
 

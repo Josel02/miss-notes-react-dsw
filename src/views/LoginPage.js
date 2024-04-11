@@ -35,10 +35,10 @@ const LoginPage = () => {
                 <h2 className="login-title">Iniciar Sesión</h2>
                 <form onSubmit={handleLogin}>
                     <div className="mb-3">
-                        <label htmlFor="email" className="form-label">Correo Electrónico</label>
+                        <label htmlFor="email" className="form-label-login-register">Correo Electrónico</label>
                         <input 
                             type="email" 
-                            className="form-control" 
+                            className="form-control-login-register form-control" 
                             id="email" 
                             value={email} 
                             onChange={(e) => setEmail(e.target.value)} 
@@ -46,10 +46,10 @@ const LoginPage = () => {
                         />
                     </div>
                     <div className="mb-3">
-                        <label htmlFor="password" className="form-label">Contraseña</label>
+                        <label htmlFor="password" className="form-label-login-register">Contraseña</label>
                         <input 
                             type="password" 
-                            className="form-control" 
+                            className="form-control-login-register form-control" 
                             id="password" 
                             value={password} 
                             onChange={(e) => setPassword(e.target.value)} 
@@ -57,9 +57,9 @@ const LoginPage = () => {
                         />
                     </div>
                     {loginError && <div className="alert alert-danger" role="alert">{loginError}</div>}
-                    <button type="submit" className="btn btn-primary">Iniciar Sesión</button>
+                    <button type="submit" className="btn btn-primary btn-login-register">Iniciar Sesión</button>
                     <div className="mt-3 text-center">
-                        <Link to="/register" className="text-decoration-underline">¿No tienes cuenta? Regístrate</Link>
+                        <Link to="/register" className="text-decoration-underline text-decoration-underline-login-register">¿No tienes cuenta? Regístrate</Link>
                     </div>
                 </form>
             </div>
