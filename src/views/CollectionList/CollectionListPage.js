@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { Alert, Accordion, Button, Modal, Form, Tooltip, OverlayTrigger } from 'react-bootstrap';
 import { FiEdit, FiTrash2 } from 'react-icons/fi';
 import Masonry from '@mui/lab/Masonry';
-import NoteCard from '../components/NoteCard';
+import NoteCard from '../../components/NoteCard';
 import AddCollectionModal from './AddCollectionModal';
-import Layout from '../layouts/Layout';
+import EditCollectionModal from './EditCollectionModal';
+import Layout from '../../layouts/Layout';
 import axios from 'axios';
 
 const CollectionListPage = () => {
@@ -15,7 +16,8 @@ const CollectionListPage = () => {
   const [message, setMessage] = useState('');
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [currentCollectionId, setCurrentCollectionId] = useState('');
-
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [currentCollection, setCurrentCollection] = useState({ id: '', name: '' });
 
   useEffect(() => {
     const fetchAuthTokenAndCollections = async () => {
@@ -76,6 +78,26 @@ const CollectionListPage = () => {
     </Tooltip>
   );
 
+  const handleEditCollection = async (newName) => {
+    try {
+      await axios.put(`http://localhost:3000/collections/${currentCollection.id}`, {
+        name: newName
+      }, {
+        headers: { Authorization: `Bearer ${authToken}` }
+      });
+      const updatedCollections = collections.map(collection => {
+        if (collection._id === currentCollection.id) {
+          return { ...collection, name: newName };
+        }
+        return collection;
+      });
+      setCollections(updatedCollections);
+      setMessage('Nombre de la colección actualizado con éxito.');
+    } catch (error) {
+      console.error('Error updating collection:', error);
+      setMessage('Error al actualizar el nombre de la colección.');
+    }
+  };
   return (
     <Layout>
       {message && <Alert variant="danger">{message}</Alert>}
@@ -91,7 +113,10 @@ const CollectionListPage = () => {
                   placement="top"
                   overlay={(props) => renderTooltip(props, "Editar")}
                 >
-                  <Button variant="link" onClick={() => {/* Logic to edit name */}}><FiEdit /></Button>
+                  <Button variant="link" onClick={() => {
+                    setCurrentCollection({ id: collection._id, name: collection.name });
+                    setShowEditModal(true);
+                  }}><FiEdit /></Button>
                 </OverlayTrigger>
                 <OverlayTrigger
                   placement="top"
@@ -118,18 +143,26 @@ const CollectionListPage = () => {
       ) : (
         <Alert variant="info">No hay colecciones disponibles.</Alert>
       )}
-
+  
       <Button style={{ position: 'fixed', right: '20px', bottom: '20px', zIndex: '1000', borderRadius: '50%' }} onClick={() => setShowAddModal(true)}>
         +
       </Button>
-
+  
       <AddCollectionModal
         key={showAddModal}
         show={showAddModal}
         handleClose={() => setShowAddModal(false)}
         handleSave={handleCreateCollection}
       />
-
+  
+      <EditCollectionModal
+        key={showEditModal}
+        show={showEditModal}
+        handleClose={() => setShowEditModal(false)}
+        handleSave={handleEditCollection}
+        initialName={currentCollection.name}
+      />
+  
       <Modal key={showDeleteModal} show={showDeleteModal} onHide={() => setShowDeleteModal(false)} centered>
         <Modal.Header closeButton>
           <Modal.Title>Confirmar eliminación</Modal.Title>
@@ -142,6 +175,6 @@ const CollectionListPage = () => {
       </Modal>
     </Layout>
   );
-};
+}
 
 export default CollectionListPage;
