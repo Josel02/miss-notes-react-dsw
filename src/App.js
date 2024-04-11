@@ -5,6 +5,7 @@ import HomePage from './views/HomePage';
 import NotePage from './views/NoteListPage';
 import LoginPage from './views/LoginPage';
 import RegisterPage from './views/RegisterPage';
+import CollectionListPage from './views/CollectionList/CollectionListPage';
 import './styles/Bootstrap.css';
 
 function App() {
@@ -15,6 +16,7 @@ function App() {
         <Route path="/notes" element={<NotePage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+        <Route path="/collections" element={<CollectionListPage />} />
       </Routes>
     </Router>
   );
