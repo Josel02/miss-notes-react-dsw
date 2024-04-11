@@ -93,40 +93,43 @@ const RegisterPage = () => {
             {errors.form && <Alert variant="danger">{errors.form}</Alert>}
             <Form onSubmit={handleRegister}>
                 <Form.Group className="mb-3">
-                    <Form.Label>Nombre Completo</Form.Label>
+                    <Form.Label className='form-label-login-register'>Nombre Completo</Form.Label>
                     <FormControl 
                         type="text" 
                         isInvalid={!!errors.name}
                         value={name} 
                         onChange={(e) => setName(e.target.value)} 
+                        className='form-control-login-register'
                         required 
                     />
                     {errors.name && <div className="error-message">{errors.name}</div>}
                 </Form.Group>
                 
                 <Form.Group className="mb-3">
-                    <Form.Label>Correo Electrónico</Form.Label>
+                    <Form.Label className='form-label-login-register'>Correo Electrónico</Form.Label>
                     <FormControl 
                         type="email" 
                         isInvalid={!!errors.email}
                         value={email} 
-                        onChange={handleEmailChange} 
-                        required 
+                        onChange={handleEmailChange}
+                        className='form-control-login-register'
+                        required
                     />
                     {errors.email && <div className="error-message">{errors.email}</div>}
                 </Form.Group>
     
                 <Form.Group className="mb-3">
-                    <Form.Label>Contraseña</Form.Label>
+                    <Form.Label className='form-label-login-register'>Contraseña</Form.Label>
                     <InputGroup className="password-input-group">
                         <FormControl 
                             type={passwordType}
                             isInvalid={!!errors.password}
                             value={password} 
                             onChange={handlePasswordChange}
+                            className='form-control-login-register'
                             required 
                         />
-                        <InputGroup.Text onClick={togglePasswordVisibility}>
+                        <InputGroup.Text onClick={togglePasswordVisibility} className='password-visibility'>
                             {passwordType === 'password' ? <Eye /> : <EyeSlash />}
                         </InputGroup.Text>
                     </InputGroup>
@@ -134,25 +137,26 @@ const RegisterPage = () => {
                 </Form.Group>
     
                 <Form.Group className="mb-3">
-                    <Form.Label>Confirmar Contraseña</Form.Label>
+                    <Form.Label className='form-label-login-register'>Confirmar Contraseña</Form.Label>
                     <InputGroup className="password-input-group">
                         <FormControl 
                             type={confirmPasswordType}
                             isInvalid={!!errors.confirmPassword}
                             value={confirmPassword} 
                             onChange={handleConfirmPasswordChange}
+                            className='form-control-login-register'
                             required 
                         />
-                        <InputGroup.Text onClick={toggleConfirmPasswordVisibility}>
+                        <InputGroup.Text onClick={toggleConfirmPasswordVisibility} className='password-visibility'>
                             {confirmPasswordType === 'password' ? <Eye /> : <EyeSlash />}
                         </InputGroup.Text>
                     </InputGroup>
                     {errors.confirmPassword && <div className="error-message">{errors.confirmPassword}</div>}
                 </Form.Group>
     
-                <Button variant="primary" type="submit">Registrarse</Button>
+                <Button variant="primary" type="submit" className='btn-login-register'>Registrarse</Button>
                 <div className="mt-3 text-center">
-                    <Link to="/login" className="text-decoration-underline">¿Ya tienes cuenta? Inicia sesión</Link>
+                    <Link to="/login" className="text-decoration-underline text-decoration-underline-login-register">¿Ya tienes cuenta? Inicia sesión</Link>
                 </div>
             </Form>
         </Container>
