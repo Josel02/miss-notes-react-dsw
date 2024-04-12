@@ -73,8 +73,11 @@ const NoteListPage = () => {
   useEffect(() => {
     const fetchNotes = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/notes');
-        setNotes(response.data);
+        const token = sessionStorage.getItem('token');
+        const userId = sessionStorage.getItem('userId');
+        const response = await axios.get(`http://localhost:3000/notes/users/${userId}`, {
+          headers: { Authorization: `Bearer ${token}` }});
+      setNotes(response.data);
       } catch (error) {
         console.error('Error fetching notes', error);
       } finally {

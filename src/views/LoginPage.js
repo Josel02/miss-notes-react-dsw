@@ -17,7 +17,8 @@ const LoginPage = () => {
         axios.post('http://localhost:3000/users/login', { email, password })
             .then((response) => {
                 console.log(response.data);
-                // Aquí podrías también almacenar el token en localStorage o en el contexto de tu aplicación
+                sessionStorage.setItem('token', response.data.token);
+                sessionStorage.setItem('userId', response.data.userId);
                 navigate('/');
             })
             .catch((error) => {
