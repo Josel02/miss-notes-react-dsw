@@ -30,18 +30,21 @@ export const NotesProvider = ({ children }) => {
   };
 
   const updateNote = async (id, updatedNote) => {
-    console.log("Estamos aquí, en el updateNote")
     try {
       const response = await axios.put(`http://localhost:3000/notes/${id}`, updatedNote);
       if (response.status === 200) {
         setNotes(prevNotes => prevNotes.map(note => note._id === id ? { ...note, ...response.data } : note));
+        return Promise.resolve();
       } else {
-        console.error('Failed to update note:', response.data);
+        return Promise.reject('Error updating note');
       }
     } catch (error) {
       console.error('Error updating note:', error);
+      return Promise.reject(error);
     }
   };
+  
+  
   
   
   const deleteNote = async (id) => {

@@ -20,7 +20,7 @@ const CollectionListPage = () => {
   const [currentCollection, setCurrentCollection] = useState({ id: '', name: '' });
   const [showEditModal, setShowEditModal] = useState(false);
   const [editingNote, setEditingNote] = useState(null);
-  const { updateNote, deleteNote } = useNotes();
+  const { updateNote } = useNotes();
 
   useEffect(() => {
     const fetchAuthTokenAndCollections = async () => {
@@ -68,11 +68,38 @@ const CollectionListPage = () => {
     }
   };
 
-  const renderTooltip = (props, text) => (
-    <Tooltip id="button-tooltip" {...props}>
-      {text}
-    </Tooltip>
-  );
+  const deleteNote = async (noteId) => {
+    try {
+      await axios.delete(`http://localhost:3000/notes/${noteId}`);
+      // Actualiza el estado de las colecciones para remover la nota eliminada
+      setCollections(prevCollections => prevCollections.map(collection => ({
+        ...collection,
+        notes: collection.notes.filter(note => note._id !== noteId)
+      })));
+      setMessage({ text: 'Nota eliminada con éxito.', type: 'success' });
+    } catch (error) {
+      console.error('Error deleting note:', error);
+      setMessage({ text: 'Error al eliminar la nota.', type: 'error' });
+    }
+  };
+
+
+
+const deleteCollection = async () => {
+    try {
+        await axios.delete(`http://localhost:3000/collections/${currentCollection.id}`, {
+            headers: { Authorization: `Bearer ${authToken}` },
+        });
+        // Actualizar el estado para eliminar la colección del estado local
+        setCollections(prevCollections => prevCollections.filter(collection => collection._id !== currentCollection.id));
+        setShowDeleteModal(false);
+        setMessage({ text: 'Colección eliminada con éxito.', type: 'success' });
+    } catch (error) {
+        console.error('Error deleting collection:', error);
+        setMessage({ text: 'Error al eliminar la colección.', type: 'error' });
+    }
+};
+
 
   const handleEditNote = (note) => {
     setEditingNote(note);
@@ -80,7 +107,12 @@ const CollectionListPage = () => {
 
   const saveEditedNote = async (updatedNote) => {
     console.log("Saving note", updatedNote);
-    updateNote(updatedNote._id, updatedNote);
+    updateNote(updatedNote._id, updatedNote).then(() => {
+      setCollections(prevCollections => prevCollections.map(collection => ({
+        ...collection,
+        notes: collection.notes.map(note => note._id === updatedNote._id ? { ...note, ...updatedNote } : note)
+      })));
+    });
   };
 
   const handleCloseModal = () => {
@@ -106,23 +138,11 @@ const CollectionListPage = () => {
     }
   };
 
-  const deleteCollection = async () => {
-    try {
-      await axios.delete(`http://localhost:3000/collections/${currentCollection.id}`, {
-        headers: { Authorization: `Bearer ${authToken}` },
-      });
-      setCollections(collections.filter(c => c._id !== currentCollection.id));
-      setShowDeleteModal(false);
-      setMessage('Colección eliminada con éxito.');
-    } catch (error) {
-      console.error('Error deleting collection:', error);
-      setMessage('Error al eliminar la colección.');
-    }
-  };
-
   return (
     <Layout>
-      {message && <Alert variant="danger">{message}</Alert>}
+      {message && <Alert variant={message.type === 'success' ? 'success' : 'danger'}>
+        {message.text}
+      </Alert>}
       {loading ? (
         <div>Cargando colecciones...</div>
       ) : collections.length > 0 ? (
@@ -133,7 +153,7 @@ const CollectionListPage = () => {
                 {collection.name}
                 <OverlayTrigger
                   placement="top"
-                  overlay={renderTooltip({}, "Editar")}
+                  overlay={<Tooltip id={`tooltip-edit-${collection._id}`}>Editar</Tooltip>}
                 >
                   <Button variant="link" onClick={() => {
                     setCurrentCollection({ id: collection._id, name: collection.name });
@@ -142,14 +162,14 @@ const CollectionListPage = () => {
                 </OverlayTrigger>
                 <OverlayTrigger
                   placement="top"
-                  overlay={renderTooltip({}, "Eliminar")}
+                  overlay={<Tooltip id={`tooltip-delete-${collection._id}`}>Eliminar</Tooltip>}
                 >
                   <Button variant="link" onClick={() => {
                     setCurrentCollection({ id: collection._id, name: collection.name });
                     setShowDeleteModal(true);
                   }}><FiTrash2 /></Button>
-                </OverlayTrigger
-              ></Accordion.Header>
+                </OverlayTrigger>
+              </Accordion.Header>
               <Accordion.Body>
                 <Masonry columns={{ xs: 1, sm: 2, md: 3, lg: 4 }} spacing={2}>
                   {collection.notes.map(note => (
@@ -173,11 +193,13 @@ const CollectionListPage = () => {
         +
       </Button>
       <AddCollectionModal
+        key={showAddModal}
         show={showAddModal}
         handleClose={() => setShowAddModal(false)}
         handleSave={handleCreateCollection}
       />
       <EditCollectionModal
+        key={showEditModal}
         show={showEditModal}
         handleClose={() => setShowEditModal(false)}
         handleSave={handleEditCollection}
@@ -202,7 +224,7 @@ const CollectionListPage = () => {
         />
       )}
     </Layout>
-  );
-};
+);
+}
 
 export default CollectionListPage;
