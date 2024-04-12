@@ -31,6 +31,9 @@ const NoteListPage = () => {
         const { tempId, ...newItem } = item;
         return newItem;
       })
+      .filter(item => {
+        return !(item.type === 'image' && (!item.data || item.data === ''));
+      })
     };
     return processedData;
   };
