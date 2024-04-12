@@ -1,3 +1,32 @@
+.image-container img {
+    transition: filter 0.3s;
+    cursor: pointer;
+}
+
+.image-container:hover img {
+    filter: blur(10px);
+}
+
+.hover-text {
+    display: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    background-color: var(--davys-gray);
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 20px;
+    pointer-events: none;
+}
+
+.image-container:hover .hover-text {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .image-container {
     display: flex;
     align-items: center;

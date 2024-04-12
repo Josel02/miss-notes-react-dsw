@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState, useRef } from 'react';
 import { Form, Button } from 'react-bootstrap';
 import { useSnackbar } from 'notistack';
 import { readAndCompressImage } from 'browser-image-resizer';
@@ -9,6 +9,7 @@ const ImageSection = React.memo(({ image, onBlur, onAddSection, onRemoveSection 
     const [selectedFile, setSelectedFile] = useState(null);
     const [preview, setPreview] = useState(image);
     const { enqueueSnackbar } = useSnackbar();
+    const fileInputRef = useRef(null);
     const config = {
         quality: 0.7,
         maxWidth: 800,
@@ -35,11 +36,23 @@ const ImageSection = React.memo(({ image, onBlur, onAddSection, onRemoveSection 
         }
     };
 
+    const triggerFileSelect = () => fileInputRef.current.click();
+
     return (
         <div className="section-container">
           <div className="image-container">
             {preview ? (
-              <img src={preview} alt="Preview" style={{ maxWidth: '200px', maxHeight: '200px' }} />
+              <div onClick={triggerFileSelect}>
+                <img src={preview} alt="Preview" style={{ maxWidth: '200px', maxHeight: '200px' }} />
+                <div className="hover-text"><i className="fas fa-camera"></i></div>
+                <input 
+                  type="file" 
+                  accept="image/*" 
+                  onChange={handleFileChange}
+                  ref={fileInputRef} 
+                  style={{ display: 'none' }}
+                />
+              </div>
             ) : (
               <Form.Group>
                 <Form.Control
@@ -60,8 +73,6 @@ const ImageSection = React.memo(({ image, onBlur, onAddSection, onRemoveSection 
           <AddSectionButton onAddClick={onAddSection} />
         </div>
       );
-      
-
 });
 
 export default ImageSection;
