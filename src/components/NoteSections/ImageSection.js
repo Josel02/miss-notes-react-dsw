@@ -3,6 +3,7 @@ import { Form, Button } from 'react-bootstrap';
 import { useSnackbar } from 'notistack';
 import { readAndCompressImage } from 'browser-image-resizer';
 import AddSectionButton from './AddSectionButton';
+import "../../styles/ImageSection.css";
 
 const ImageSection = React.memo(({ image, onBlur, onAddSection, onRemoveSection }) => {
     const [selectedFile, setSelectedFile] = useState(null);
@@ -20,7 +21,7 @@ const ImageSection = React.memo(({ image, onBlur, onAddSection, onRemoveSection 
         const file = e.target.files[0];
         if (file){
             if (!file.type.startsWith('image/')) {
-                enqueueSnackbar('Only image files are allowed!', { variant: 'error', autoHideDuration: 4000});
+                enqueueSnackbar('Only image files are allowed!', { variant: 'error', autoHideDuration: 3000});
                 return;
             }
             const resizedImage = await readAndCompressImage(file, config);
@@ -36,27 +37,31 @@ const ImageSection = React.memo(({ image, onBlur, onAddSection, onRemoveSection 
 
     return (
         <div className="section-container">
-          <Form.Group className="d-flex align-items-start">
-          {preview && (
+          <div className="image-container">
+            {preview ? (
               <img src={preview} alt="Preview" style={{ maxWidth: '200px', maxHeight: '200px' }} />
+            ) : (
+              <Form.Group>
+                <Form.Control
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                />
+              </Form.Group>
             )}
-            <Form.Control
-              type="file"
-              accept="image/*"
-              onChange={handleFileChange}
-              className='me-2'
-            />
             <Button 
               variant="outline-danger" 
               size="sm" 
-              className="ms-2 mt-3 me-3"
+              className="remove-button me-3"
               onClick={onRemoveSection}>
               <i className="fas fa-trash"></i>
             </Button>
-          </Form.Group>
+          </div>
           <AddSectionButton onAddClick={onAddSection} />
         </div>
       );
+      
+
 });
 
 export default ImageSection;

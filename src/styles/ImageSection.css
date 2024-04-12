@@ -1,0 +1,32 @@
+.image-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.remove-button {
+    position: absolute;
+    right: 0;
+}
+
+/* Styles for xs screens */
+@media (max-width: 575.98px) { 
+    .image-container {
+        justify-content: space-between;
+        flex-direction: row;
+    }
+
+    .image-container .remove-button {
+        position: static;
+        order: 3;
+    }
+
+    .image-container img {
+        order: 2;
+        margin: 0 auto;
+    }
+
+    .image-container .form-group {
+        order: 1;
+    }
+}
