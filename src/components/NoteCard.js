@@ -26,8 +26,13 @@ const NoteCard = ({ note, onEdit, onDelete }) => {
         </ListGroup>
         );
       case 'image':
-        // Por ahora no renderizamos nada para imágenes
-        return null;
+        return (
+          <img 
+              key={content._id || content.tempId}
+              src={content.data}
+              style={{ maxWidth: '100%' }}
+          />
+      );
       default:
         return null;
     }

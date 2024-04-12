@@ -5,11 +5,18 @@ import HomePage from './views/HomePage';
 import NotePage from './views/NoteListPage';
 import LoginPage from './views/LoginPage';
 import RegisterPage from './views/RegisterPage';
+import { SnackbarProvider } from 'notistack';
 import CollectionListPage from './views/CollectionList/CollectionListPage';
 import './styles/Bootstrap.css';
 
 function App() {
   return (
+    <SnackbarProvider
+    maxSnack={3}
+    anchorOrigin={{
+      vertical: 'bottom',
+      horizontal: 'center',
+    }}>
     <Router>
       <Routes>
         <Route path="/" element={<HomePage />} />
@@ -19,6 +26,7 @@ function App() {
         <Route path="/collections" element={<CollectionListPage />} />
       </Routes>
     </Router>
+    </SnackbarProvider>
   );
 }
 
