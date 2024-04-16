@@ -5,6 +5,7 @@ import { Alert } from 'react-bootstrap';
 import Layout from '../layouts/Layout';
 import axios from 'axios';
 import EditNoteModal from './EditNoteModal';
+import AddNoteCard from '../components/AddNotePreview';
 
 const NoteListPage = () => {
   const [notes, setNotes] = useState([]);
@@ -90,6 +91,7 @@ const NoteListPage = () => {
 
   return (
     <Layout>
+      <AddNoteCard/>
       {message.text && (
         <Alert variant={message.type === 'success' ? 'success' : 'danger'}>
           {message.text}
@@ -98,6 +100,7 @@ const NoteListPage = () => {
       {loading ? (
         <div>Cargando notas...</div>
       ) : notes.length > 0 ? (
+        <div>
         <Masonry columns={{ xs: 1, sm: 2, md: 3, lg: 4 }} spacing={2}>
           {notes.map(note => (
             <div key={note._id}>
@@ -105,6 +108,7 @@ const NoteListPage = () => {
             </div>
           ))}
         </Masonry>
+        </div>
       ) : (
         <Alert variant="info">Todavía no hay ninguna nota, ¿Por qué no añades una?</Alert>
       )}
