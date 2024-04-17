@@ -3,11 +3,11 @@
     margin-left: auto;
     margin-right: auto;
     box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
-    border-radius: 8px;
+    border-radius: 2rem;
     transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
     transform: scale(1);
     cursor: pointer;
-    width: 50%; /* O un valor fijo si es necesario, como 200px */
+    width: 18%; /* O un valor fijo si es necesario, como 200px */
 }
 
 .add-note-card:hover {
