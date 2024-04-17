@@ -144,7 +144,7 @@ const CollectionListPage = () => {
         <Alert variant="info">No hay colecciones disponibles.</Alert>
       )}
   
-      <Button style={{ position: 'fixed', right: '20px', bottom: '20px', zIndex: '1000', borderRadius: '50%' }} onClick={() => setShowAddModal(true)}>
+      <Button style={{ position: 'fixed', right: '20px', bottom: '20px', zIndex: '1000', borderRadius: '50%', width: '55px', height: '55px', fontSize: '28px' }} onClick={() => setShowAddModal(true)}>
         +
       </Button>
   
