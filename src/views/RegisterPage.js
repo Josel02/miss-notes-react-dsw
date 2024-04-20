@@ -4,8 +4,8 @@ import axios from 'axios';
 import Layout from '../layouts/Layout';
 import '../styles/LoginRegister.css';
 import { Container, Form, Button, Alert, InputGroup, FormControl } from 'react-bootstrap';
-import { EyeSlash, Eye } from 'react-bootstrap-icons'; // Importa los íconos de Bootstrap
-import 'bootstrap/dist/css/bootstrap.min.css'; // Importar estilos de Bootstrap
+import { EyeSlash, Eye } from 'react-bootstrap-icons';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 
 const RegisterPage = () => {
