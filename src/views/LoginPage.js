@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useAuth } from '../components/AuthContext';
 import Layout from '../layouts/Layout';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
@@ -9,6 +10,7 @@ const LoginPage = () => {
     const [password, setPassword] = useState('');
     const [loginError, setLoginError] = useState(''); // Estado para manejar los mensajes de error
     const navigate = useNavigate();
+    const { login } = useAuth();
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -19,6 +21,7 @@ const LoginPage = () => {
                 console.log(response.data);
                 sessionStorage.setItem('token', response.data.token);
                 sessionStorage.setItem('userId', response.data.userId);
+                login(response.data.userId);
                 navigate('/');
             })
             .catch((error) => {
