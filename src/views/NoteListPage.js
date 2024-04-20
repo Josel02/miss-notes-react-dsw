@@ -11,17 +11,29 @@ const NoteListPage = () => {
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState({ text: '', type: '' });
   const [editingNote, setEditingNote] = useState(null);
+  const [isEditingExistingNote, setIsEditingExistingNote] = useState(false);
   
-  const addNewNote = (newNote) => {
-    setNotes(prevNotes => [...prevNotes, newNote]);
+  const emptyNote = {
+    title: '',
+    content: []
+  }
+
+  const addNewNote = () => {
+    setEditingNote(emptyNote);
+    setIsEditingExistingNote(false);
   };
 
-  const saveEditedNote = (updatedNote, isCambios) => {
+  const handleSaveNote = (updatedNote, isCambios) => {
     if (isCambios){
       let noteWithoutTempIds = processWithoutTempIds(updatedNote);
-      saveNote(noteWithoutTempIds);
+      if (isEditingExistingNote) {
+        updateNote(noteWithoutTempIds);
+      } else {
+        createNote(noteWithoutTempIds);
+      }
     }
     setEditingNote(null)
+    setIsEditingExistingNote(false);
   };
 
   const processWithoutTempIds = (jsonData) => {
@@ -40,9 +52,23 @@ const NoteListPage = () => {
 
   const handleEditNote = (note) => {
     setEditingNote(note);
+    setIsEditingExistingNote(true);
   }
 
-  const saveNote = async (updatedNote) => {
+  const createNote = async (note) => {
+    const token = sessionStorage.getItem('token');
+    try {
+      const response = await axios.post(`http://localhost:3000/notes/`, note, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      console.log('Note created:', response.data);
+    }
+    catch(error){
+      console.error('Error creating note:', error);
+    }
+  }
+  
+  const updateNote = async (updatedNote) => {
     try{
       const response = await axios.put(`http://localhost:3000/notes/${updatedNote._id}`, updatedNote);
       console.log('Note saved:', response.data);
@@ -95,7 +121,12 @@ const NoteListPage = () => {
           {message.text}
         </Alert>
       )}
-      <Button style={{ position: 'fixed', right: '20px', bottom: '20px', zIndex: '1000', borderRadius: '50%', width: '55px', height: '55px', fontSize: '28px' }} onClick={null}>
+      <Button style={{ 
+        position: 'fixed', right: '20px', 
+        bottom: '20px', zIndex: '1000', 
+        borderRadius: '50%', width: '55px', 
+        height: '55px', fontSize: '28px' }}
+        onClick={addNewNote}>
         +
       </Button>
       {loading ? (
@@ -118,9 +149,8 @@ const NoteListPage = () => {
       {editingNote && (
       <EditNoteModal
         show={!!editingNote}
-        handleClose={(note, isCambios) => saveEditedNote(note, isCambios)}
+        handleClose={(note, isCambios) => handleSaveNote(note, isCambios)}
         note={editingNote}
-        onSave={null}
       />
 )}
 
