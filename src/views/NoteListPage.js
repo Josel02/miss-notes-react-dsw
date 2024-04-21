@@ -3,7 +3,7 @@ import Masonry from '@mui/lab/Masonry';
 import NoteCard from '../components/NoteCard';
 import { Alert } from 'react-bootstrap';
 import Layout from '../layouts/Layout';
-import axios from 'axios';
+import api from '../services/axiosIncerpet.js';
 import EditNoteModal from './EditNoteModal';
 
 const NoteListPage = () => {
@@ -44,7 +44,7 @@ const NoteListPage = () => {
 
   const saveNote = async (updatedNote) => {
     try{
-      const response = await axios.put(`http://localhost:3000/notes/${updatedNote._id}`, updatedNote);
+      const response = await api.put(`http://localhost:3000/notes/${updatedNote._id}`, updatedNote);
       console.log('Note saved:', response.data);
     }
     catch(error){
@@ -57,7 +57,7 @@ const NoteListPage = () => {
     try {
       console.log('Deleting note with id:', noteId);
       // Llamada API para eliminar la nota
-      await axios.delete(`http://localhost:3000/notes/${noteId}`);
+      await api.delete(`http://localhost:3000/notes/${noteId}`);
       
       // Actualizar el estado para remover la nota eliminada
       setNotes(prevNotes => prevNotes.filter(note => note.id !== noteId));
@@ -75,7 +75,7 @@ const NoteListPage = () => {
       try {
         const token = sessionStorage.getItem('token');
         const userId = sessionStorage.getItem('userId');
-        const response = await axios.get(`http://localhost:3000/notes/users/${userId}`, {
+        const response = await api.get(`http://localhost:3000/notes/users/${userId}`, {
           headers: { Authorization: `Bearer ${token}` }});
       setNotes(response.data);
       } catch (error) {
@@ -89,36 +89,36 @@ const NoteListPage = () => {
   }, []);
 
   return (
-    <Layout>
-      {message.text && (
-        <Alert variant={message.type === 'success' ? 'success' : 'danger'}>
-          {message.text}
-        </Alert>
-      )}
-      {loading ? (
-        <div>Cargando notas...</div>
-      ) : notes.length > 0 ? (
-        <Masonry columns={{ xs: 1, sm: 2, md: 3, lg: 4 }} spacing={2}>
-          {notes.map(note => (
-            <div key={note._id}>
-              <NoteCard note={note} onEdit={() => handleEditNote(note)} onDelete={() => deleteNote(note.id)} />
-            </div>
-          ))}
-        </Masonry>
-      ) : (
-        <Alert variant="info">Todavía no hay ninguna nota, ¿Por qué no añades una?</Alert>
-      )}
-      {editingNote && (
-      <EditNoteModal
-        show={!!editingNote}
-        handleClose={(note, isCambios) => saveEditedNote(note, isCambios)}
-        note={editingNote}
-        onSave={null}
-      />
-)}
-
-    </Layout>
+      <Layout>
+        {message.text && (
+          <Alert variant={message.type === 'success' ? 'success' : 'danger'}>
+            {message.text}
+          </Alert>
+        )}
+        {loading ? (
+          <div>Cargando notas...</div>
+        ) : notes.length > 0 ? (
+          <Masonry columns={{ xs: 1, sm: 2, md: 3, lg: 4 }} spacing={2}>
+            {notes.map(note => (
+              <div key={note._id}>
+                <NoteCard note={note} onEdit={() => handleEditNote(note)} onDelete={() => deleteNote(note.id)} />
+              </div>
+            ))}
+          </Masonry>
+        ) : (
+          <Alert variant="info">Todavía no hay ninguna nota, ¿Por qué no añades una?</Alert>
+        )}
+        {editingNote && (
+          <EditNoteModal
+            show={!!editingNote}
+            handleClose={(note, isCambios) => saveEditedNote(note, isCambios)}
+            note={editingNote}
+            onSave={null}
+          />
+        )}
+      </Layout>
   );
+  
 };
 
 export default NoteListPage;
