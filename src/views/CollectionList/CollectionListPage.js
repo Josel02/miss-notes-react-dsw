@@ -5,7 +5,6 @@ import Masonry from '@mui/lab/Masonry';
 import NoteCard from '../../components/NoteCard';
 import AddCollectionModal from './AddCollectionModal';
 import EditCollectionModal from './EditCollectionModal';
-import Layout from '../../layouts/Layout';
 import axios from 'axios';
 
 const CollectionListPage = () => {
@@ -99,7 +98,7 @@ const CollectionListPage = () => {
     }
   };
   return (
-    <Layout>
+    <>
       {message && <Alert variant="danger">{message}</Alert>}
       {loading ? (
         <div>Cargando colecciones...</div>
@@ -173,7 +172,7 @@ const CollectionListPage = () => {
           <Button variant="danger" onClick={deleteCollection}>Eliminar</Button>
         </Modal.Footer>
       </Modal>
-    </Layout>
+    </>
   );
 }
 
