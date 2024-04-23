@@ -6,6 +6,7 @@ import NotePage from './views/NoteListPage';
 import LoginPage from './views/LoginPage';
 import RegisterPage from './views/RegisterPage';
 import { SnackbarProvider } from 'notistack';
+import Layout from './layouts/Layout';
 import CollectionListPage from './views/CollectionList/CollectionListPage';
 import './styles/Bootstrap.css';
 
@@ -18,6 +19,7 @@ function App() {
       horizontal: 'center',
     }}>
     <Router>
+      <Layout />
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/notes" element={<NotePage />} />

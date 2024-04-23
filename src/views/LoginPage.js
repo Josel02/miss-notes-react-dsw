@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useAuth } from '../components/AuthContext';
-import Layout from '../layouts/Layout';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import '../styles/LoginRegister.css';
@@ -34,7 +33,7 @@ const LoginPage = () => {
     };
 
     return (
-        <Layout>
+        <>
             <div className="login-container">
                 <h2 className="login-title">Iniciar Sesión</h2>
                 <form onSubmit={handleLogin}>
@@ -67,7 +66,7 @@ const LoginPage = () => {
                     </div>
                 </form>
             </div>
-        </Layout>
+        </>
     );
 };
 

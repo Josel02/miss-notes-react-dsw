@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import Masonry from '@mui/lab/Masonry';
+import { useAuth } from '../components/AuthContext';
 import NoteCard from '../components/NoteCard';
 import { Alert } from 'react-bootstrap';
-import Layout from '../layouts/Layout';
+import { useSnackbar } from 'notistack';
+import { useNavigate } from 'react-router-dom';
 import api from '../services/axiosIncerpet.js';
 import EditNoteModal from './EditNoteModal';
 
@@ -11,6 +13,9 @@ const NoteListPage = () => {
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState({ text: '', type: '' });
   const [editingNote, setEditingNote] = useState(null);
+  const navigate = useNavigate();
+  const { logout } = useAuth();
+  const { enqueueSnackbar } = useSnackbar();
   
   const addNewNote = (newNote) => {
     setNotes(prevNotes => [...prevNotes, newNote]);
@@ -79,7 +84,11 @@ const NoteListPage = () => {
           headers: { Authorization: `Bearer ${token}` }});
       setNotes(response.data);
       } catch (error) {
-        console.error('Error fetching notes', error);
+        if (error.response && error.response.status === 403) {
+          navigate('/', { replace: true });
+          enqueueSnackbar('Session expired. Please login again.', { variant: 'warning' });
+          logout();
+        }
       } finally {
         setLoading(false);
       }
@@ -89,7 +98,7 @@ const NoteListPage = () => {
   }, []);
 
   return (
-      <Layout>
+      <>
         {message.text && (
           <Alert variant={message.type === 'success' ? 'success' : 'danger'}>
             {message.text}
@@ -116,7 +125,7 @@ const NoteListPage = () => {
             onSave={null}
           />
         )}
-      </Layout>
+      </>
   );
   
 };

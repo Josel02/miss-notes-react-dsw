@@ -13,9 +13,7 @@ api.interceptors.response.use(
       // Código para manejar el token expirado
       sessionStorage.removeItem('token');
       sessionStorage.removeItem('userId');
-      // Redirigir al usuario a la página principal
-      window.location = '/';
-
+      return Promise.reject(error);
     }
     return Promise.reject(error);
   }
