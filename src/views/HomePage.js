@@ -1,5 +1,4 @@
 import React from 'react';
-import Layout from '../layouts/Layout';
 
 const HomePage = () => {
   const title = "MissNotes"; 

@@ -17,9 +17,9 @@ const NoteListPage = () => {
   const { logout } = useAuth();
   const { enqueueSnackbar } = useSnackbar();
   
-  const addNewNote = (newNote) => {
-    setNotes(prevNotes => [...prevNotes, newNote]);
-  };
+  // const addNewNote = (newNote) => {
+  //   setNotes(prevNotes => [...prevNotes, newNote]);
+  // };
 
   const saveEditedNote = (updatedNote, isCambios) => {
     if (isCambios){
@@ -95,7 +95,7 @@ const NoteListPage = () => {
     };
 
     fetchNotes();
-  }, []);
+  }, [enqueueSnackbar, logout, navigate]);
 
   return (
       <>

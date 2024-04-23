@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Alert, Accordion, Button, Modal, Form, Tooltip, OverlayTrigger } from 'react-bootstrap';
+import { Alert, Accordion, Button, Modal, Tooltip, OverlayTrigger } from 'react-bootstrap';
 import { FiEdit, FiTrash2 } from 'react-icons/fi';
 import Masonry from '@mui/lab/Masonry';
 import NoteCard from '../../components/NoteCard';
