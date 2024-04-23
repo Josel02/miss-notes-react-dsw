@@ -9,6 +9,7 @@ import EditNoteModal from '../EditNoteModal';
 import Layout from '../../layouts/Layout';
 import axios from 'axios';
 import { useNotes } from '../../context/NotesContext';
+import '../../styles/CollectionListPage.css'
 
 const CollectionListPage = () => {
   const [collections, setCollections] = useState([]);
@@ -138,18 +139,20 @@ const deleteCollection = async () => {
     }
   };
 
+
+
   return (
-    <Layout>
-      {message && <Alert variant={message.type === 'success' ? 'success' : 'danger'}>
+    <Layout className="collection-list-page">
+      {message && <Alert variant={message.type === 'success' ? 'success' : 'danger'} className="collection-alert">
         {message.text}
       </Alert>}
       {loading ? (
         <div>Cargando colecciones...</div>
       ) : collections.length > 0 ? (
         collections.map((collection) => (
-          <Accordion defaultActiveKey="0" key={collection._id}>
+          <Accordion defaultActiveKey="0" key={collection._id} className="collection-item">
             <Accordion.Item eventKey="0">
-              <Accordion.Header>
+              <Accordion.Header className="collection-header">
                 {collection.name}
                 <OverlayTrigger
                   placement="top"
@@ -189,7 +192,7 @@ const deleteCollection = async () => {
       ) : (
         <Alert variant="info">No hay colecciones disponibles.</Alert>
       )}
-      <Button style={{ position: 'fixed', right: '20px', bottom: '20px', zIndex: '1000', borderRadius: '50%' }} onClick={() => setShowAddModal(true)}>
+      <Button style={{ position: 'fixed', right: '20px', bottom: '20px', zIndex: '1000', borderRadius: '50%' }} onClick={() => setShowAddModal(true)} className="collection-add-btn">
         +
       </Button>
       <AddCollectionModal
@@ -205,8 +208,8 @@ const deleteCollection = async () => {
         handleSave={handleEditCollection}
         initialName={currentCollection.name}
       />
-      <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)} centered>
-        <Modal.Header closeButton>
+      <Modal  key={showDeleteModal} show={showDeleteModal} onHide={() => setShowDeleteModal(false)} centered className="collection-modal-content">
+        <Modal.Header closeButton className="collection-modal-header">
           <Modal.Title>Confirmar eliminación</Modal.Title>
         </Modal.Header>
         <Modal.Body>¿Estás seguro de que deseas eliminar esta colección?</Modal.Body>
@@ -225,6 +228,8 @@ const deleteCollection = async () => {
       )}
     </Layout>
 );
+
+
 }
 
 export default CollectionListPage;
