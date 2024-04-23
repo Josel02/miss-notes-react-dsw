@@ -78,6 +78,7 @@ const NoteListPage = () => {
   useEffect(() => {
     const fetchNotes = async () => {
       try {
+        console.log("aaaaaaa")
         const token = sessionStorage.getItem('token');
         const userId = sessionStorage.getItem('userId');
         const response = await api.get(`http://localhost:3000/notes/users/${userId}`, {

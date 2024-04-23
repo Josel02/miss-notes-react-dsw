@@ -89,7 +89,7 @@ const RegisterPage = () => {
     };
     
     return (
-        <Layout>
+        <>
         <Container className="login-container">
             <h2 className="login-title">Registrarse</h2>
             {errors.form && <Alert variant="danger">{errors.form}</Alert>}
@@ -162,7 +162,7 @@ const RegisterPage = () => {
                 </div>
             </Form>
         </Container>
-        </Layout>
+        </>
     );
     
     

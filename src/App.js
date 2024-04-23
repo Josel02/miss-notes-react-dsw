@@ -18,16 +18,15 @@ function App() {
       vertical: 'bottom',
       horizontal: 'center',
     }}>
-    <Router>
-      <Layout />
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/notes" element={<NotePage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
-        <Route path="/collections" element={<CollectionListPage />} />
-      </Routes>
-    </Router>
+   <Router>
+        <Routes>
+          <Route path="/" element={<Layout><HomePage /></Layout>} />
+          <Route path="/notes" element={<Layout><NotePage /></Layout>} />
+          <Route path="/login" element={<Layout><LoginPage /></Layout>} />
+          <Route path="/register" element={<Layout><RegisterPage /></Layout>} />
+          <Route path="/collections" element={<Layout><CollectionListPage /></Layout>} />
+        </Routes>
+      </Router>
     </SnackbarProvider>
   );
 }
