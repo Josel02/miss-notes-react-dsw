@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import Masonry from '@mui/lab/Masonry';
+import axios from 'axios';
 import { useAuth } from '../components/AuthContext';
 import NoteCard from '../components/NoteCard';
 import { Alert } from 'react-bootstrap';
 import { useSnackbar } from 'notistack';
 import { useNavigate } from 'react-router-dom';
-import api from '../services/axiosIncerpet.js';
 import EditNoteModal from './EditNoteModal';
 
 const NoteListPage = () => {
@@ -49,11 +49,16 @@ const NoteListPage = () => {
 
   const saveNote = async (updatedNote) => {
     try{
-      const response = await api.put(`http://localhost:3000/notes/${updatedNote._id}`, updatedNote);
+      const response = await axios.put(`http://localhost:3000/notes/${updatedNote._id}`, updatedNote);
       console.log('Note saved:', response.data);
     }
     catch(error){
       console.error('Error saving note:', error);
+      if (error.response && error.response.status === 403) {
+        navigate('/', { replace: true });
+        enqueueSnackbar('Session expired. Please login again.', { variant: 'warning' });
+        logout();
+      }
     }
 
   };
@@ -62,7 +67,7 @@ const NoteListPage = () => {
     try {
       console.log('Deleting note with id:', noteId);
       // Llamada API para eliminar la nota
-      await api.delete(`http://localhost:3000/notes/${noteId}`);
+      await axios.delete(`http://localhost:3000/notes/${noteId}`);
       
       // Actualizar el estado para remover la nota eliminada
       setNotes(prevNotes => prevNotes.filter(note => note.id !== noteId));
@@ -70,7 +75,14 @@ const NoteListPage = () => {
       setMessage({ text: 'Nota eliminada con éxito.', type: 'success' });
     } catch (error) {
       console.error('Error al eliminar la nota:', error);
-      setMessage({ text: 'Error al eliminar la nota.', type: 'error' });
+      if (error.response && error.response.status === 403) {
+        navigate('/', { replace: true });
+        enqueueSnackbar('Session expired. Please login again.', { variant: 'warning' });
+        logout();
+      }
+      else{
+        setMessage({ text: 'Error al eliminar la nota.', type: 'error' });
+      }
     }
   };
   
@@ -81,17 +93,16 @@ const NoteListPage = () => {
         console.log("aaaaaaa")
         const token = sessionStorage.getItem('token');
         const userId = sessionStorage.getItem('userId');
-        const response = await api.get(`http://localhost:3000/notes/users/${userId}`, {
+        const response = await axios.get(`http://localhost:3000/notes/users/${userId}`, {
           headers: { Authorization: `Bearer ${token}` }});
       setNotes(response.data);
+      setLoading(false);
       } catch (error) {
         if (error.response && error.response.status === 403) {
           navigate('/', { replace: true });
           enqueueSnackbar('Session expired. Please login again.', { variant: 'warning' });
           logout();
         }
-      } finally {
-        setLoading(false);
       }
     };
 
