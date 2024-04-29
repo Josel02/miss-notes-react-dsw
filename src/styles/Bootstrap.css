@@ -20,6 +20,9 @@
     background-color: var(--amaranth-pink);
     border: var(--amaranth-pink) 2px solid; 
     color: var(--white);
+
+body {
+    background-color: var(--pale-purple);
 }
 
 .form-control {

@@ -1,10 +1,13 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../components/AuthContext'; // Verifica que la ruta de importación sea correcta
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import '../styles/layout.css';
 
 const Layout = ({ children }) => {
+  const { isAuthenticated } = useAuth(); // Asegúrate de que el AuthContext está correctamente implementado
+
   return (
     <>
       <nav className="navbar navbar-expand-lg navbar-light bg-light">
@@ -14,15 +17,31 @@ const Layout = ({ children }) => {
         </button>
         <div id="navbarNav" className="collapse navbar-collapse">
           <ul className="navbar-nav">
-            <li className="nav-item">
-              <Link className="nav-link" to="/notes">Notas</Link>
-            </li>
-            <li className="nav-item">
-              <Link className="nav-link" to="/login">Iniciar Sesión</Link>
-            </li>
-            <li className="nav-item">
-              <Link className="nav-link" to="/collections">Colecciones</Link>
-            </li>
+            {isAuthenticated && (
+              <>
+                <li className="nav-item">
+                  <Link className="nav-link" to="/notes">Notas</Link>
+                </li>
+                <li className="nav-item">
+                  <Link className="nav-link" to="/collections">Colecciones</Link>
+                </li>
+                <li className="nav-item">
+                  <Link className="nav-link" to="/profile">
+                    <i className="bi bi-person-circle"></i> Perfil
+                  </Link>
+                </li>
+              </>
+            )}
+            {!isAuthenticated && (
+              <>
+                <li className="nav-item">
+                  <Link className="nav-link" to="/login">Iniciar Sesión</Link>
+                </li>
+                <li className="nav-item">
+                  <Link className="nav-link" to="/register">Registrarse</Link>
+                </li>
+              </>
+            )}
             {/* Agregar más elementos de navegación aquí si es necesario */}
           </ul>
         </div>

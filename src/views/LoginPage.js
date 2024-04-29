@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Layout from '../layouts/Layout';
+import { useAuth } from '../components/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import '../styles/LoginRegister.css';
@@ -9,6 +9,7 @@ const LoginPage = () => {
     const [password, setPassword] = useState('');
     const [loginError, setLoginError] = useState(''); // Estado para manejar los mensajes de error
     const navigate = useNavigate();
+    const { login } = useAuth();
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -19,6 +20,7 @@ const LoginPage = () => {
                 console.log(response.data);
                 sessionStorage.setItem('token', response.data.token);
                 sessionStorage.setItem('userId', response.data.userId);
+                login(response.data.userId);
                 navigate('/');
             })
             .catch((error) => {
@@ -31,7 +33,7 @@ const LoginPage = () => {
     };
 
     return (
-        <Layout>
+        <>
             <div className="login-container">
                 <h2 className="login-title">Iniciar Sesión</h2>
                 <form onSubmit={handleLogin}>
@@ -64,7 +66,7 @@ const LoginPage = () => {
                     </div>
                 </form>
             </div>
-        </Layout>
+        </>
     );
 };
 
