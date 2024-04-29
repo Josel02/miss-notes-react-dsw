@@ -4,7 +4,6 @@ import axios from 'axios';
 import { useAuth } from '../components/AuthContext';
 import NoteCard from '../components/NoteCard';
 import { Alert, Button } from 'react-bootstrap';
-import axios from 'axios';
 import { useSnackbar } from 'notistack';
 import { useNavigate } from 'react-router-dom';
 import EditNoteModal from './EditNoteModal';
@@ -162,7 +161,7 @@ const NoteListPage = () => {
           <Masonry columns={{ xs: 1, sm: 2, md: 3, lg: 4 }} spacing={2}>
             {notes.map(note => (
               <div key={note._id}>
-                <NoteCard note={note} onEdit={() => handleEditNote(note)} onDelete={() => deleteNote(note.id)} />
+                <NoteCard note={note} onEdit={() => handleEditNote(note)} onDelete={() => deleteNote(note._id)} />
               </div>
             ))}
           </Masonry>
@@ -172,7 +171,7 @@ const NoteListPage = () => {
         {editingNote && (
           <EditNoteModal
             show={!!editingNote}
-            handleClose={(note, isCambios) => saveEditedNote(note, isCambios)}
+            handleClose={(note, isCambios) => handleSaveNote(note, isCambios)}
             note={editingNote}
             onSave={null}
           />
