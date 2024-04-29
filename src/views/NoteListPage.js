@@ -70,7 +70,10 @@ const NoteListPage = () => {
   
   const updateNote = async (updatedNote) => {
     try{
-      const response = await axios.put(`http://localhost:3000/notes/${updatedNote._id}`, updatedNote);
+      const token = sessionStorage.getItem('token');
+      const response = await axios.put(`http://localhost:3000/notes/${updatedNote._id}`, updatedNote, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
       console.log('Note saved:', response.data);
     }
     catch(error){
@@ -82,8 +85,11 @@ const NoteListPage = () => {
   const deleteNote = async (noteId) => {
     try {
       console.log('Deleting note with id:', noteId);
+      const token = sessionStorage.getItem('token');
       // Llamada API para eliminar la nota
-      await axios.delete(`http://localhost:3000/notes/${noteId}`);
+      await axios.delete(`http://localhost:3000/notes/${noteId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
       
       // Actualizar el estado para remover la nota eliminada
       setNotes(prevNotes => prevNotes.filter(note => note.id !== noteId));
@@ -100,8 +106,7 @@ const NoteListPage = () => {
     const fetchNotes = async () => {
       try {
         const token = sessionStorage.getItem('token');
-        const userId = sessionStorage.getItem('userId');
-        const response = await axios.get(`http://localhost:3000/notes/users/${userId}`, {
+        const response = await axios.get(`http://localhost:3000/notes/user`, {
           headers: { Authorization: `Bearer ${token}` }});
       setNotes(response.data);
       } catch (error) {
@@ -136,7 +141,7 @@ const NoteListPage = () => {
         <Masonry columns={{ xs: 1, sm: 2, md: 3, lg: 4 }} spacing={2}>
           {notes.map(note => (
             <div key={note._id}>
-              <NoteCard note={note} onEdit={() => handleEditNote(note)} onDelete={() => deleteNote(note.id)} />
+              <NoteCard note={note} onEdit={() => handleEditNote(note)} onDelete={() => deleteNote(note._id)} />
             </div>
           ))}
         </Masonry>
