@@ -47,7 +47,7 @@ const NoteCard = ({ note, onEdit, onDelete }) => {
         </div>
         <div className="action-buttons">
           <Button variant="primary" onClick={() => onEdit(note)}>Editar</Button>
-          <Button variant="danger" onClick={onDelete}>Eliminar</Button>
+          <Button variant="outline-primary" onClick={onDelete}>Eliminar</Button>
         </div>
       </Card.Body>
     </Card>

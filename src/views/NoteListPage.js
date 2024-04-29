@@ -3,7 +3,8 @@ import Masonry from '@mui/lab/Masonry';
 import axios from 'axios';
 import { useAuth } from '../components/AuthContext';
 import NoteCard from '../components/NoteCard';
-import { Alert } from 'react-bootstrap';
+import { Alert, Button } from 'react-bootstrap';
+import axios from 'axios';
 import { useSnackbar } from 'notistack';
 import { useNavigate } from 'react-router-dom';
 import EditNoteModal from './EditNoteModal';
@@ -13,20 +14,31 @@ const NoteListPage = () => {
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState({ text: '', type: '' });
   const [editingNote, setEditingNote] = useState(null);
+  const [isEditingExistingNote, setIsEditingExistingNote] = useState(false);
   const navigate = useNavigate();
   const { logout } = useAuth();
   const { enqueueSnackbar } = useSnackbar();
-  
-  // const addNewNote = (newNote) => {
-  //   setNotes(prevNotes => [...prevNotes, newNote]);
-  // };
+  const emptyNote = {
+    title: '',
+    content: []
+  }
 
-  const saveEditedNote = (updatedNote, isCambios) => {
+  const addNewNote = () => {
+    setEditingNote(emptyNote);
+    setIsEditingExistingNote(false);
+  };
+
+  const handleSaveNote = (updatedNote, isCambios) => {
     if (isCambios){
       let noteWithoutTempIds = processWithoutTempIds(updatedNote);
-      saveNote(noteWithoutTempIds);
+      if (isEditingExistingNote) {
+        updateNote(noteWithoutTempIds);
+      } else {
+        createNote(noteWithoutTempIds);
+      }
     }
     setEditingNote(null)
+    setIsEditingExistingNote(false);
   };
 
   const processWithoutTempIds = (jsonData) => {
@@ -45,11 +57,29 @@ const NoteListPage = () => {
 
   const handleEditNote = (note) => {
     setEditingNote(note);
+    setIsEditingExistingNote(true);
   }
 
-  const saveNote = async (updatedNote) => {
+  const createNote = async (note) => {
+    const token = sessionStorage.getItem('token');
+    try {
+      const response = await axios.post(`http://localhost:3000/notes/`, note, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      console.log('Note created:', response.data);
+      setNotes(prevNotes => [...prevNotes, response.data]);
+    }
+    catch(error){
+      console.error('Error creating note:', error);
+    }
+  }
+  
+  const updateNote = async (updatedNote) => {
     try{
-      const response = await axios.put(`http://localhost:3000/notes/${updatedNote._id}`, updatedNote);
+      const token = sessionStorage.getItem('token');
+      const response = await axios.put(`http://localhost:3000/notes/${updatedNote._id}`, updatedNote, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
       console.log('Note saved:', response.data);
     }
     catch(error){
@@ -66,11 +96,14 @@ const NoteListPage = () => {
   const deleteNote = async (noteId) => {
     try {
       console.log('Deleting note with id:', noteId);
+      const token = sessionStorage.getItem('token');
       // Llamada API para eliminar la nota
-      await axios.delete(`http://localhost:3000/notes/${noteId}`);
+      await axios.delete(`http://localhost:3000/notes/${noteId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
       
       // Actualizar el estado para remover la nota eliminada
-      setNotes(prevNotes => prevNotes.filter(note => note.id !== noteId));
+      setNotes(prevNotes => prevNotes.filter(note => note._id !== noteId));
       
       setMessage({ text: 'Nota eliminada con éxito.', type: 'success' });
     } catch (error) {
@@ -92,8 +125,7 @@ const NoteListPage = () => {
       try {
         console.log("aaaaaaa")
         const token = sessionStorage.getItem('token');
-        const userId = sessionStorage.getItem('userId');
-        const response = await axios.get(`http://localhost:3000/notes/users/${userId}`, {
+        const response = await axios.get(`http://localhost:3000/notes/user`, {
           headers: { Authorization: `Bearer ${token}` }});
       setNotes(response.data);
       setLoading(false);
@@ -116,6 +148,14 @@ const NoteListPage = () => {
             {message.text}
           </Alert>
         )}
+        <Button style={{ 
+          position: 'fixed', right: '20px', 
+          bottom: '20px', zIndex: '1000', 
+          borderRadius: '50%', width: '55px', 
+          height: '55px', fontSize: '28px' }}
+          onClick={addNewNote}>
+          +
+        </Button>
         {loading ? (
           <div>Cargando notas...</div>
         ) : notes.length > 0 ? (

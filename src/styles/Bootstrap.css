@@ -1,14 +1,25 @@
-.btn-primary {
+.btn-primary{
     background-color: var(--amaranth-pink);
     color: var(--white);
     font-weight: bold; /* Texto en negrita */
     border: none;
 }
 
+.btn-outline-primary{
+    color: var(--amaranth-pink);
+    font-weight: bold; /* Texto en negrita */
+    border: var(--amaranth-pink) 2px solid; 
+}
+
 .btn-primary:hover {
     background-color: var(--pink-lavender);
     color: var(--lavender-blush);
 }
+
+.btn-outline-primary:hover {
+    background-color: var(--amaranth-pink);
+    border: var(--amaranth-pink) 2px solid; 
+    color: var(--white);
 
 body {
     background-color: var(--pale-purple);
