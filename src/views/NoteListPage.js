@@ -62,6 +62,7 @@ const NoteListPage = () => {
         headers: { Authorization: `Bearer ${token}` }
       });
       console.log('Note created:', response.data);
+      setNotes(prevNotes => [...prevNotes, response.data]);
     }
     catch(error){
       console.error('Error creating note:', error);
@@ -92,7 +93,7 @@ const NoteListPage = () => {
       });
       
       // Actualizar el estado para remover la nota eliminada
-      setNotes(prevNotes => prevNotes.filter(note => note.id !== noteId));
+      setNotes(prevNotes => prevNotes.filter(note => note._id !== noteId));
       
       setMessage({ text: 'Nota eliminada con éxito.', type: 'success' });
     } catch (error) {
