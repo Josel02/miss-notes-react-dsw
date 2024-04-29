@@ -5,47 +5,45 @@ import Masonry from '@mui/lab/Masonry';
 import NoteCard from '../../components/NoteCard';
 import AddCollectionModal from './AddCollectionModal';
 import EditCollectionModal from './EditCollectionModal';
-import EditNoteModal from '../EditNoteModal';
 import Layout from '../../layouts/Layout';
 import axios from 'axios';
-import { useNotes } from '../../context/NotesContext';
 import '../../styles/CollectionListPage.css'
 
 const CollectionListPage = () => {
   const [collections, setCollections] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [showAddModal, setShowAddModal] = useState(false);
   const [authToken, setAuthToken] = useState('');
   const [message, setMessage] = useState('');
+  const [showAddModal, setShowAddModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [currentCollection, setCurrentCollection] = useState({ id: '', name: '' });
   const [showEditModal, setShowEditModal] = useState(false);
-  const [editingNote, setEditingNote] = useState(null);
-  const { updateNote } = useNotes();
 
   useEffect(() => {
-    const fetchAuthTokenAndCollections = async () => {
-      try {
-        const loginResponse = await axios.post('http://localhost:3000/users/login', {
-          email: "testuser@example.com",
-          password: "password123",
-        });
-        const token = loginResponse.data.token;
-        setAuthToken(token);
-        const config = {
-          headers: { Authorization: `Bearer ${token}` },
-        };
-        const response = await axios.get('http://localhost:3000/collections', config);
-        setCollections(response.data);
-      } catch (error) {
-        console.error('Error fetching auth token or collections:', error);
-        setMessage('Error al cargar datos.');
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchAuthTokenAndCollections();
+    const token = sessionStorage.getItem('token'); // Obtiene el token directamente del sessionStorage
+    if (token) {
+      setAuthToken(token);
+      fetchCollections(token);
+    } else {
+      console.error('No se encontró token de autenticación.');
+      setMessage('No se encontró token de autenticación. Por favor, inicie sesión.');
+    }
   }, []);
+
+  const fetchCollections = async (token) => {
+    try {
+      const config = {
+        headers: { Authorization: `Bearer ${token}` },
+      };
+      const response = await axios.get('http://localhost:3000/collections', config);
+      setCollections(response.data);
+    } catch (error) {
+      console.error('Error fetching collections:', error);
+      setMessage('Error al cargar colecciones.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleEditCollection = async (newName) => {
     try {
@@ -69,58 +67,19 @@ const CollectionListPage = () => {
     }
   };
 
-  const deleteNote = async (noteId) => {
+  const deleteCollection = async () => {
     try {
-      await axios.delete(`http://localhost:3000/notes/${noteId}`);
-      // Actualiza el estado de las colecciones para remover la nota eliminada
-      setCollections(prevCollections => prevCollections.map(collection => ({
-        ...collection,
-        notes: collection.notes.filter(note => note._id !== noteId)
-      })));
-      setMessage({ text: 'Nota eliminada con éxito.', type: 'success' });
+      await axios.delete(`http://localhost:3000/collections/${currentCollection.id}`, {
+        headers: { Authorization: `Bearer ${authToken}` },
+      });
+      // Actualizar el estado para eliminar la colección del estado local
+      setCollections(prevCollections => prevCollections.filter(collection => collection._id !== currentCollection.id));
+      setShowDeleteModal(false);
+      setMessage({ text: 'Colección eliminada con éxito.', type: 'success' });
     } catch (error) {
-      console.error('Error deleting note:', error);
-      setMessage({ text: 'Error al eliminar la nota.', type: 'error' });
+      console.error('Error deleting collection:', error);
+      setMessage({ text: 'Error al eliminar la colección.', type: 'error' });
     }
-  };
-
-
-
-const deleteCollection = async () => {
-    try {
-        await axios.delete(`http://localhost:3000/collections/${currentCollection.id}`, {
-            headers: { Authorization: `Bearer ${authToken}` },
-        });
-        // Actualizar el estado para eliminar la colección del estado local
-        setCollections(prevCollections => prevCollections.filter(collection => collection._id !== currentCollection.id));
-        setShowDeleteModal(false);
-        setMessage({ text: 'Colección eliminada con éxito.', type: 'success' });
-    } catch (error) {
-        console.error('Error deleting collection:', error);
-        setMessage({ text: 'Error al eliminar la colección.', type: 'error' });
-    }
-};
-
-
-  const handleEditNote = (note) => {
-    setEditingNote(note);
-  };
-
-  const saveEditedNote = async (updatedNote) => {
-    console.log("Saving note", updatedNote);
-    updateNote(updatedNote._id, updatedNote).then(() => {
-      setCollections(prevCollections => prevCollections.map(collection => ({
-        ...collection,
-        notes: collection.notes.map(note => note._id === updatedNote._id ? { ...note, ...updatedNote } : note)
-      })));
-    });
-  };
-
-  const handleCloseModal = () => {
-    if (editingNote) {
-      saveEditedNote(editingNote);
-    }
-    setEditingNote(null);
   };
 
   const handleCreateCollection = async (collectionName) => {
@@ -138,8 +97,6 @@ const deleteCollection = async () => {
       setMessage('Error al añadir colección.');
     }
   };
-
-
 
   return (
     <Layout className="collection-list-page">
@@ -179,8 +136,7 @@ const deleteCollection = async () => {
                     <div key={note._id}>
                       <NoteCard
                         note={note}
-                        onEdit={() => handleEditNote(note)}
-                        onDelete={() => deleteNote(note._id)}
+                        onDelete={() => deleteCollection(note._id)}
                       />
                     </div>
                   ))}
@@ -208,7 +164,7 @@ const deleteCollection = async () => {
         handleSave={handleEditCollection}
         initialName={currentCollection.name}
       />
-      <Modal  key={showDeleteModal} show={showDeleteModal} onHide={() => setShowDeleteModal(false)} centered className="collection-modal-content">
+      <Modal key={showDeleteModal} show={showDeleteModal} onHide={() => setShowDeleteModal(false)} centered className="collection-modal-content">
         <Modal.Header closeButton className="collection-modal-header">
           <Modal.Title>Confirmar eliminación</Modal.Title>
         </Modal.Header>
@@ -218,18 +174,8 @@ const deleteCollection = async () => {
           <Button variant="danger" onClick={deleteCollection}>Eliminar</Button>
         </Modal.Footer>
       </Modal>
-      {editingNote && (
-        <EditNoteModal
-          show={!!editingNote}
-          handleClose={handleCloseModal}
-          handleSave={(updatedNote, cambios) => saveEditedNote(updatedNote)}
-          note={editingNote}
-        />
-      )}
     </Layout>
-);
-
-
+  );
 }
 
 export default CollectionListPage;
