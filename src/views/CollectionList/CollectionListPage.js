@@ -6,7 +6,6 @@ import NoteCard from '../../components/NoteCard';
 import AddCollectionModal from './AddCollectionModal';
 import EditCollectionModal from './EditCollectionModal';
 import EditNoteModal from '../EditNoteModal';
-import Layout from '../../layouts/Layout';
 import axios from 'axios';
 import { useNotes } from '../../context/NotesContext';
 import '../../styles/CollectionListPage.css'
@@ -142,7 +141,7 @@ const deleteCollection = async () => {
 
 
   return (
-    <Layout className="collection-list-page">
+    <>
       {message && <Alert variant={message.type === 'success' ? 'success' : 'danger'} className="collection-alert">
         {message.text}
       </Alert>}
@@ -226,9 +225,8 @@ const deleteCollection = async () => {
           note={editingNote}
         />
       )}
-    </Layout>
+   </>
 );
-
 
 }
 

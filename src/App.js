@@ -7,6 +7,7 @@ import NotePage from './views/NoteListPage';
 import LoginPage from './views/LoginPage';
 import RegisterPage from './views/RegisterPage';
 import { SnackbarProvider } from 'notistack';
+import Layout from './layouts/Layout';
 import CollectionListPage from './views/CollectionList/CollectionListPage';
 import './styles/Bootstrap.css';
 
@@ -21,11 +22,11 @@ function App() {
     <Router>
       <NotesProvider> {/* Envolver todas las rutas con NotesProvider */}
         <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/notes" element={<NotePage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
-          <Route path="/collections" element={<CollectionListPage />} />
+          <Route path="/" element={<Layout><HomePage /></Layout>} />
+          <Route path="/notes" element={<Layout><NotePage /></Layout>} />
+          <Route path="/login" element={<Layout><LoginPage /></Layout>} />
+          <Route path="/register" element={<Layout><RegisterPage /></Layout>} />
+          <Route path="/collections" element={<Layout><CollectionListPage /></Layout>} />
         </Routes>
       </NotesProvider>
     </Router>

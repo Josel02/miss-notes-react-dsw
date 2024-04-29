@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import Masonry from '@mui/lab/Masonry';
+import axios from 'axios';
+import { useAuth } from '../components/AuthContext';
 import NoteCard from '../components/NoteCard';
 import { Alert } from 'react-bootstrap';
-import Layout from '../layouts/Layout';
-import axios from 'axios';
+import { useSnackbar } from 'notistack';
+import { useNavigate } from 'react-router-dom';
 import EditNoteModal from './EditNoteModal';
 
 const NoteListPage = () => {
@@ -11,10 +13,13 @@ const NoteListPage = () => {
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState({ text: '', type: '' });
   const [editingNote, setEditingNote] = useState(null);
+  const navigate = useNavigate();
+  const { logout } = useAuth();
+  const { enqueueSnackbar } = useSnackbar();
   
-  const addNewNote = (newNote) => {
-    setNotes(prevNotes => [...prevNotes, newNote]);
-  };
+  // const addNewNote = (newNote) => {
+  //   setNotes(prevNotes => [...prevNotes, newNote]);
+  // };
 
   const saveEditedNote = (updatedNote, isCambios) => {
     if (isCambios){
@@ -49,6 +54,11 @@ const NoteListPage = () => {
     }
     catch(error){
       console.error('Error saving note:', error);
+      if (error.response && error.response.status === 403) {
+        navigate('/', { replace: true });
+        enqueueSnackbar('Session expired. Please login again.', { variant: 'warning' });
+        logout();
+      }
     }
 
   };
@@ -65,7 +75,14 @@ const NoteListPage = () => {
       setMessage({ text: 'Nota eliminada con éxito.', type: 'success' });
     } catch (error) {
       console.error('Error al eliminar la nota:', error);
-      setMessage({ text: 'Error al eliminar la nota.', type: 'error' });
+      if (error.response && error.response.status === 403) {
+        navigate('/', { replace: true });
+        enqueueSnackbar('Session expired. Please login again.', { variant: 'warning' });
+        logout();
+      }
+      else{
+        setMessage({ text: 'Error al eliminar la nota.', type: 'error' });
+      }
     }
   };
   
@@ -73,52 +90,56 @@ const NoteListPage = () => {
   useEffect(() => {
     const fetchNotes = async () => {
       try {
+        console.log("aaaaaaa")
         const token = sessionStorage.getItem('token');
         const userId = sessionStorage.getItem('userId');
         const response = await axios.get(`http://localhost:3000/notes/users/${userId}`, {
           headers: { Authorization: `Bearer ${token}` }});
       setNotes(response.data);
+      setLoading(false);
       } catch (error) {
-        console.error('Error fetching notes', error);
-      } finally {
-        setLoading(false);
+        if (error.response && error.response.status === 403) {
+          navigate('/', { replace: true });
+          enqueueSnackbar('Session expired. Please login again.', { variant: 'warning' });
+          logout();
+        }
       }
     };
 
     fetchNotes();
-  }, []);
+  }, [enqueueSnackbar, logout, navigate]);
 
   return (
-    <Layout>
-      {message.text && (
-        <Alert variant={message.type === 'success' ? 'success' : 'danger'}>
-          {message.text}
-        </Alert>
-      )}
-      {loading ? (
-        <div>Cargando notas...</div>
-      ) : notes.length > 0 ? (
-        <Masonry columns={{ xs: 1, sm: 2, md: 3, lg: 4 }} spacing={2}>
-          {notes.map(note => (
-            <div key={note._id}>
-              <NoteCard note={note} onEdit={() => handleEditNote(note)} onDelete={() => deleteNote(note.id)} />
-            </div>
-          ))}
-        </Masonry>
-      ) : (
-        <Alert variant="info">Todavía no hay ninguna nota, ¿Por qué no añades una?</Alert>
-      )}
-      {editingNote && (
-      <EditNoteModal
-        show={!!editingNote}
-        handleClose={(note, isCambios) => saveEditedNote(note, isCambios)}
-        note={editingNote}
-        onSave={null}
-      />
-)}
-
-    </Layout>
+      <>
+        {message.text && (
+          <Alert variant={message.type === 'success' ? 'success' : 'danger'}>
+            {message.text}
+          </Alert>
+        )}
+        {loading ? (
+          <div>Cargando notas...</div>
+        ) : notes.length > 0 ? (
+          <Masonry columns={{ xs: 1, sm: 2, md: 3, lg: 4 }} spacing={2}>
+            {notes.map(note => (
+              <div key={note._id}>
+                <NoteCard note={note} onEdit={() => handleEditNote(note)} onDelete={() => deleteNote(note.id)} />
+              </div>
+            ))}
+          </Masonry>
+        ) : (
+          <Alert variant="info">Todavía no hay ninguna nota, ¿Por qué no añades una?</Alert>
+        )}
+        {editingNote && (
+          <EditNoteModal
+            show={!!editingNote}
+            handleClose={(note, isCambios) => saveEditedNote(note, isCambios)}
+            note={editingNote}
+            onSave={null}
+          />
+        )}
+      </>
   );
+  
 };
 
 export default NoteListPage;

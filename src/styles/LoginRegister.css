@@ -42,10 +42,6 @@
     padding-right: 40px;
 }
 
-body {
-    background-color: var(--pale-purple);
-}
-
 .text-decoration-underline-login-register {
     font-size: 14px;
     margin-top: 20px;
