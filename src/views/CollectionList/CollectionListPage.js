@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Alert, Accordion, Button, Modal, Tooltip, OverlayTrigger } from 'react-bootstrap';
-import { FiEdit, FiTrash2 } from 'react-icons/fi';
+import { FiEdit, FiTrash2, FiPlusCircle } from 'react-icons/fi';
 import Masonry from '@mui/lab/Masonry';
 import NoteCard from '../../components/NoteCard';
 import AddCollectionModal from './AddCollectionModal';
 import EditCollectionModal from './EditCollectionModal';
 import EditNoteModal from '../EditNoteModal';
+import AddNotesToCollectionModal from '../../components/AddNotesToCollectionModal';
 import axios from 'axios';
 import { useNotes } from '../../context/NotesContext';
 import '../../styles/CollectionListPage.css'
@@ -20,6 +21,7 @@ const CollectionListPage = () => {
   const [currentCollection, setCurrentCollection] = useState({ id: '', name: '' });
   const [showEditModal, setShowEditModal] = useState(false);
   const [editingNote, setEditingNote] = useState(null);
+  const [showAddNotesModal, setShowAddNotesModal] = useState(false);
   const { updateNote } = useNotes();
 
   useEffect(() => {
@@ -45,6 +47,16 @@ const CollectionListPage = () => {
     };
     fetchAuthTokenAndCollections();
   }, []);
+
+  const handleOpenAddNotesModal = (collectionId) => {
+    setCurrentCollection({ id: collectionId, name: collections.find(c => c._id === collectionId).name });
+    setShowAddNotesModal(true);
+  }
+
+  const handleAddNotesToCollection = async (selectedNotes) => {
+    // Lógica para añadir notas a la colección usando API
+    setShowAddNotesModal(false);
+  };
 
   const handleEditCollection = async (newName) => {
     try {
@@ -171,6 +183,15 @@ const deleteCollection = async () => {
                     setShowDeleteModal(true);
                   }}><FiTrash2 /></Button>
                 </OverlayTrigger>
+                <OverlayTrigger
+                  placement="top"
+                  overlay={<Tooltip id={`tooltip-add-${collection._id}`}>Añadir notas</Tooltip>}
+                >
+                <Button variant="link" onClick={() => {
+                    setCurrentCollection({ id: collection._id, name: collection.name });
+                    setShowAddNotesModal(true); // Cambiamos el modal que se muestra
+                  }}><FiPlusCircle /></Button> 
+                </OverlayTrigger>
               </Accordion.Header>
               <Accordion.Body>
                 <Masonry columns={{ xs: 1, sm: 2, md: 3, lg: 4 }} spacing={2}>
@@ -225,6 +246,7 @@ const deleteCollection = async () => {
           note={editingNote}
         />
       )}
+
    </>
 );
 
