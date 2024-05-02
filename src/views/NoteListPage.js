@@ -65,7 +65,6 @@ const NoteListPage = () => {
       const response = await axios.post(`http://localhost:3000/notes/`, note, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      console.log('Note created:', response.data);
       setNotes(prevNotes => [...prevNotes, response.data]);
     }
     catch(error){
@@ -79,7 +78,6 @@ const NoteListPage = () => {
       const response = await axios.put(`http://localhost:3000/notes/${updatedNote._id}`, updatedNote, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      console.log('Note saved:', response.data);
     }
     catch(error){
       console.error('Error saving note:', error);
@@ -94,7 +92,6 @@ const NoteListPage = () => {
 
   const deleteNote = async (noteId) => {
     try {
-      console.log('Deleting note with id:', noteId);
       const token = sessionStorage.getItem('token');
       // Llamada API para eliminar la nota
       await axios.delete(`http://localhost:3000/notes/${noteId}`, {
@@ -122,7 +119,6 @@ const NoteListPage = () => {
   useEffect(() => {
     const fetchNotes = async () => {
       try {
-        console.log("aaaaaaa")
         const token = sessionStorage.getItem('token');
         const response = await axios.get(`http://localhost:3000/notes/user`, {
           headers: { Authorization: `Bearer ${token}` }});

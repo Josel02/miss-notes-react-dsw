@@ -5,6 +5,9 @@ import Masonry from '@mui/lab/Masonry';
 import NoteCard from '../../components/NoteCard';
 import AddCollectionModal from './AddCollectionModal';
 import EditCollectionModal from './EditCollectionModal';
+import { useNavigate } from 'react-router-dom';
+import { useSnackbar } from 'notistack';
+import { useAuth } from '../../components/AuthContext';
 import EditNoteModal from '../EditNoteModal';
 import AddNotesToCollectionModal from '../../components/AddNotesToCollectionModal';
 import axios from 'axios';
@@ -15,43 +18,40 @@ const CollectionListPage = () => {
   const [collections, setCollections] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showAddModal, setShowAddModal] = useState(false);
-  const [authToken, setAuthToken] = useState('');
   const [message, setMessage] = useState('');
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [currentCollection, setCurrentCollection] = useState({ id: '', name: '' });
   const [showEditModal, setShowEditModal] = useState(false);
   const [editingNote, setEditingNote] = useState(null);
   const [showAddNotesModal, setShowAddNotesModal] = useState(false);
+  const [allNotes, setAllNotes] = useState([]);
+  const navigate = useNavigate();
+  const { logout } = useAuth();
+  const { enqueueSnackbar } = useSnackbar();
   const { updateNote } = useNotes();
 
   useEffect(() => {
-    const fetchAuthTokenAndCollections = async () => {
+    const fetchCollectionsAndNotes = async () => { 
       try {
-        const loginResponse = await axios.post('http://localhost:3000/users/login', {
-          email: "testuser@example.com",
-          password: "password123",
-        });
-        const token = loginResponse.data.token;
-        setAuthToken(token);
-        const config = {
-          headers: { Authorization: `Bearer ${token}` },
-        };
-        const response = await axios.get('http://localhost:3000/collections', config);
-        setCollections(response.data);
-      } catch (error) {
-        console.error('Error fetching auth token or collections:', error);
-        setMessage('Error al cargar datos.');
-      } finally {
+        const token = sessionStorage.getItem('token');
+        let response = await axios.get('http://localhost:3000/collections', {
+          headers: { Authorization: `Bearer ${token}` }});
+        await setCollections(response.data);
+
+        response = await axios.get(`http://localhost:3000/notes/user`, {
+          headers: { Authorization: `Bearer ${token}` }});
+        await setAllNotes(response.data);
         setLoading(false);
+      } catch (error) {
+        if (error.response && error.response.status === 403) {
+          navigate('/', { replace: true });
+          enqueueSnackbar('Session expired. Please login again.', { variant: 'warning' });
+          logout();
+        }
       }
     };
-    fetchAuthTokenAndCollections();
+    fetchCollectionsAndNotes();
   }, []);
-
-  const handleOpenAddNotesModal = (collectionId) => {
-    setCurrentCollection({ id: collectionId, name: collections.find(c => c._id === collectionId).name });
-    setShowAddNotesModal(true);
-  }
 
   const handleAddNotesToCollection = async (selectedNotes) => {
     // Lógica para añadir notas a la colección usando API
@@ -60,10 +60,11 @@ const CollectionListPage = () => {
 
   const handleEditCollection = async (newName) => {
     try {
+      const token = sessionStorage.getItem('token');
       await axios.put(`http://localhost:3000/collections/${currentCollection.id}`, {
         name: newName
       }, {
-        headers: { Authorization: `Bearer ${authToken}` }
+        headers: { Authorization: `Bearer ${token}` }
       });
       const updatedCollections = collections.map(collection => {
         if (collection._id === currentCollection.id) {
@@ -99,8 +100,9 @@ const CollectionListPage = () => {
 
 const deleteCollection = async () => {
     try {
+      const token = sessionStorage.getItem('token');
         await axios.delete(`http://localhost:3000/collections/${currentCollection.id}`, {
-            headers: { Authorization: `Bearer ${authToken}` },
+            headers: { Authorization: `Bearer ${token}` },
         });
         // Actualizar el estado para eliminar la colección del estado local
         setCollections(prevCollections => prevCollections.filter(collection => collection._id !== currentCollection.id));
@@ -136,10 +138,11 @@ const deleteCollection = async () => {
 
   const handleCreateCollection = async (collectionName) => {
     try {
+      const token = sessionStorage.getItem('token');
       const response = await axios.post('http://localhost:3000/collections', {
         name: collectionName
       }, {
-        headers: { Authorization: `Bearer ${authToken}` }
+        headers: { Authorization: `Bearer ${token}` }
       });
       setCollections([...collections, response.data]);
       setShowAddModal(false);
@@ -189,7 +192,7 @@ const deleteCollection = async () => {
                 >
                 <Button variant="link" onClick={() => {
                     setCurrentCollection({ id: collection._id, name: collection.name });
-                    setShowAddNotesModal(true); // Cambiamos el modal que se muestra
+                    setShowAddNotesModal(true);
                   }}><FiPlusCircle /></Button> 
                 </OverlayTrigger>
               </Accordion.Header>
@@ -228,7 +231,14 @@ const deleteCollection = async () => {
         handleSave={handleEditCollection}
         initialName={currentCollection.name}
       />
-      <Modal  key={showDeleteModal} show={showDeleteModal} onHide={() => setShowDeleteModal(false)} centered className="collection-modal-content">
+      <AddNotesToCollectionModal
+        key={showAddNotesModal}
+        show={showAddNotesModal}
+        handleClose={() => setShowAddNotesModal(false)}
+        handleSave={handleCreateCollection}
+        notes={allNotes}
+      />
+      <Modal key={showDeleteModal} show={showDeleteModal} onHide={() => setShowDeleteModal(false)} centered className="collection-modal-content">
         <Modal.Header closeButton className="collection-modal-header">
           <Modal.Title>Confirmar eliminación</Modal.Title>
         </Modal.Header>

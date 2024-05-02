@@ -2,16 +2,20 @@ import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form, FormControl  } from 'react-bootstrap';
 import Select from 'react-select';
 
-const AddNotesToCollectionModal = ({ show, handleClose, notes, addNotesToCollection  }) => { 
+const AddNotesToCollectionModal = ({ show, handleClose, notes, addNotesToCollection, initialSelectedNotes  }) => { 
     const [selectedNotes, setSelectedNotes] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
 
+    useEffect(() => {
+      if (initialSelectedNotes){
+        setSelectedNotes(initialSelectedNotes.map(note => ({ value: note._id, label: note.title })));
+      }
+    }, [show, initialSelectedNotes]);
+    
     const handleNoteSelection = (noteId, isChecked) => {
         setSelectedNotes(prev => isChecked ? [...prev, noteId] : prev.filter(id => id !== noteId));
     }
-    useEffect(() => {
-      setSelectedNotes([]);
-    }, [show]);
+
     const handleFilter = event => {
       setSearchTerm(event.target.value.toLowerCase());
     };
@@ -52,7 +56,7 @@ const AddNotesToCollectionModal = ({ show, handleClose, notes, addNotesToCollect
           <Button variant="secondary" onClick={handleClose}>
             Cerrar
           </Button>
-          <Button variant="primary" onClick={() => addNotesToCollection(selectedNotes)}>
+          <Button variant="primary" onClick={() => addNotesToCollection(selectedNotes.map(note => note.value))}>
             Añadir Notas
           </Button>
         </Modal.Footer>
