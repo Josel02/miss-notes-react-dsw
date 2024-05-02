@@ -235,8 +235,8 @@ const deleteCollection = async () => {
         key={showAddNotesModal}
         show={showAddNotesModal}
         handleClose={() => setShowAddNotesModal(false)}
-        handleSave={handleCreateCollection}
         notes={allNotes}
+        handleSave={handleCreateCollection}
       />
       <Modal key={showDeleteModal} show={showDeleteModal} onHide={() => setShowDeleteModal(false)} centered className="collection-modal-content">
         <Modal.Header closeButton className="collection-modal-header">
