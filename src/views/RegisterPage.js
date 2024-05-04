@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
-import Layout from '../layouts/Layout';
 import '../styles/LoginRegister.css';
 import { Container, Form, Button, Alert, InputGroup, FormControl } from 'react-bootstrap';
 import { EyeSlash, Eye } from 'react-bootstrap-icons';

@@ -31,21 +31,19 @@ export const NotesProvider = ({ children }) => {
 
   const updateNote = async (id, updatedNote) => {
     try {
-      const response = await axios.put(`http://localhost:3000/notes/${id}`, updatedNote);
+      const token = sessionStorage.getItem('token');
+      const response = await axios.put(`http://localhost:3000/notes/${id}`, updatedNote, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
       if (response.status === 200) {
         setNotes(prevNotes => prevNotes.map(note => note._id === id ? { ...note, ...response.data } : note));
         return Promise.resolve();
-      } else {
-        return Promise.reject('Error updating note');
       }
     } catch (error) {
       console.error('Error updating note:', error);
       return Promise.reject(error);
     }
   };
-  
-  
-  
   
   const deleteNote = async (id) => {
     await axios.delete(`http://localhost:3000/notes/${id}`);
