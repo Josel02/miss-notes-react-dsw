@@ -7,6 +7,7 @@
 
 .btn-outline-primary{
     color: var(--amaranth-pink);
+    background-color: white;
     font-weight: bold; /* Texto en negrita */
     border: var(--amaranth-pink) 2px solid; 
 }
@@ -23,7 +24,7 @@
 }
 
 body {
-    background-color: var(--pale-purple);
+    background-color: var(--aqua-green);
 }
 
 .form-control {

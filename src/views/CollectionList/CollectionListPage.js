@@ -55,6 +55,7 @@ const CollectionListPage = () => {
 
   const handleAddNotesToCollection = async (selectedNotes) => {
     // Lógica para añadir notas a la colección usando API
+    console.log('Selected notes:', selectedNotes);
     setShowAddNotesModal(false);
   };
 
@@ -114,7 +115,6 @@ const deleteCollection = async () => {
     }
 };
 
-
   const handleEditNote = (note) => {
     setEditingNote(note);
   };
@@ -152,8 +152,6 @@ const deleteCollection = async () => {
       setMessage('Error al añadir colección.');
     }
   };
-
-
 
   return (
     <>
@@ -236,7 +234,7 @@ const deleteCollection = async () => {
         show={showAddNotesModal}
         handleClose={() => setShowAddNotesModal(false)}
         notes={allNotes}
-        handleSave={handleCreateCollection}
+        handleSave={handleAddNotesToCollection}
       />
       <Modal key={showDeleteModal} show={showDeleteModal} onHide={() => setShowDeleteModal(false)} centered className="collection-modal-content">
         <Modal.Header closeButton className="collection-modal-header">

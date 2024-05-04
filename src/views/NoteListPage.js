@@ -143,7 +143,8 @@ const NoteListPage = () => {
             {message.text}
           </Alert>
         )}
-        <Button style={{ 
+        <Button variant="outline-primary" 
+          style={{ 
           position: 'fixed', right: '20px', 
           bottom: '20px', zIndex: '1000', 
           borderRadius: '50%', width: '55px', 

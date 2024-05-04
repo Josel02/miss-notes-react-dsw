@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form, FormControl, FormCheck } from 'react-bootstrap';
 
-const AddNotesToCollectionModal = ({ show, handleClose, notes, addNotesToCollection, initialSelectedNotes }) => {
+const AddNotesToCollectionModal = ({ show, handleClose, notes, handleSave, initialSelectedNotes }) => {
     const [selectedNotes, setSelectedNotes] = useState(new Set());
     const [searchTerm, setSearchTerm] = useState("");
     const [selectAll, setSelectAll] = useState(false);
@@ -80,7 +80,7 @@ const AddNotesToCollectionModal = ({ show, handleClose, notes, addNotesToCollect
                 <Button variant="secondary" onClick={handleClose}>
                     Cerrar
                 </Button>
-                <Button variant="primary" onClick={() => addNotesToCollection(Array.from(selectedNotes))}>
+                <Button variant="primary" onClick={() => handleSave(Array.from(selectedNotes))}>
                     Añadir Notas
                 </Button>
             </Modal.Footer>
