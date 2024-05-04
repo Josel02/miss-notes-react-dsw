@@ -126,7 +126,9 @@ const CollectionListPage = () => {
 
   const deleteNote = async (noteId) => {
     try {
-      await axios.delete(`http://localhost:3000/notes/${noteId}`);
+      const token = localStorage.getItem('token');
+      await axios.delete(`http://localhost:3000/notes/${noteId}`, {
+        headers: { Authorization: `Bearer ${token}` }});
       setCollections(prevCollections => prevCollections.map(collection => ({
         ...collection,
         notes: collection.notes.filter(note => note._id !== noteId)
