@@ -18,9 +18,9 @@ const LoginPage = () => {
         axios.post('http://localhost:3000/users/login', { email, password })
             .then((response) => {
                 console.log(response.data);
-                sessionStorage.setItem('token', response.data.token);
-                sessionStorage.setItem('userId', response.data.userId);
-                login(response.data.userId);
+                localStorage.setItem('token', response.data.token);
+                localStorage.setItem('userId', response.data.userId);
+                login(response.data.userId, response.data.token);
                 navigate('/');
             })
             .catch((error) => {

@@ -60,7 +60,7 @@ const NoteListPage = () => {
   }
 
   const createNote = async (note) => {
-    const token = sessionStorage.getItem('token');
+    const token = localStorage.getItem('token');
     try {
       const response = await axios.post(`http://localhost:3000/notes/`, note, {
         headers: { Authorization: `Bearer ${token}` }
@@ -75,7 +75,7 @@ const NoteListPage = () => {
   
   const updateNote = async (updatedNote) => {
     try{
-      const token = sessionStorage.getItem('token');
+      const token = localStorage.getItem('token');
       const response = await axios.put(`http://localhost:3000/notes/${updatedNote._id}`, updatedNote, {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -95,7 +95,7 @@ const NoteListPage = () => {
   const deleteNote = async (noteId) => {
     try {
       console.log('Deleting note with id:', noteId);
-      const token = sessionStorage.getItem('token');
+      const token = localStorage.getItem('token');
       // Llamada API para eliminar la nota
       await axios.delete(`http://localhost:3000/notes/${noteId}`, {
         headers: { Authorization: `Bearer ${token}` }
@@ -123,7 +123,7 @@ const NoteListPage = () => {
     const fetchNotes = async () => {
       try {
         console.log("aaaaaaa")
-        const token = sessionStorage.getItem('token');
+        const token = localStorage.getItem('token');
         const response = await axios.get(`http://localhost:3000/notes/user`, {
           headers: { Authorization: `Bearer ${token}` }});
       setNotes(response.data);
