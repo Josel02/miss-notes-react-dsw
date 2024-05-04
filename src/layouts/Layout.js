@@ -1,12 +1,19 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { useAuth } from '../components/AuthContext'; // Verifica que la ruta de importación sea correcta
+import { Link, useNavigate } from 'react-router-dom'; // Importar useNavigate en lugar de useHistory
+import LogoutIcon from '@mui/icons-material/Logout';
+import { useAuth } from '../components/AuthContext';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import '../styles/layout.css';
 
 const Layout = ({ children }) => {
-  const { isAuthenticated } = useAuth(); // Asegúrate de que el AuthContext está correctamente implementado
+  const { isAuthenticated, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/', { replace: true });
+  };
 
   return (
     <>
@@ -16,7 +23,7 @@ const Layout = ({ children }) => {
           <span className="navbar-toggler-icon" />
         </button>
         <div id="navbarNav" className="collapse navbar-collapse">
-          <ul className="navbar-nav">
+          <ul className="navbar-nav me-auto">
             {isAuthenticated && (
               <>
                 <li className="nav-item">
@@ -42,8 +49,12 @@ const Layout = ({ children }) => {
                 </li>
               </>
             )}
-            {/* Agregar más elementos de navegación aquí si es necesario */}
           </ul>
+          {isAuthenticated && (
+            <button className="btn btn-outline-primary me-2 logout-button" type="button" onClick={handleLogout}>
+              <LogoutIcon /> Cerrar Sesión
+            </button>
+          )}
         </div>
       </nav>
       <div className="container">
