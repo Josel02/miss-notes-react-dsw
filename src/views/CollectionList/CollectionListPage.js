@@ -86,7 +86,6 @@ const CollectionListPage = () => {
       }
     }
   };
-  
 
   const handleEditCollection = async (newName) => {
     try {
@@ -108,13 +107,17 @@ const CollectionListPage = () => {
     } catch (error) {
       console.error('Error updating collection:', error);
       setMessage('Error al actualizar el nombre de la colección.');
+      if (error.response && error.response.status === 403) {
+        navigate('/', { replace: true });
+        enqueueSnackbar('Session expired. Please login again.', { variant: 'warning' });
+        logout();
+      }
     }
   };
 
   const deleteNote = async (noteId) => {
     try {
       await axios.delete(`http://localhost:3000/notes/${noteId}`);
-      // Actualiza el estado de las colecciones para remover la nota eliminada
       setCollections(prevCollections => prevCollections.map(collection => ({
         ...collection,
         notes: collection.notes.filter(note => note._id !== noteId)
@@ -123,6 +126,11 @@ const CollectionListPage = () => {
     } catch (error) {
       console.error('Error deleting note:', error);
       setMessage({ text: 'Error al eliminar la nota.', type: 'error' });
+      if (error.response && error.response.status === 403) {
+        navigate('/', { replace: true });
+        enqueueSnackbar('Session expired. Please login again.', { variant: 'warning' });
+        logout();
+      }
     }
   };
 
@@ -141,6 +149,11 @@ const deleteCollection = async () => {
     } catch (error) {
         console.error('Error deleting collection:', error);
         setMessage({ text: 'Error al eliminar la colección.', type: 'error' });
+        if (error.response && error.response.status === 403) {
+          navigate('/', { replace: true });
+          enqueueSnackbar('Session expired. Please login again.', { variant: 'warning' });
+          logout();
+        }
     }
 };
 
@@ -155,6 +168,14 @@ const deleteCollection = async () => {
         ...collection,
         notes: collection.notes.map(note => note._id === updatedNote._id ? { ...note, ...updatedNote } : note)
       })));
+    })
+    .catch(error => {
+      console.error('Error saving note:', error);
+      if (error.response && error.response.status === 403) {
+        navigate('/', { replace: true });
+        enqueueSnackbar('Session expired. Please login again.', { variant: 'warning' });
+        logout();
+      }
     });
   };
 
@@ -179,6 +200,11 @@ const deleteCollection = async () => {
     } catch (error) {
       console.error('Error creating collection:', error);
       setMessage('Error al añadir colección.');
+      if (error.response && error.response.status === 403) {
+        navigate('/', { replace: true });
+        enqueueSnackbar('Session expired. Please login again.', { variant: 'warning' });
+        logout();
+      }
     }
   };
 
