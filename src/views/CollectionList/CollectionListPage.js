@@ -54,10 +54,39 @@ const CollectionListPage = () => {
   }, []);
 
   const handleAddNotesToCollection = async (selectedNotes) => {
-    // Lógica para añadir notas a la colección usando API
-    console.log('Selected notes:', selectedNotes);
-    setShowAddNotesModal(false);
+    const token = sessionStorage.getItem('token');
+  
+    try {
+      const config = {
+        headers: { Authorization: `Bearer ${token}` }
+      };
+  
+      const payload = {
+        noteIds: selectedNotes
+      };
+  
+      const response = await axios.put(
+        `http://localhost:3000/collections/${currentCollection.id}/notes/add`,
+        payload,
+        config
+      );
+  
+      console.log('Response from adding notes:', response.data);
+      setShowAddNotesModal(false);
+    } catch (error) {
+      console.error('Error adding notes to collection:', error);
+      if (error.response) {
+        if (error.response.status === 403) {
+          navigate('/', { replace: true });
+          enqueueSnackbar('Session expired. Please login again.', { variant: 'warning' });
+          logout();
+        } else {
+          enqueueSnackbar(`Failed to add notes: ${error.response.data.message}`, { variant: 'error' });
+        }
+      }
+    }
   };
+  
 
   const handleEditCollection = async (newName) => {
     try {
