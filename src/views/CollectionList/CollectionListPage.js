@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { Alert, Accordion, Button, Modal, Tooltip, OverlayTrigger } from 'react-bootstrap';
-import { FiEdit, FiTrash2 } from 'react-icons/fi';
+import { FiEdit, FiTrash2, FiPlusCircle } from 'react-icons/fi';
 import Masonry from '@mui/lab/Masonry';
 import NoteCard from '../../components/NoteCard';
 import AddCollectionModal from './AddCollectionModal';
 import EditCollectionModal from './EditCollectionModal';
+import { useNavigate } from 'react-router-dom';
+import { useSnackbar } from 'notistack';
+import { useAuth } from '../../components/AuthContext';
 import EditNoteModal from '../EditNoteModal';
+import AddNotesToCollectionModal from '../../components/AddNotesToCollectionModal';
 import axios from 'axios';
 import { useNotes } from '../../context/NotesContext';
 import '../../styles/CollectionListPage.css'
@@ -14,44 +18,91 @@ const CollectionListPage = () => {
   const [collections, setCollections] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showAddModal, setShowAddModal] = useState(false);
-  const [authToken, setAuthToken] = useState('');
   const [message, setMessage] = useState('');
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [currentCollection, setCurrentCollection] = useState({ id: '', name: '' });
   const [showEditModal, setShowEditModal] = useState(false);
   const [editingNote, setEditingNote] = useState(null);
+  const [showAddNotesModal, setShowAddNotesModal] = useState(false);
+  const [allNotes, setAllNotes] = useState([]);
+  const navigate = useNavigate();
+  const { logout } = useAuth();
+  const { enqueueSnackbar } = useSnackbar();
   const { updateNote } = useNotes();
 
   useEffect(() => {
-    const fetchAuthTokenAndCollections = async () => {
+    const fetchCollectionsAndNotes = async () => { 
       try {
-        const loginResponse = await axios.post('http://localhost:3000/users/login', {
-          email: "testuser@example.com",
-          password: "password123",
-        });
-        const token = loginResponse.data.token;
-        setAuthToken(token);
-        const config = {
-          headers: { Authorization: `Bearer ${token}` },
-        };
-        const response = await axios.get('http://localhost:3000/collections', config);
-        setCollections(response.data);
-      } catch (error) {
-        console.error('Error fetching auth token or collections:', error);
-        setMessage('Error al cargar datos.');
-      } finally {
+        const token = sessionStorage.getItem('token');
+        let response = await axios.get('http://localhost:3000/collections', {
+          headers: { Authorization: `Bearer ${token}` }});
+        await setCollections(response.data);
+
+        response = await axios.get(`http://localhost:3000/notes/user`, {
+          headers: { Authorization: `Bearer ${token}` }});
+        await setAllNotes(response.data);
         setLoading(false);
+      } catch (error) {
+        if (error.response && error.response.status === 403) {
+          navigate('/', { replace: true });
+          enqueueSnackbar('Session expired. Please login again.', { variant: 'warning' });
+          logout();
+        }
       }
     };
-    fetchAuthTokenAndCollections();
+    fetchCollectionsAndNotes();
   }, []);
+
+  const handleAddNotesToCollection = async (selectedNotes) => {
+    const token = sessionStorage.getItem('token');
+  
+    try {
+      const config = {
+        headers: { Authorization: `Bearer ${token}` }
+      };
+  
+      const payload = {
+        noteIds: selectedNotes
+      };
+  
+      const response = await axios.put(
+        `http://localhost:3000/collections/${currentCollection.id}/notes/add`,
+        payload,
+        config
+      );
+
+      const updatedNoteIds = response.data.notes;
+      const updatedNotes = allNotes.filter(note => updatedNoteIds.includes(note._id));
+
+      setCollections(collections.map(collection => {
+        if (collection._id === currentCollection.id) {
+          return { ...collection, notes: updatedNotes };
+        }
+        return collection;
+      }));
+
+      setShowAddNotesModal(false);
+    } catch (error) {
+      console.error('Error adding notes to collection:', error);
+      if (error.response) {
+        if (error.response.status === 403) {
+          navigate('/', { replace: true });
+          enqueueSnackbar('Session expired. Please login again.', { variant: 'warning' });
+          logout();
+        } else {
+          enqueueSnackbar(`Failed to add notes: ${error.response.data.message}`, { variant: 'error' });
+        }
+      }
+    }
+  };
 
   const handleEditCollection = async (newName) => {
     try {
+      const token = sessionStorage.getItem('token');
       await axios.put(`http://localhost:3000/collections/${currentCollection.id}`, {
         name: newName
       }, {
-        headers: { Authorization: `Bearer ${authToken}` }
+        headers: { Authorization: `Bearer ${token}` }
       });
       const updatedCollections = collections.map(collection => {
         if (collection._id === currentCollection.id) {
@@ -65,6 +116,11 @@ const CollectionListPage = () => {
     } catch (error) {
       console.error('Error updating collection:', error);
       setMessage('Error al actualizar el nombre de la colección.');
+      if (error.response && error.response.status === 403) {
+        navigate('/', { replace: true });
+        enqueueSnackbar('Session expired. Please login again.', { variant: 'warning' });
+        logout();
+      }
     }
   };
 
@@ -81,6 +137,11 @@ const CollectionListPage = () => {
     } catch (error) {
       console.error('Error deleting note:', error);
       setMessage({ text: 'Error al eliminar la nota.', type: 'error' });
+      if (error.response && error.response.status === 403) {
+        navigate('/', { replace: true });
+        enqueueSnackbar('Session expired. Please login again.', { variant: 'warning' });
+        logout();
+      }
     }
   };
 
@@ -88,8 +149,9 @@ const CollectionListPage = () => {
 
 const deleteCollection = async () => {
     try {
+      const token = sessionStorage.getItem('token');
         await axios.delete(`http://localhost:3000/collections/${currentCollection.id}`, {
-            headers: { Authorization: `Bearer ${authToken}` },
+            headers: { Authorization: `Bearer ${token}` },
         });
         // Actualizar el estado para eliminar la colección del estado local
         setCollections(prevCollections => prevCollections.filter(collection => collection._id !== currentCollection.id));
@@ -98,9 +160,13 @@ const deleteCollection = async () => {
     } catch (error) {
         console.error('Error deleting collection:', error);
         setMessage({ text: 'Error al eliminar la colección.', type: 'error' });
+        if (error.response && error.response.status === 403) {
+          navigate('/', { replace: true });
+          enqueueSnackbar('Session expired. Please login again.', { variant: 'warning' });
+          logout();
+        }
     }
 };
-
 
   const handleEditNote = (note) => {
     setEditingNote(note);
@@ -113,6 +179,14 @@ const deleteCollection = async () => {
         ...collection,
         notes: collection.notes.map(note => note._id === updatedNote._id ? { ...note, ...updatedNote } : note)
       })));
+    })
+    .catch(error => {
+      console.error('Error saving note:', error);
+      if (error.response && error.response.status === 403) {
+        navigate('/', { replace: true });
+        enqueueSnackbar('Session expired. Please login again.', { variant: 'warning' });
+        logout();
+      }
     });
   };
 
@@ -125,10 +199,11 @@ const deleteCollection = async () => {
 
   const handleCreateCollection = async (collectionName) => {
     try {
+      const token = sessionStorage.getItem('token');
       const response = await axios.post('http://localhost:3000/collections', {
         name: collectionName
       }, {
-        headers: { Authorization: `Bearer ${authToken}` }
+        headers: { Authorization: `Bearer ${token}` }
       });
       setCollections([...collections, response.data]);
       setShowAddModal(false);
@@ -136,10 +211,13 @@ const deleteCollection = async () => {
     } catch (error) {
       console.error('Error creating collection:', error);
       setMessage('Error al añadir colección.');
+      if (error.response && error.response.status === 403) {
+        navigate('/', { replace: true });
+        enqueueSnackbar('Session expired. Please login again.', { variant: 'warning' });
+        logout();
+      }
     }
   };
-
-
 
   return (
     <>
@@ -171,6 +249,15 @@ const deleteCollection = async () => {
                     setCurrentCollection({ id: collection._id, name: collection.name });
                     setShowDeleteModal(true);
                   }}><FiTrash2 /></Button>
+                </OverlayTrigger>
+                <OverlayTrigger
+                  placement="top"
+                  overlay={<Tooltip id={`tooltip-add-${collection._id}`}>Añadir notas</Tooltip>}
+                >
+                <Button variant="link" onClick={() => {
+                    setCurrentCollection({ id: collection._id, name: collection.name, notes: collection.notes });
+                    setShowAddNotesModal(true);
+                  }}><FiPlusCircle /></Button> 
                 </OverlayTrigger>
               </Accordion.Header>
               <Accordion.Body>
@@ -208,7 +295,15 @@ const deleteCollection = async () => {
         handleSave={handleEditCollection}
         initialName={currentCollection.name}
       />
-      <Modal  key={showDeleteModal} show={showDeleteModal} onHide={() => setShowDeleteModal(false)} centered className="collection-modal-content">
+      <AddNotesToCollectionModal
+        key={showAddNotesModal}
+        show={showAddNotesModal}
+        handleClose={() => setShowAddNotesModal(false)}
+        notes={allNotes}
+        handleSave={handleAddNotesToCollection}
+        initialSelectedNotes={currentCollection.notes || []}
+      />
+      <Modal key={showDeleteModal} show={showDeleteModal} onHide={() => setShowDeleteModal(false)} centered className="collection-modal-content">
         <Modal.Header closeButton className="collection-modal-header">
           <Modal.Title>Confirmar eliminación</Modal.Title>
         </Modal.Header>
@@ -226,6 +321,7 @@ const deleteCollection = async () => {
           note={editingNote}
         />
       )}
+
    </>
 );
 

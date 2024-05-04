@@ -55,8 +55,6 @@ const EditNoteModal = ({ show, handleClose, note, onSave}) => {
   
 
   const handleHide = () => {
-    console.log('Hiding modal');
-    console.log(note);
     handleClose(note, isCambios);
   }
 
