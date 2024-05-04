@@ -244,7 +244,7 @@ const deleteCollection = async () => {
                   overlay={<Tooltip id={`tooltip-add-${collection._id}`}>Añadir notas</Tooltip>}
                 >
                 <Button variant="link" onClick={() => {
-                    setCurrentCollection({ id: collection._id, name: collection.name });
+                    setCurrentCollection({ id: collection._id, name: collection.name, notes: collection.notes });
                     setShowAddNotesModal(true);
                   }}><FiPlusCircle /></Button> 
                 </OverlayTrigger>
@@ -290,6 +290,7 @@ const deleteCollection = async () => {
         handleClose={() => setShowAddNotesModal(false)}
         notes={allNotes}
         handleSave={handleAddNotesToCollection}
+        initialSelectedNotes={currentCollection.notes || []}
       />
       <Modal key={showDeleteModal} show={showDeleteModal} onHide={() => setShowDeleteModal(false)} centered className="collection-modal-content">
         <Modal.Header closeButton className="collection-modal-header">
