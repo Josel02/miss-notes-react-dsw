@@ -70,8 +70,17 @@ const CollectionListPage = () => {
         payload,
         config
       );
-  
-      console.log('Response from adding notes:', response.data);
+
+      const updatedNoteIds = response.data.notes;
+      const updatedNotes = allNotes.filter(note => updatedNoteIds.includes(note._id));
+
+      setCollections(collections.map(collection => {
+        if (collection._id === currentCollection.id) {
+          return { ...collection, notes: updatedNotes };
+        }
+        return collection;
+      }));
+
       setShowAddNotesModal(false);
     } catch (error) {
       console.error('Error adding notes to collection:', error);
