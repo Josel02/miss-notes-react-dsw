@@ -33,7 +33,7 @@ const CollectionListPage = () => {
   useEffect(() => {
     const fetchCollectionsAndNotes = async () => { 
       try {
-        const token = sessionStorage.getItem('token');
+        const token = localStorage.getItem('token');
         let response = await axios.get('http://localhost:3000/collections', {
           headers: { Authorization: `Bearer ${token}` }});
         await setCollections(response.data);
@@ -54,7 +54,7 @@ const CollectionListPage = () => {
   }, []);
 
   const handleAddNotesToCollection = async (selectedNotes) => {
-    const token = sessionStorage.getItem('token');
+    const token = localStorage.getItem('token');
   
     try {
       const config = {
@@ -98,7 +98,7 @@ const CollectionListPage = () => {
 
   const handleEditCollection = async (newName) => {
     try {
-      const token = sessionStorage.getItem('token');
+      const token = localStorage.getItem('token');
       await axios.put(`http://localhost:3000/collections/${currentCollection.id}`, {
         name: newName
       }, {
@@ -149,7 +149,7 @@ const CollectionListPage = () => {
 
 const deleteCollection = async () => {
     try {
-      const token = sessionStorage.getItem('token');
+      const token = localStorage.getItem('token');
         await axios.delete(`http://localhost:3000/collections/${currentCollection.id}`, {
             headers: { Authorization: `Bearer ${token}` },
         });
@@ -199,7 +199,7 @@ const deleteCollection = async () => {
 
   const handleCreateCollection = async (collectionName) => {
     try {
-      const token = sessionStorage.getItem('token');
+      const token = localStorage.getItem('token');
       const response = await axios.post('http://localhost:3000/collections', {
         name: collectionName
       }, {
