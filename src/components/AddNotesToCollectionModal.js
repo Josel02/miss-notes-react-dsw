@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form, FormControl, FormCheck } from 'react-bootstrap';
+import '../styles/AddNotesToCollectionModal.css';
 
 const AddNotesToCollectionModal = ({ show, handleClose, notes, handleSave, initialSelectedNotes }) => {
     const [selectedNotes, setSelectedNotes] = useState(new Set());
@@ -62,7 +63,7 @@ const AddNotesToCollectionModal = ({ show, handleClose, notes, handleSave, initi
                         label="Seleccionar todas"
                         checked={selectAll}
                         onChange={(e) => handleSelectAll(e.target.checked)}
-                        className="mb-2"
+                        className="mb-2 select-all-checkbox"
                     />
                     {filteredNotes.map(note => (
                         <FormCheck
