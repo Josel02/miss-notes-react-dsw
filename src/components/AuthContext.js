@@ -5,6 +5,7 @@ const AuthContext = createContext(null);
 export const AuthProvider = ({ children }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [userId, setUserId] = useState(null);
+    const [role, setRole] = useState(null);
 
     // Efecto para inicializar el estado de autenticación basado en el almacenamiento local
     useEffect(() => {
@@ -13,16 +14,20 @@ export const AuthProvider = ({ children }) => {
         if (storedToken && storedUserId) {
             setIsAuthenticated(true);
             setUserId(storedUserId);
+            //Petición para obtener el rol del usuario
+
         }
     }, []);
 
     // Función para manejar el inicio de sesión
-    const login = (userId, token) => {
+    const login = (userId, token, role) => {
         if (token && userId) {
             localStorage.setItem('token', token); // Guardar token en localStorage
             localStorage.setItem('userId', userId); // Guardar userId en localStorage
             setIsAuthenticated(true);
             setUserId(userId);
+            setRole(role);
+            console.log("role: ", role)
         } else {
             console.error('Login failed: token or userId not provided');
         }
@@ -34,10 +39,11 @@ export const AuthProvider = ({ children }) => {
         localStorage.removeItem('userId'); // Eliminar userId de localStorage
         setIsAuthenticated(false);
         setUserId(null);
+        setRole(null);
     };
 
     return (
-        <AuthContext.Provider value={{ isAuthenticated, userId, login, logout }}>
+        <AuthContext.Provider value={{ isAuthenticated, userId, login, logout, role }}>
             {children}
         </AuthContext.Provider>
     );
