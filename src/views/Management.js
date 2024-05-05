@@ -8,7 +8,7 @@ import { useAuth } from '../components/AuthContext';
 import axios from 'axios';
 import EditUserModal from './EditUserModal';
 
-const UserManagement = () => {
+const Management = () => {
   const [users, setUsers] = useState([]);
   const [editingUser, setEditingUser] = useState(null);
   const navigate = useNavigate();
@@ -113,4 +113,4 @@ const UserManagement = () => {
   );
 };
 
-export default UserManagement;
+export default Management;

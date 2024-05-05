@@ -18,8 +18,13 @@ const Layout = ({ children }) => {
     navigate('/', { replace: true });
   };
 
-  const toggleAdminView = () => {
-    setAdminView(!adminView); // Cambia entre vistas de admin y usuario
+  const toggleAdminView = async () => {
+    await setAdminView(!adminView); // Cambia entre vistas de admin y usuario
+    if(!adminView) {
+      navigate('/management', { replace: true });
+    } else {
+      navigate('/notes', { replace: true });
+    }
   };
 
   return (
@@ -36,10 +41,10 @@ const Layout = ({ children }) => {
                 {adminView && (
                   <>
                     <li className="nav-item">
-                      <Link className="nav-link" to="/manageUsers">Usuarios</Link>
+                      <Link className="nav-link" to="/management">Gestión</Link>
                     </li>
                     <li className="nav-item">
-                      <Link className="nav-link" to="/seccion2">Notas</Link>
+                      <Link className="nav-link" to="/manageNotes">Notas</Link>
                     </li>
                     <li className="nav-item">
                       <Link className="nav-link" to="/seccion3">Colecciones</Link>
