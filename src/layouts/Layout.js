@@ -27,16 +27,16 @@ const Layout = ({ children }) => {
             {isAuthenticated && role === 'Admin' && (
               <>
                 <li className="nav-item">
-                  <Link className="nav-link" to="/seccion1">Sección 1</Link>
+                  <Link className="nav-link" to="/manageUsers">Usuarios</Link>
                 </li>
                 <li className="nav-item">
-                  <Link className="nav-link" to="/seccion2">Sección 2</Link>
+                  <Link className="nav-link" to="/seccion2">Notas</Link>
                 </li>
                 <li className="nav-item">
-                  <Link className="nav-link" to="/seccion3">Sección 3</Link>
+                  <Link className="nav-link" to="/seccion3">Colecciones</Link>
                 </li>
                 <li className="nav-item">
-                  <Link className="nav-link" to="/seccion4">Sección 4</Link>
+                  <Link className="nav-link" to="/seccion4">Relaciones</Link>
                 </li>
               </>
             )}

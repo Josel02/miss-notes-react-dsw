@@ -1,6 +1,7 @@
 import React from 'react';
 import { Card, Button, ListGroup } from 'react-bootstrap';
 import '../styles/NoteCard.css';
+import '../styles/Card.css';
 
 const NoteCard = ({ note, onEdit, onDelete }) => {
 
@@ -39,7 +40,7 @@ const NoteCard = ({ note, onEdit, onDelete }) => {
   };
 
   return (
-    <Card className="note-card" style={{ margin: '10px' }}>
+    <Card className="note-card card" style={{ margin: '10px' }}>
       <Card.Body>
         <Card.Title>{note.title}</Card.Title>
         <div>
