@@ -1,12 +1,19 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { useAuth } from '../components/AuthContext'; // Verifica que la ruta de importación sea correcta
+import { Link, useNavigate } from 'react-router-dom';
+import LogoutIcon from '@mui/icons-material/Logout';
+import { useAuth } from '../components/AuthContext';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import '../styles/layout.css';
 
 const Layout = ({ children }) => {
-  const { isAuthenticated } = useAuth(); // Asegúrate de que el AuthContext está correctamente implementado
+  const { isAuthenticated, logout, role } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/', { replace: true });
+  };
 
   return (
     <>
@@ -16,8 +23,24 @@ const Layout = ({ children }) => {
           <span className="navbar-toggler-icon" />
         </button>
         <div id="navbarNav" className="collapse navbar-collapse">
-          <ul className="navbar-nav">
-            {isAuthenticated && (
+          <ul className="navbar-nav me-auto">
+            {isAuthenticated && role === 'Admin' && (
+              <>
+                <li className="nav-item">
+                  <Link className="nav-link" to="/manageUsers">Usuarios</Link>
+                </li>
+                <li className="nav-item">
+                  <Link className="nav-link" to="/seccion2">Notas</Link>
+                </li>
+                <li className="nav-item">
+                  <Link className="nav-link" to="/seccion3">Colecciones</Link>
+                </li>
+                <li className="nav-item">
+                  <Link className="nav-link" to="/seccion4">Relaciones</Link>
+                </li>
+              </>
+            )}
+            {isAuthenticated && role !== 'Admin' && (
               <>
                 <li className="nav-item">
                   <Link className="nav-link" to="/notes">Notas</Link>
@@ -42,8 +65,12 @@ const Layout = ({ children }) => {
                 </li>
               </>
             )}
-            {/* Agregar más elementos de navegación aquí si es necesario */}
           </ul>
+          {isAuthenticated && (
+            <button className="btn btn-outline-primary me-2 logout-button" type="button" onClick={handleLogout}>
+              <LogoutIcon /> Cerrar Sesión
+            </button>
+          )}
         </div>
       </nav>
       <div className="container">

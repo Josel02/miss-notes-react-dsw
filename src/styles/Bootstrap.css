@@ -25,6 +25,7 @@
 
 body {
     background-color: var(--anti-flash-white);
+    /*background-color: var(--celeste);*/
 }
 
 .form-control {
