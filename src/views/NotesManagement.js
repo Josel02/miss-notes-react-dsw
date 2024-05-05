@@ -4,12 +4,13 @@ import NoteCard from '../components/NoteCard';
 import Masonry from '@mui/lab/Masonry';
 import { Alert, Button } from 'react-bootstrap';
 import { useSnackbar } from 'notistack';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../components/AuthContext';
 import axios from 'axios';
 import EditNoteModal from './EditNoteModal';
 
 const NotesManagement = () => {
+    const location = useLocation();
     const [notes, setNotes] = useState([]);
     const { userId } = useParams();
     const [loading, setLoading] = useState(true);
@@ -28,6 +29,22 @@ const NotesManagement = () => {
         setEditingNote(emptyNote);
         setIsEditingExistingNote(false);
       };
+
+      const handleAPIError = (error) => {
+        console.error('API error:', error);
+        if (error.response && error.response.status === 403) {
+        navigate('/', { replace: true });
+        enqueueSnackbar('Session expired. Please login again.', { variant: 'warning' });
+        logout();
+        } 
+        else if (error.response && error.response.status === 404) {
+            navigate('/management', { replace: true });
+            enqueueSnackbar(error.response.data.message, { variant: 'info' });
+        }
+        else {
+            enqueueSnackbar('Error al procesar la solicitud.', { variant: 'error' });
+        }
+    };
     
       const handleSaveNote = (updatedNote, isCambios) => {
         if (isCambios){
@@ -92,32 +109,24 @@ const NotesManagement = () => {
     
       };
     
-      const deleteNote = async (noteId) => {
+    const deleteNote = async (noteId) => {
         try {
           const token = localStorage.getItem('token');
-    
+      
           // Llamada API para eliminar la nota
-          await axios.delete(`http://localhost:3000/notes/${noteId}`, {
+          await axios.delete(`http://localhost:3000/notes/admin-delete/${noteId}`, {
             headers: { Authorization: `Bearer ${token}` }
           });
-          
+      
           // Actualizar el estado para remover la nota eliminada
           setNotes(prevNotes => prevNotes.filter(note => note._id !== noteId));
-          
-          setMessage({ text: 'Nota eliminada con éxito.', type: 'success' });
-        } catch (error) {
-          console.error('Error al eliminar la nota:', error);
-          if (error.response && error.response.status === 403) {
-            navigate('/', { replace: true });
-            enqueueSnackbar('Session expired. Please login again.', { variant: 'warning' });
-            logout();
-          }
-          else{
-            setMessage({ text: 'Error al eliminar la nota.', type: 'error' });
-          }
-        }
-      };
       
+          setMessage({ text: 'Nota eliminada con éxito.', type: 'success' });
+        } 
+        catch (error) {
+          handleAPIError(error);
+        }
+    };
     
       useEffect(() => {
         const fetchNotes = async () => {
@@ -129,19 +138,16 @@ const NotesManagement = () => {
             setNotes(response.data);
             setLoading(false);
           } catch (error) {
-            if (error.response && error.response.status === 403) {
-              navigate('/', { replace: true });
-              enqueueSnackbar('Session expired. Please login again.', { variant: 'warning' });
-              logout();
-            }
+            handleAPIError(error);
           }
         };
       
         fetchNotes();
-      }, [enqueueSnackbar, logout, navigate]); // Puedes necesitar añadir userId a las dependencias si cambia durante la vida del componente
-      
+      }, []); 
+
       return (
           <>
+          <h2 className='mt-2 ms-2'>Notas del usuario</h2>
             {message.text && (
               <Alert variant={message.type === 'success' ? 'success' : 'danger'}>
                 {message.text}
