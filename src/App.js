@@ -11,6 +11,8 @@ import { SnackbarProvider } from 'notistack';
 import Layout from './layouts/Layout';
 import CollectionListPage from './views/CollectionList/CollectionListPage';
 import './styles/Bootstrap.css';
+import UserProfile from './views/UserProfile';
+
 
 function App() {
   return (
@@ -28,6 +30,7 @@ function App() {
           <Route path="/login" element={<Layout><LoginPage /></Layout>} />
           <Route path="/register" element={<Layout><RegisterPage /></Layout>} />
           <Route path="/collections" element={<Layout><CollectionListPage /></Layout>} />
+          <Route path="/profile" element={<Layout><UserProfile /></Layout>} />
           <Route path="/manageUsers" element={<Layout><UsersManagement /></Layout>} />
         </Routes>
       </NotesProvider>
