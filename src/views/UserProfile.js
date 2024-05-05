@@ -112,18 +112,28 @@ const UserProfile = () => {
       enqueueSnackbar('Por favor, resuelve los errores antes de enviar.', { variant: 'error' });
       return;
     }
-
+  
     try {
       await axios.post('http://localhost:3000/users/me/change-password', user, {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       });
       enqueueSnackbar('Contraseña cambiada con éxito!', { variant: 'success' });
       setIsChangingPassword(false);
+  
+      // Limpia los campos de contraseña después de un cambio exitoso
+      setUser(prev => ({
+        ...prev,
+        currentPassword: '',
+        newPassword: '',
+        confirmNewPassword: ''
+      }));
+  
     } catch (error) {
       console.error('Error changing password:', error);
       enqueueSnackbar('Error al cambiar la contraseña!', { variant: 'error' });
     }
   }
+  
 
   const handleDelete = async () => {
     // Confirmar con el usuario antes de eliminar el perfil
