@@ -1,29 +1,48 @@
-/* src/views/UserProfile/userProfile.css */
-.user-profile {
-    padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    margin-top: 20px;
-  }
-  
-  .user-profile label {
-    display: block;
-    margin-bottom: 10px;
-  }
-  
-  .user-profile input {
-    padding: 8px;
-    margin-left: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-  }
-  
-  .user-profile button {
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
+.user-profile-container .user-profile {
+  width: 80%;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.user-profile-container .section {
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  padding: 20px;
+  margin-top: 20px;
+  border-radius: 5px;
+}
+
+.user-profile-container .form-group {
+  margin-bottom: 20px;
+}
+
+.user-profile-container .form-group label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.user-profile-container .form-group input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px; /* Ajuste para un tamaño de fuente más grande */
+}
+
+.user-profile-container .btn {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
+  display: block; /* Para que los botones no estén en la misma línea */
+}
+
+.user-profile-container .error-message {
+  color: red;
+  margin-top: 10px;
+}
