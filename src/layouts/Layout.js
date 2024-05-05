@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom'; // Importar useNavigate en lugar de useHistory
+import { Link, useNavigate } from 'react-router-dom';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { useAuth } from '../components/AuthContext';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -7,7 +7,7 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 import '../styles/layout.css';
 
 const Layout = ({ children }) => {
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated, logout, role } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -24,7 +24,23 @@ const Layout = ({ children }) => {
         </button>
         <div id="navbarNav" className="collapse navbar-collapse">
           <ul className="navbar-nav me-auto">
-            {isAuthenticated && (
+            {isAuthenticated && role === 'Admin' && (
+              <>
+                <li className="nav-item">
+                  <Link className="nav-link" to="/manageUsers">Usuarios</Link>
+                </li>
+                <li className="nav-item">
+                  <Link className="nav-link" to="/seccion2">Notas</Link>
+                </li>
+                <li className="nav-item">
+                  <Link className="nav-link" to="/seccion3">Colecciones</Link>
+                </li>
+                <li className="nav-item">
+                  <Link className="nav-link" to="/seccion4">Relaciones</Link>
+                </li>
+              </>
+            )}
+            {isAuthenticated && role !== 'Admin' && (
               <>
                 <li className="nav-item">
                   <Link className="nav-link" to="/notes">Notas</Link>
