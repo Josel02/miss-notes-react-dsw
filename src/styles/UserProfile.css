@@ -53,6 +53,12 @@
   padding: 10px 20px;  /* Tamaño adecuado del botón */
 }
 
+.user-profile-container .btn.delete-profile-btn {
+  background-color: #dc3545; /* Rojo para indicar acción potencialmente peligrosa */
+  margin-right: 3%;
+}
+
+
 .user-profile-container .error-message {
   color: red;
   margin-top: 10px;

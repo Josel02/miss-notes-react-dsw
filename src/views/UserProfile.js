@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useSnackbar } from 'notistack';
 import '../styles/UserProfile.css';
+import { useAuth } from '../components/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 const UserProfile = () => {
   const [user, setUser] = useState({
@@ -21,6 +23,8 @@ const UserProfile = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [isChangingPassword, setIsChangingPassword] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
+  const { logout } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -90,7 +94,7 @@ const UserProfile = () => {
 
     try {
       const { currentPassword, newPassword, confirmNewPassword, ...updateData } = user;
-      const response = await axios.put('http://localhost:3000/users/me', updateData, {
+      await axios.put('http://localhost:3000/users/me', updateData, {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       });
       enqueueSnackbar('Profile updated successfully!', { variant: 'success' });
@@ -109,7 +113,7 @@ const UserProfile = () => {
     }
 
     try {
-      const response = await axios.put('http://localhost:3000/users/me/change-password', user, {
+      await axios.put('http://localhost:3000/users/me/change-password', user, {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       });
       enqueueSnackbar('Password changed successfully!', { variant: 'success' });
@@ -119,6 +123,29 @@ const UserProfile = () => {
       enqueueSnackbar('Failed to change password!', { variant: 'error' });
     }
   }
+
+  const handleDelete = async () => {
+    // Confirmar con el usuario antes de eliminar el perfil
+    if (window.confirm("¿Estás seguro de que deseas eliminar tu perfil? Esta acción no se puede deshacer.")) {
+      try {
+        await axios.delete('http://localhost:3000/users/me', {
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+        });
+        enqueueSnackbar('Perfil eliminado con éxito!', { variant: 'success' });
+  
+        // Usar logout del AuthContext para limpiar el estado y el almacenamiento local
+        logout();
+        
+        // Redirigir al usuario a la página de inicio
+        navigate('/');
+      } catch (error) {
+        console.error('Error al eliminar el usuario:', error);
+        enqueueSnackbar('Error al eliminar el perfil!', { variant: 'error' });
+      }
+    }
+  };
+  
+  
 
   return (
     <div className="user-profile-container">
@@ -213,6 +240,7 @@ const UserProfile = () => {
           ))}
           {isEditing && (
             <div className="cancel-button-container">
+              <button type="button" onClick={handleDelete} className="btn delete-profile-btn">Delete Profile</button>
               <button type="button" onClick={handleCancel} className="btn cancel-btn">Cancel</button>
             </div>
           )}
