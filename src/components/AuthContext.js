@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import axios from 'axios';
 
 const AuthContext = createContext(null);
 
@@ -14,10 +15,24 @@ export const AuthProvider = ({ children }) => {
         if (storedToken && storedUserId) {
             setIsAuthenticated(true);
             setUserId(storedUserId);
-            //Petición para obtener el rol del usuario
-
+            fetchRole(storedToken);
         }
     }, []);
+
+    const fetchRole = async (token) => {
+        try {
+            const response = await axios.get('http://localhost:3000/users/check-role', {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            const { isAdmin } = response.data;
+            if (isAdmin) {
+                setRole('Admin');
+            }
+        } catch (error) {
+            console.error('Failed to fetch user role:', error);
+            logout(); // Considera cerrar sesión si la verificación falla
+        }
+    }
 
     // Función para manejar el inicio de sesión
     const login = (userId, token, role) => {
@@ -27,7 +42,6 @@ export const AuthProvider = ({ children }) => {
             setIsAuthenticated(true);
             setUserId(userId);
             setRole(role);
-            console.log("role: ", role)
         } else {
             console.error('Login failed: token or userId not provided');
         }

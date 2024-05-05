@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import UserCard from '../components/UserCard';
+import Masonry from '@mui/lab/Masonry';
 import { Alert } from 'react-bootstrap';
 import { useSnackbar } from 'notistack';
 import { useNavigate } from 'react-router-dom';
@@ -58,14 +59,16 @@ const UserManagement = () => {
       {loading ? (
         <div>Cargando usuarios...</div>
       ) : users.length > 0 ? (
-        users.map(user => (
+        <Masonry columns={{ xs: 1, sm: 2, md: 3, lg: 4 }} spacing={2} className='mt-2'>
+        {users.map(user => (
           <UserCard
             key={user._id}
             user={user}
             onEdit={() => handleEdit(user)}
             onDelete={() => handleDelete(user)}
           />
-        ))
+        ))}
+        </Masonry>
       ) : (
         <Alert className="mt-2" variant="info">No hay usuarios registrados.</Alert>
       )}
