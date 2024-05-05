@@ -47,7 +47,6 @@ const UserManagement = () => {
 
     const handleEditUser = (user) => {
     setEditingUser(user);
-    console.log('Edit user:', user);
     };
 
     const handleDelete = (user) => {
@@ -55,12 +54,24 @@ const UserManagement = () => {
     console.log('Delete user:', user);
     };
 
-    const handleChangeUser = (user) => {
+    const handleChangeUser = async (user) => {
         if (user){
-            console.log('User:', user);
+            try {
+                const token = localStorage.getItem('token');
+                const response = await axios.put(`http://localhost:3000/users/${editingUser._id}`, user, {
+                  headers: { Authorization: `Bearer ${token}` }
+                });
+                enqueueSnackbar('Usuario actualizado con éxito.', { variant: 'success' });
+    
+                const updatedUsers = users.map(item => item._id === editingUser._id ? { ...item, ...response.data.user } : item);
+                setUsers(updatedUsers);
+                setEditingUser(null);
+            } catch (error) {
+                handleAPIError(error);
+            }
         }
         setEditingUser(null);
-    }
+    };
 
   return (
     <div>

@@ -9,7 +9,6 @@ const EditUserModal = ({ show, handleClose, user }) => {
 
   useEffect(() => {
     if (user) {
-        console.log('editUser:', user);
         setLocalName(user.name);
         setLocalEmail(user.email);
         setLocalRole(user.role);
