@@ -21,6 +21,7 @@ const UserProfile = () => {
   });
   const [errors, setErrors] = useState({});
   const [isEditing, setIsEditing] = useState(false);
+  // eslint-disable-next-line no-unused-vars
   const [isChangingPassword, setIsChangingPassword] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
   const { logout } = useAuth();
