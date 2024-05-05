@@ -120,103 +120,107 @@ const UserProfile = () => {
     }
   }
 
-return (
-  <div className="user-profile-container">
-    <div className="user-profile">
-      <div className="user-profile-section">
-        <h2>User Profile</h2>
-      </div>
-      <form onSubmit={e => e.preventDefault()}>
-        <div className="personal-details section">
-          <h3>Personal Details</h3>
-          <div className="form-group">
-            <label htmlFor="name">Name</label>
-            <input
-              type="text"
-              id="name"
-              name="name"
-              value={user.name}
-              onChange={handleInputChange}
-              disabled={!isEditing}
-              autoComplete="off"
-            />
-          </div>
-          <div className="form-group">
-            <label htmlFor="email">Email</label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              value={user.email}
-              onChange={handleInputChange}
-              disabled={!isEditing}
-              autoComplete="off"
-            />
-          </div>
-          <div className="form-group">
-            <label>Role</label>
-            <input
-              type="text"
-              value={user.role}
-              disabled={true}
-              autoComplete="off"
-            />
+  return (
+    <div className="user-profile-container">
+      <div className="user-profile">
+        <div className="user-profile-section">
+          <h2>User Profile</h2>
+        </div>
+        <form onSubmit={e => e.preventDefault()}>
+          <div className="personal-details section">
+            <h3>Personal Details</h3>
+            <div className="form-group">
+              <label htmlFor="name">Name</label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                value={user.name}
+                onChange={handleInputChange}
+                disabled={!isEditing}
+                autoComplete="off"
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="email">Email</label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                value={user.email}
+                onChange={handleInputChange}
+                disabled={!isEditing}
+                autoComplete="off"
+              />
+            </div>
+            <div className="form-group">
+              <label>Role</label>
+              <input
+                type="text"
+                value={user.role}
+                disabled={true}
+                autoComplete="off"
+              />
+            </div>
+            {isEditing && (
+              <button type="button" onClick={saveProfileChanges} className="btn save-btn">Save Changes</button>
+            )}
           </div>
           {isEditing && (
-            <button type="button" onClick={saveProfileChanges} className="btn save-btn">Save Changes</button>
+            <div className="password-section section">
+              <h3>Change Password</h3>
+              <div className="form-group">
+                <label htmlFor="currentPassword">Current Password</label>
+                <input
+                  type="password"
+                  id="currentPassword"
+                  name="currentPassword"
+                  value={user.currentPassword}
+                  onChange={handleInputChange}
+                  autoComplete="new-password"
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="newPassword">New Password</label>
+                <input
+                  type="password"
+                  id="newPassword"
+                  name="newPassword"
+                  value={user.newPassword}
+                  onChange={handleInputChange}
+                  autoComplete="new-password"
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="confirmNewPassword">Confirm New Password</label>
+                <input
+                  type="password"
+                  id="confirmNewPassword"
+                  name="confirmNewPassword"
+                  value={user.confirmNewPassword}
+                  onChange={handleInputChange}
+                  autoComplete="new-password"
+                />
+              </div>
+              <button type="button" onClick={changePassword} className="btn change-password-btn">Change Password</button>
+            </div>
           )}
-        </div>
-        {isEditing && (
-          <div className="password-section section">
-            <h3>Change Password</h3>
-            <div className="form-group">
-              <label htmlFor="currentPassword">Current Password</label>
-              <input
-                type="password"
-                id="currentPassword"
-                name="currentPassword"
-                value={user.currentPassword}
-                onChange={handleInputChange}
-                autoComplete="new-password"
-              />
+          {!isEditing && (
+            <button type="button" onClick={() => setIsEditing(true)} className="btn edit-profile-btn">Edit Profile</button>
+          )}
+          {Object.values(errors).map((error, i) => (
+            <div key={i} className="error-message">{error}</div>
+          ))}
+          {isEditing && (
+            <div className="cancel-button-container">
+              <button type="button" onClick={handleCancel} className="btn cancel-btn">Cancel</button>
             </div>
-            <div className="form-group">
-              <label htmlFor="newPassword">New Password</label>
-              <input
-                type="password"
-                id="newPassword"
-                name="newPassword"
-                value={user.newPassword}
-                onChange={handleInputChange}
-                autoComplete="new-password"
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="confirmNewPassword">Confirm New Password</label>
-              <input
-                type="password"
-                id="confirmNewPassword"
-                name="confirmNewPassword"
-                value={user.confirmNewPassword}
-                onChange={handleInputChange}
-                autoComplete="new-password"
-              />
-            </div>
-            <button type="button" onClick={changePassword} className="btn change-password-btn">Change Password</button>
-            <button type="button" onClick={handleCancel} className="btn cancel-btn">Cancel</button>
-          </div>
-        )}
-        {!isEditing && (
-          <button type="button" onClick={() => setIsEditing(true)} className="btn edit-profile-btn">Edit Profile</button>
-        )}
-        {Object.values(errors).map((error, i) => (
-          <div key={i} className="error-message">{error}</div>
-        ))}
-      </form>
+          )}
+        </form>
+      </div>
     </div>
-  </div>
-);
-
+  );
+  
 };  
 
 export default UserProfile;

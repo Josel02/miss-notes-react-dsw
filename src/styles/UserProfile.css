@@ -24,7 +24,7 @@
 }
 
 .user-profile-container .form-group input {
-  width: 100%;
+  width: calc(100% - 20px);  /* Ajuste para dar espacio a los bordes */
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 5px;
@@ -38,9 +38,21 @@
   padding: 10px 20px;
   border-radius: 5px;
   cursor: pointer;
-  margin-top: 10px;
-  display: block; /* Para que los botones no estén en la misma línea */
+  margin-top: 20px;
+  display: block; /* Asegura que los botones se muestren en su propia línea */
+  width: auto; /* Permite que el ancho del botón se ajuste al contenido */
 }
+
+.user-profile-container .cancel-button-container {
+  display: flex;
+  justify-content: flex-end; /* Alinea el botón a la derecha */
+  margin-top: 5px; /* Espacio arriba para separarlo de los otros elementos */
+}
+
+.user-profile-container .btn.cancel-btn {
+  padding: 10px 20px; /* Tamaño adecuado del botón */
+}
+
 
 .user-profile-container .error-message {
   color: red;
