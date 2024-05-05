@@ -21,7 +21,7 @@ const UserProfile = () => {
   });
   const [errors, setErrors] = useState({});
   const [isEditing, setIsEditing] = useState(false);
-  // eslint-disable-next-line no-unused-vars
+  // eslint-disable-next-line
   const [isChangingPassword, setIsChangingPassword] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
   const { logout } = useAuth();
@@ -89,7 +89,7 @@ const UserProfile = () => {
 
   const saveProfileChanges = async () => {
     if (!validateField('email', user.email) || !validateField('name', user.name)) {
-      enqueueSnackbar('Please resolve the errors before submitting.', { variant: 'error' });
+      enqueueSnackbar('Por favor, resuelve los errores antes de enviar.', { variant: 'error' });
       return;
     }
 
@@ -98,30 +98,30 @@ const UserProfile = () => {
       await axios.put('http://localhost:3000/users/me', updateData, {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       });
-      enqueueSnackbar('Profile updated successfully!', { variant: 'success' });
+      enqueueSnackbar('Perfil actualizado con éxito!', { variant: 'success' });
       setIsEditing(false);
       setUser(prev => ({ ...prev, currentPassword: '', newPassword: '', confirmNewPassword: '' }));
     } catch (error) {
       console.error('Error updating user data:', error);
-      enqueueSnackbar('Failed to update profile!', { variant: 'error' });
+      enqueueSnackbar('Error al actualizar el perfil!', { variant: 'error' });
     }
   };
 
   const changePassword = async () => {
     if (!validateField('newPassword', user.newPassword) || !validateField('confirmNewPassword', user.confirmNewPassword)) {
-      enqueueSnackbar('Please resolve the errors before submitting.', { variant: 'error' });
+      enqueueSnackbar('Por favor, resuelve los errores antes de enviar.', { variant: 'error' });
       return;
     }
 
     try {
-      await axios.put('http://localhost:3000/users/me/change-password', user, {
+      await axios.post('http://localhost:3000/users/me/change-password', user, {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       });
-      enqueueSnackbar('Password changed successfully!', { variant: 'success' });
+      enqueueSnackbar('Contraseña cambiada con éxito!', { variant: 'success' });
       setIsChangingPassword(false);
     } catch (error) {
       console.error('Error changing password:', error);
-      enqueueSnackbar('Failed to change password!', { variant: 'error' });
+      enqueueSnackbar('Error al cambiar la contraseña!', { variant: 'error' });
     }
   }
 
@@ -146,19 +146,18 @@ const UserProfile = () => {
     }
   };
   
-  
 
   return (
     <div className="user-profile-container">
       <div className="user-profile">
         <div className="user-profile-section">
-          <h2>User Profile</h2>
+          <h2>Perfil de Usuario</h2>
         </div>
         <form onSubmit={e => e.preventDefault()}>
           <div className="personal-details section">
-            <h3>Personal Details</h3>
+            <h3>Detalles Personales</h3>
             <div className="form-group">
-              <label htmlFor="name">Name</label>
+              <label htmlFor="name">Nombre</label>
               <input
                 type="text"
                 id="name"
@@ -170,7 +169,7 @@ const UserProfile = () => {
               />
             </div>
             <div className="form-group">
-              <label htmlFor="email">Email</label>
+              <label htmlFor="email">Correo Electrónico</label>
               <input
                 type="email"
                 id="email"
@@ -182,7 +181,7 @@ const UserProfile = () => {
               />
             </div>
             <div className="form-group">
-              <label>Role</label>
+              <label>Rol</label>
               <input
                 type="text"
                 value={user.role}
@@ -191,14 +190,14 @@ const UserProfile = () => {
               />
             </div>
             {isEditing && (
-              <button type="button" onClick={saveProfileChanges} className="btn save-btn">Save Changes</button>
+              <button type="button" onClick={saveProfileChanges} className="btn save-btn">Guardar Cambios</button>
             )}
           </div>
           {isEditing && (
             <div className="password-section section">
-              <h3>Change Password</h3>
+              <h3>Cambiar Contraseña</h3>
               <div className="form-group">
-                <label htmlFor="currentPassword">Current Password</label>
+                <label htmlFor="currentPassword">Contraseña Actual</label>
                 <input
                   type="password"
                   id="currentPassword"
@@ -209,7 +208,7 @@ const UserProfile = () => {
                 />
               </div>
               <div className="form-group">
-                <label htmlFor="newPassword">New Password</label>
+                <label htmlFor="newPassword">Nueva Contraseña</label>
                 <input
                   type="password"
                   id="newPassword"
@@ -220,7 +219,7 @@ const UserProfile = () => {
                 />
               </div>
               <div className="form-group">
-                <label htmlFor="confirmNewPassword">Confirm New Password</label>
+                <label htmlFor="confirmNewPassword">Confirmar Nueva Contraseña</label>
                 <input
                   type="password"
                   id="confirmNewPassword"
@@ -230,19 +229,19 @@ const UserProfile = () => {
                   autoComplete="new-password"
                 />
               </div>
-              <button type="button" onClick={changePassword} className="btn change-password-btn">Change Password</button>
+              <button type="button" onClick={changePassword} className="btn change-password-btn">Cambiar Contraseña</button>
             </div>
           )}
           {!isEditing && (
-            <button type="button" onClick={() => setIsEditing(true)} className="btn edit-profile-btn">Edit Profile</button>
+            <button type="button" onClick={() => setIsEditing(true)} className="btn edit-profile-btn">Editar Perfil</button>
           )}
           {Object.values(errors).map((error, i) => (
             <div key={i} className="error-message">{error}</div>
           ))}
           {isEditing && (
             <div className="cancel-button-container">
-              <button type="button" onClick={handleDelete} className="btn delete-profile-btn">Delete Profile</button>
-              <button type="button" onClick={handleCancel} className="btn cancel-btn">Cancel</button>
+              <button type="button" onClick={handleDelete} className="btn delete-profile-btn">Eliminar Perfil</button>
+              <button type="button" onClick={handleCancel} className="btn cancel-btn">Cancelar</button>
             </div>
           )}
         </form>
