@@ -1,5 +1,5 @@
 .user-profile-container .user-profile {
-  width: 80%;
+  width: 50%;  /* Ancho reducido del contenedor principal */
   margin: auto;
   padding: 20px;
   border: 1px solid #ccc;
@@ -9,13 +9,13 @@
 .user-profile-container .section {
   background-color: #f9f9f9;
   border: 1px solid #ddd;
-  padding: 20px;
-  margin-top: 20px;
+  padding: 30px;  /* Padding reducido para un look más compacto */
+  margin-top: 15px;  /* Margen superior reducido */
   border-radius: 5px;
 }
 
 .user-profile-container .form-group {
-  margin-bottom: 20px;
+  margin-bottom: 20px;  /* Margen inferior reducido para los grupos de formularios */
 }
 
 .user-profile-container .form-group label {
@@ -24,11 +24,11 @@
 }
 
 .user-profile-container .form-group input {
-  width: calc(100% - 20px);  /* Ajuste para dar espacio a los bordes */
+  width: calc(100% - 40px);  /* Ancho reducido de los campos de entrada */
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 5px;
-  font-size: 16px; /* Ajuste para un tamaño de fuente más grande */
+  font-size: 16px;  /* Tamaño de fuente puede ajustarse si necesario */
 }
 
 .user-profile-container .btn {
@@ -39,20 +39,19 @@
   border-radius: 5px;
   cursor: pointer;
   margin-top: 20px;
-  display: block; /* Asegura que los botones se muestren en su propia línea */
-  width: auto; /* Permite que el ancho del botón se ajuste al contenido */
+  display: block;  /* Asegura que los botones se muestren en su propia línea */
+  width: auto;  /* Permite que el ancho del botón se ajuste al contenido */
 }
 
 .user-profile-container .cancel-button-container {
   display: flex;
-  justify-content: flex-end; /* Alinea el botón a la derecha */
-  margin-top: 5px; /* Espacio arriba para separarlo de los otros elementos */
+  justify-content: flex-end;  /* Alinea el botón cancelar a la derecha */
+  margin-top: 5px;  /* Espacio arriba para separarlo de los otros elementos */
 }
 
 .user-profile-container .btn.cancel-btn {
-  padding: 10px 20px; /* Tamaño adecuado del botón */
+  padding: 10px 20px;  /* Tamaño adecuado del botón */
 }
-
 
 .user-profile-container .error-message {
   color: red;
