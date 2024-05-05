@@ -23,10 +23,7 @@ const UserCard = ({ user, onEdit, onDelete }) => {
         <Card.Title className="text-center">{user.name}</Card.Title>
         <hr />
         <div className="links-container links-enhanced">
-          <Link to={{
-                  pathname: "/notesManagement",
-                  state: { userId: user._id }
-                }} className="btn btn-link link-btn-enhanced vertical-link">
+        <Link to={`/notesManagement/${user._id}`} className="btn btn-link link-btn-enhanced vertical-link">
             <DescriptionIcon style={{ display: 'block', margin: 'auto'}} />
             Notas
           </Link>
