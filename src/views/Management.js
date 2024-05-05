@@ -89,7 +89,7 @@ const Management = () => {
       {loading ? (
         <div>Cargando usuarios...</div>
       ) : users.length > 0 ? (
-        <Masonry columns={{ xs: 1, sm: 2, md: 3, lg: 4 }} spacing={2} className='mt-2'>
+        <Masonry columns={{ xs: 1, sm: 1, md: 2, lg: 3 }} spacing={1} className='mt-2'>
         {users.map(user => (
           <UserCard
             key={user._id}
