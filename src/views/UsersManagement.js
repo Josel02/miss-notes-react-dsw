@@ -49,10 +49,21 @@ const UserManagement = () => {
     setEditingUser(user);
     };
 
-    const handleDelete = (user) => {
-    // Lógica para eliminar usuario
-    console.log('Delete user:', user);
+    const handleDelete = async (user) => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.delete(`http://localhost:3000/users/${user._id}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            enqueueSnackbar('Usuario eliminado con éxito.', { variant: 'success' });
+            // Filtrar al usuario eliminado del estado de usuarios
+            const filteredUsers = users.filter(item => item._id !== user._id);
+            setUsers(filteredUsers);
+        } catch (error) {
+            handleAPIError(error);
+        }
     };
+    
 
     const handleChangeUser = async (user) => {
         if (user){
