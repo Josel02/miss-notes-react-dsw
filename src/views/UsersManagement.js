@@ -6,53 +6,59 @@ import { useSnackbar } from 'notistack';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../components/AuthContext';
 import axios from 'axios';
+import EditUserModal from './EditUserModal';
 
 const UserManagement = () => {
   const [users, setUsers] = useState([]);
+  const [editingUser, setEditingUser] = useState(null);
   const navigate = useNavigate();
   const { logout } = useAuth();
   const [loading, setLoading] = useState(true);
   const { enqueueSnackbar } = useSnackbar();
 
-  useEffect(() => {
-    fetchUsers();
-  }, []);
+    useEffect(() => {
+        fetchUsers();
+        }, []);
 
-  const handleAPIError = (error) => {
-    console.error('API error:', error);
-    if (error.response && error.response.status === 403) {
-      navigate('/', { replace: true });
-      enqueueSnackbar('Session expired. Please login again.', { variant: 'warning' });
-      logout();
-    } else {
-        enqueueSnackbar('Error al procesar la solicitud.', { variant: 'error' });
-    }
-  };
+        const handleAPIError = (error) => {
+        console.error('API error:', error);
+        if (error.response && error.response.status === 403) {
+        navigate('/', { replace: true });
+        enqueueSnackbar('Session expired. Please login again.', { variant: 'warning' });
+        logout();
+        } else {
+            enqueueSnackbar('Error al procesar la solicitud.', { variant: 'error' });
+        }
+    };
 
-  const fetchUsers = async () => {
+    const fetchUsers = async () => {
       try{
           const token = localStorage.getItem('token');
           const response = await axios.get(`http://localhost:3000/users/`, {
               headers: { Authorization: `Bearer ${token}` }
             });
-            console.log('Users:', response.data);
             setUsers(response.data);
             setLoading(false);
       }
       catch(error){
         handleAPIError(error);
       }
-  };
+    };
 
-  const handleEdit = (user) => {
-    // Lógica para editar usuario
+    const handleEditUser = (user) => {
+    setEditingUser(user);
     console.log('Edit user:', user);
-  };
+    };
 
-  const handleDelete = (user) => {
+    const handleDelete = (user) => {
     // Lógica para eliminar usuario
     console.log('Delete user:', user);
-  };
+    };
+
+    const handleChangeUser = (user, isCambios) => {
+        console.log('User:', user);
+        setEditingUser(null);
+    }
 
   return (
     <div>
@@ -64,7 +70,7 @@ const UserManagement = () => {
           <UserCard
             key={user._id}
             user={user}
-            onEdit={() => handleEdit(user)}
+            onEdit={() => handleEditUser(user)}
             onDelete={() => handleDelete(user)}
           />
         ))}
@@ -72,6 +78,13 @@ const UserManagement = () => {
       ) : (
         <Alert className="mt-2" variant="info">No hay usuarios registrados.</Alert>
       )}
+      {editingUser && (
+          <EditUserModal
+            show={!!editingUser}
+            handleClose={(user, isCambios) => handleChangeUser(user, isCambios)}
+            user={editingUser}
+          />
+        )}
     </div>
   );
 };
