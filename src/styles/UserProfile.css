@@ -1,65 +1,87 @@
+.user-profile-container {
+  background-color: var(--anti-flash-white); /* Fondo general claro y neutral */
+}
+
 .user-profile-container .user-profile {
-  width: 50%;  /* Ancho reducido del contenedor principal */
+  width: 50%;
   margin: auto;
+  margin-top: 1%;
   padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
+  border: none; /* Sin bordes para un look más limpio */
+  border-radius: 8px; /* Bordes más redondeados */
+  /*box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Sombra sutil */
+  background-color: var(--anti-flash-white); /* Fondo claro para el contenedor */
 }
 
 .user-profile-container .section {
-  background-color: #f9f9f9;
-  border: 1px solid #ddd;
-  padding: 30px;  /* Padding reducido para un look más compacto */
-  margin-top: 15px;  /* Margen superior reducido */
-  border-radius: 5px;
+  background-color: var(--white); /* Fondo claro para secciones */
+  padding: 30px;
+  margin-top: 15px;
+  border-radius: 8px; /* Bordes más redondeados */
+  box-shadow: 0 2px 4px rgba(0,0,0,0.5); /* Sombra sutil para profundidad */
 }
 
 .user-profile-container .form-group {
-  margin-bottom: 20px;  /* Margen inferior reducido para los grupos de formularios */
+  margin-bottom: 20px;
 }
 
 .user-profile-container .form-group label {
   display: block;
   margin-bottom: 5px;
+  color: var(--gunmetal); /* Color oscuro para texto para mejor contraste */
 }
 
 .user-profile-container .form-group input {
-  width: calc(100% - 40px);  /* Ancho reducido de los campos de entrada */
+  width: calc(100% - 40px);
   padding: 10px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--celeste); /* Borde claro para diferenciar de fondo */
   border-radius: 5px;
-  font-size: 16px;  /* Tamaño de fuente puede ajustarse si necesario */
+  font-size: 16px;
 }
 
 .user-profile-container .btn {
-  background-color: #007bff;
-  color: white;
+  background-color: var(--verdigris); /* Color verde oscuro para botones principales */
+  color: var(--white); /* Texto blanco para contraste */
   border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
+  padding: 12px 24px; /* Padding más generoso */
+  border-radius: 4px; /* Bordes redondeados */
   cursor: pointer;
   margin-top: 20px;
-  display: block;  /* Asegura que los botones se muestren en su propia línea */
-  width: auto;  /* Permite que el ancho del botón se ajuste al contenido */
+  display: block;
+  width: auto;
+  transition: background-color 0.3s; /* Transición suave al interactuar */
+}
+
+.user-profile-container .btn:hover {
+  background-color: var(--charcoal); /* Oscurecer con un tono más oscuro que verdigris */
+  color: var(--white); /* Asegurarse que el texto siga siendo blanco para máxima legibilidad */
+}
+
+.user-profile-container .btn.cancel-btn:hover {
+  background-color: var(--gunmetal); /* Oscurecer con un tono más oscuro que tiffany-blue */
+}
+
+.user-profile-container .btn.delete-profile-btn:hover {
+  background-color: #990000; /* Un rojo más oscuro manualmente seleccionado */
 }
 
 .user-profile-container .cancel-button-container {
   display: flex;
-  justify-content: flex-end;  /* Alinea el botón cancelar a la derecha */
-  margin-top: 5px;  /* Espacio arriba para separarlo de los otros elementos */
+  justify-content: flex-end;
+  margin-top: 5px;
 }
 
 .user-profile-container .btn.cancel-btn {
-  padding: 10px 20px;  /* Tamaño adecuado del botón */
+  background-color: var(--tiffany-blue); /* Color azul claro para el botón cancelar */
+  padding: 12px 24px;
 }
 
 .user-profile-container .btn.delete-profile-btn {
-  background-color: #dc3545; /* Rojo para indicar acción potencialmente peligrosa */
+  background-color: var(--cornell-red); /* Rojo para acciones críticas */
   margin-right: 3%;
 }
 
-
 .user-profile-container .error-message {
-  color: red;
+  color: var(--cornell-red); /* Mensajes de error en rojo intenso */
   margin-top: 10px;
 }

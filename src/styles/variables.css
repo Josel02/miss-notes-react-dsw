@@ -1,4 +1,22 @@
 :root {
+    /* Main palette */
+    --celeste: #ABE4E4;
+    --tiffany-blue: #67D2D2; /* Two shades, chose one or use both where appropriate */
+    --verdigris: #3CA0A0;
+    --anti-flash-white: #F5F7FA;
+    --gunmetal: #1F2933;
+    --charcoal: #3E4C59;
+    --paynes-gray: #607180;
+
+    /* Aux palette */
+    --mindaro: #FBFC9E;
+    --sage: #AEAF56;
+    --aero: #32B3DB;
+    --misty-rose: #FFDAD6;
+    --cornell-red: #BA1A1A; /* Used for error messages */
+    --chocolate-cosmos: #3F0017;
+
+    /* Existing Colors */
     --davys-gray: #595758;
     --lavender-blush: #ffeef2;
     --pale-purple: #ffe4f3;
