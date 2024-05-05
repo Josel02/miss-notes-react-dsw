@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, Form, Button } from 'react-bootstrap';
+import { Modal, Form } from 'react-bootstrap';
 
 const EditUserModal = ({ show, handleClose, user }) => {
   const [localName, setLocalName] = useState(user.name);
   const [localEmail, setLocalEmail] = useState(user.email);
+  const [localRole, setLocalRole] = useState(user.role);
   const [isChanged, setIsChanged] = useState(false);
 
   useEffect(() => {
@@ -11,6 +12,7 @@ const EditUserModal = ({ show, handleClose, user }) => {
         console.log('editUser:', user);
         setLocalName(user.name);
         setLocalEmail(user.email);
+        setLocalRole(user.role);
     }
   }, [user]);
 
@@ -28,8 +30,24 @@ const EditUserModal = ({ show, handleClose, user }) => {
     }
   };
 
+  const handleRoleChange = (e) => {
+    if (e !== localRole) {
+        setIsChanged(true);
+        setLocalRole(e);
+    }
+  };
+
   const handleHide = () => {
-    handleClose(user, isChanged);
+    if (isChanged) {
+      handleClose({
+        ...user,
+        name: localName,
+        email: localEmail,
+        role: localRole
+      });
+    } else {
+      handleClose();
+    }
   }
 
   return (
@@ -59,12 +77,12 @@ const EditUserModal = ({ show, handleClose, user }) => {
           </Form.Group>
           <Form.Group className="mb-3" controlId="userRole">
             <Form.Label style={{ fontWeight: 'bold' }}>Rol</Form.Label>
-            <Form.Control
-              type="text"
-              placeholder="Rol del usuario"
-              value={user.role}
-              disabled  // Cambiado de readOnly a disabled para visualización
-            />
+            <Form.Select 
+              value={localRole} 
+              onChange={(e) => handleRoleChange(e.target.value)}>
+              <option value="User">User</option>
+              <option value="Admin">Admin</option>
+            </Form.Select>
           </Form.Group>
         </Form>
       </Modal.Body>
