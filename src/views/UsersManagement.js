@@ -55,8 +55,10 @@ const UserManagement = () => {
     console.log('Delete user:', user);
     };
 
-    const handleChangeUser = (user, isCambios) => {
-        console.log('User:', user);
+    const handleChangeUser = (user) => {
+        if (user){
+            console.log('User:', user);
+        }
         setEditingUser(null);
     }
 
@@ -81,7 +83,7 @@ const UserManagement = () => {
       {editingUser && (
           <EditUserModal
             show={!!editingUser}
-            handleClose={(user, isCambios) => handleChangeUser(user, isCambios)}
+            handleClose={(user) => handleChangeUser(user)}
             user={editingUser}
           />
         )}
