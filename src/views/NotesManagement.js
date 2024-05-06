@@ -94,23 +94,23 @@ const NotesManagement = () => {
           handleAPIError(error);
         }
       }
-      
+
       const updateNote = async (updatedNote) => {
-        try{
-          const token = localStorage.getItem('token');
-          const response = await axios.put(`http://localhost:3000/notes/${updatedNote._id}`, updatedNote, {
+        const token = localStorage.getItem('token');
+        try {
+          const response = await axios.put(`http://localhost:3000/notes/admin-update/${updatedNote._id}`, {
+            userId,
+            ...updatedNote
+          }, {
             headers: { Authorization: `Bearer ${token}` }
           });
-        }
-        catch(error){
-          console.error('Error saving note:', error);
-          if (error.response && error.response.status === 403) {
-            navigate('/', { replace: true });
-            enqueueSnackbar('Session expired. Please login again.', { variant: 'warning' });
-            logout();
+      
+          if (response.status === 200) {
+            enqueueSnackbar('Note updated successfully', { variant: 'success' });
           }
+        } catch (error) {
+          handleAPIError(error);
         }
-    
       };
     
     const deleteNote = async (noteId) => {
