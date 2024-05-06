@@ -41,16 +41,7 @@ const Layout = ({ children }) => {
                 {adminView && (
                   <>
                     <li className="nav-item">
-                      <Link className="nav-link" to="/management">Gestión</Link>
-                    </li>
-                    <li className="nav-item">
-                      <Link className="nav-link" to="/manageNotes">Notas</Link>
-                    </li>
-                    <li className="nav-item">
-                      <Link className="nav-link" to="/seccion3">Colecciones</Link>
-                    </li>
-                    <li className="nav-item">
-                      <Link className="nav-link" to="/seccion4">Relaciones</Link>
+                      <Link className="nav-link" to="/management">Panel de gestión</Link>
                     </li>
                   </>
                 )}

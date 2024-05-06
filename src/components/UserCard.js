@@ -27,7 +27,7 @@ const UserCard = ({ user, onEdit, onDelete }) => {
             <DescriptionIcon style={{ display: 'block', margin: 'auto'}} />
             Notas
           </Link>
-          <Link to="/collectionsManagement" className="btn btn-link link-btn-enhanced vertical-link">
+          <Link to={`/collectionsManagement/${user._id}`} className="btn btn-link link-btn-enhanced vertical-link">
             <CollectionsIcon style={{ display: 'block', margin: 'auto' }} />
             Colecciones
           </Link>
