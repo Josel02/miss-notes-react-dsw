@@ -178,7 +178,7 @@ const NotesManagement = () => {
                 ))}
               </Masonry>
             ) : (
-              <Alert variant="info">Todavía no hay ninguna nota, ¿Por qué no añades una?</Alert>
+              <Alert variant="info">Este usuario no tiene ninguna nota</Alert>
             )}
             {editingNote && (
               <EditNoteModal
