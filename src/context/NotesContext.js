@@ -9,21 +9,6 @@ export const NotesProvider = ({ children }) => {
   const [notes, setNotes] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchNotes = async () => {
-      try {
-        const response = await axios.get('http://localhost:3000/notes');
-        setNotes(response.data);
-        setLoading(false);
-      } catch (error) {
-        console.error('Error fetching notes', error);
-        setLoading(false);
-      }
-    };
-
-    fetchNotes();
-  }, []);
-
   const addNote = async (noteData) => {
     const response = await axios.post('http://localhost:3000/notes', noteData);
     setNotes(prevNotes => [...prevNotes, response.data]);

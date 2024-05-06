@@ -5,12 +5,13 @@ import { NotesProvider } from './context/NotesContext'; // Asegúrate de ajustar
 import HomePage from './views/HomePage';
 import NotePage from './views/NoteListPage';
 import LoginPage from './views/LoginPage';
-import UsersManagement from './views/UsersManagement';
+import Management from './views/Management';
 import RegisterPage from './views/RegisterPage';
 import { SnackbarProvider } from 'notistack';
 import Layout from './layouts/Layout';
 import CollectionListPage from './views/CollectionList/CollectionListPage';
 import './styles/Bootstrap.css';
+import NotesManagement from './views/NotesManagement';
 import UserProfile from './views/UserProfile';
 
 
@@ -30,8 +31,9 @@ function App() {
           <Route path="/login" element={<Layout><LoginPage /></Layout>} />
           <Route path="/register" element={<Layout><RegisterPage /></Layout>} />
           <Route path="/collections" element={<Layout><CollectionListPage /></Layout>} />
+          <Route path="/management" element={<Layout><Management /></Layout>} />
+          <Route path="/notesManagement/:userId" element={<Layout><NotesManagement /></Layout>} />
           <Route path="/profile" element={<Layout><UserProfile /></Layout>} />
-          <Route path="/manageUsers" element={<Layout><UsersManagement /></Layout>} />
         </Routes>
       </NotesProvider>
     </Router>
