@@ -144,22 +144,21 @@ const CollectionsManagement = () => {
     }
   };
 
-
-
-const deleteCollection = async () => {
+  const deleteCollection = async () => {
     try {
       const token = localStorage.getItem('token');
-        await axios.delete(`http://localhost:3000/collections/${currentCollection.id}`, {
-            headers: { Authorization: `Bearer ${token}` },
-        });
-        // Actualizar el estado para eliminar la colección del estado local
-        setCollections(prevCollections => prevCollections.filter(collection => collection._id !== currentCollection.id));
-        setShowDeleteModal(false);
-        setMessage({ text: 'Colección eliminada con éxito.', type: 'success' });
+      await axios.delete(`http://localhost:3000/collections/admin-delete/${currentCollection.id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+        data: { userId: userId }
+      });
+      // Actualizar el estado para eliminar la colección del estado local
+      setCollections(prevCollections => prevCollections.filter(collection => collection._id !== currentCollection.id));
+      setShowDeleteModal(false);
+      setMessage({ text: 'Colección eliminada con éxito.', type: 'success' });
     } catch (error) {
-        handleAPIError(error);
+      handleAPIError(error);
     }
-};
+  };
 
   const handleEditNote = (note) => {
     setEditingNote(note);
