@@ -1,0 +1,87 @@
+.user-profile-container {
+  background-color: var(--anti-flash-white); /* Fondo general claro y neutral */
+}
+
+.user-profile-container .user-profile {
+  width: 50%;
+  margin: auto;
+  margin-top: 1%;
+  padding: 20px;
+  border: none; /* Sin bordes para un look más limpio */
+  border-radius: 8px; /* Bordes más redondeados */
+  /*box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Sombra sutil */
+  background-color: var(--anti-flash-white); /* Fondo claro para el contenedor */
+}
+
+.user-profile-container .section {
+  background-color: var(--white); /* Fondo claro para secciones */
+  padding: 30px;
+  margin-top: 15px;
+  border-radius: 8px; /* Bordes más redondeados */
+  box-shadow: 0 2px 4px rgba(0,0,0,0.5); /* Sombra sutil para profundidad */
+}
+
+.user-profile-container .form-group {
+  margin-bottom: 20px;
+}
+
+.user-profile-container .form-group label {
+  display: block;
+  margin-bottom: 5px;
+  color: var(--gunmetal); /* Color oscuro para texto para mejor contraste */
+}
+
+.user-profile-container .form-group input {
+  width: calc(100% - 40px);
+  padding: 10px;
+  border: 1px solid var(--celeste); /* Borde claro para diferenciar de fondo */
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+.user-profile-container .btn {
+  background-color: var(--verdigris); /* Color verde oscuro para botones principales */
+  color: var(--white); /* Texto blanco para contraste */
+  border: none;
+  padding: 12px 24px; /* Padding más generoso */
+  border-radius: 4px; /* Bordes redondeados */
+  cursor: pointer;
+  margin-top: 20px;
+  display: block;
+  width: auto;
+  transition: background-color 0.3s; /* Transición suave al interactuar */
+}
+
+.user-profile-container .btn:hover {
+  background-color: var(--charcoal); /* Oscurecer con un tono más oscuro que verdigris */
+  color: var(--white); /* Asegurarse que el texto siga siendo blanco para máxima legibilidad */
+}
+
+.user-profile-container .btn.cancel-btn:hover {
+  background-color: var(--gunmetal); /* Oscurecer con un tono más oscuro que tiffany-blue */
+}
+
+.user-profile-container .btn.delete-profile-btn:hover {
+  background-color: #990000; /* Un rojo más oscuro manualmente seleccionado */
+}
+
+.user-profile-container .cancel-button-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 5px;
+}
+
+.user-profile-container .btn.cancel-btn {
+  background-color: var(--tiffany-blue); /* Color azul claro para el botón cancelar */
+  padding: 12px 24px;
+}
+
+.user-profile-container .btn.delete-profile-btn {
+  background-color: var(--cornell-red); /* Rojo para acciones críticas */
+  margin-right: 3%;
+}
+
+.user-profile-container .error-message {
+  color: var(--cornell-red); /* Mensajes de error en rojo intenso */
+  margin-top: 10px;
+}

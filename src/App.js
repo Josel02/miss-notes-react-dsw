@@ -12,6 +12,8 @@ import Layout from './layouts/Layout';
 import CollectionListPage from './views/CollectionList/CollectionListPage';
 import './styles/Bootstrap.css';
 import NotesManagement from './views/NotesManagement';
+import UserProfile from './views/UserProfile';
+
 
 function App() {
   return (
@@ -31,6 +33,7 @@ function App() {
           <Route path="/collections" element={<Layout><CollectionListPage /></Layout>} />
           <Route path="/management" element={<Layout><Management /></Layout>} />
           <Route path="/notesManagement/:userId" element={<Layout><NotesManagement /></Layout>} />
+          <Route path="/profile" element={<Layout><UserProfile /></Layout>} />
         </Routes>
       </NotesProvider>
     </Router>
