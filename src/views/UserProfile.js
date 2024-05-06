@@ -42,11 +42,27 @@ const UserProfile = () => {
         }));
         setInitialValues({ name, email, role });
       } catch (error) {
-        console.error('Error fetching user data:', error);
+        handleAPIError(error);
       }
     };
     fetchUser();
   }, []);
+
+  const handleAPIError = (error) => {
+    console.error('API error:', error);
+    if (error.response && error.response.status === 403) {
+    navigate('/', { replace: true });
+    enqueueSnackbar('Session expired. Please login again.', { variant: 'warning' });
+    logout();
+    } 
+    else if (error.response && error.response.status === 404) {
+        navigate('/notes', { replace: true });
+        enqueueSnackbar(error.response.data.message, { variant: 'info' });
+    }
+    else {
+        enqueueSnackbar('Error al procesar la solicitud.', { variant: 'error' });
+    }
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -102,8 +118,7 @@ const UserProfile = () => {
       setIsEditing(false);
       setUser(prev => ({ ...prev, currentPassword: '', newPassword: '', confirmNewPassword: '' }));
     } catch (error) {
-      console.error('Error updating user data:', error);
-      enqueueSnackbar('Error al actualizar el perfil!', { variant: 'error' });
+      handleAPIError(error);
     }
   };
 
@@ -129,8 +144,7 @@ const UserProfile = () => {
       }));
   
     } catch (error) {
-      console.error('Error changing password:', error);
-      enqueueSnackbar('Error al cambiar la contraseña!', { variant: 'error' });
+      handleAPIError(error);
     }
   }
   
@@ -139,19 +153,19 @@ const UserProfile = () => {
     // Confirmar con el usuario antes de eliminar el perfil
     if (window.confirm("¿Estás seguro de que deseas eliminar tu perfil? Esta acción no se puede deshacer.")) {
       try {
+        const token = localStorage.getItem('token');
         await axios.delete('http://localhost:3000/users/me', {
-          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+          headers: { Authorization: `Bearer ${token}` }
         });
         enqueueSnackbar('Perfil eliminado con éxito!', { variant: 'success' });
   
-        // Usar logout del AuthContext para limpiar el estado y el almacenamiento local
-        logout();
-        
         // Redirigir al usuario a la página de inicio
         navigate('/');
+
+        // Usar logout del AuthContext para limpiar el estado y el almacenamiento local
+        logout();
       } catch (error) {
-        console.error('Error al eliminar el usuario:', error);
-        enqueueSnackbar('Error al eliminar el perfil!', { variant: 'error' });
+        handleAPIError(error);
       }
     }
   };
