@@ -79,37 +79,29 @@ const CollectionsManagement = () => {
       };
   
       const payload = {
-        noteIds: selectedNotes
+        noteIds: selectedNotes,
+        userId: userId // Añadiendo userId al payload
       };
   
       const response = await axios.put(
-        `http://localhost:3000/collections/${currentCollection.id}/notes/add`,
+        `http://localhost:3000/collections/${currentCollection.id}/notes/admin-add`,
         payload,
         config
       );
-
+  
       const updatedNoteIds = response.data.notes;
       const updatedNotes = allNotes.filter(note => updatedNoteIds.includes(note._id));
-
+  
       setCollections(collections.map(collection => {
         if (collection._id === currentCollection.id) {
           return { ...collection, notes: updatedNotes };
         }
         return collection;
       }));
-
-      setShowAddNotesModal(false);
+  
+      setShowAddNotesModal(false); // Asumiendo que hay un modal que debe ser cerrado
     } catch (error) {
-      console.error('Error adding notes to collection:', error);
-      if (error.response) {
-        if (error.response.status === 403) {
-          navigate('/', { replace: true });
-          enqueueSnackbar('Session expired. Please login again.', { variant: 'warning' });
-          logout();
-        } else {
-          enqueueSnackbar(`Failed to add notes: ${error.response.data.message}`, { variant: 'error' });
-        }
-      }
+      handleAPIError(error);
     }
   };
 
@@ -131,13 +123,7 @@ const CollectionsManagement = () => {
       setShowEditModal(false);
       setMessage('Nombre de la colección actualizado con éxito.');
     } catch (error) {
-      console.error('Error updating collection:', error);
-      setMessage('Error al actualizar el nombre de la colección.');
-      if (error.response && error.response.status === 403) {
-        navigate('/', { replace: true });
-        enqueueSnackbar('Session expired. Please login again.', { variant: 'warning' });
-        logout();
-      }
+        handleAPIError(error);
     }
   };
 
@@ -152,13 +138,7 @@ const CollectionsManagement = () => {
       })));
       setMessage({ text: 'Nota eliminada con éxito.', type: 'success' });
     } catch (error) {
-      console.error('Error deleting note:', error);
-      setMessage({ text: 'Error al eliminar la nota.', type: 'error' });
-      if (error.response && error.response.status === 403) {
-        navigate('/', { replace: true });
-        enqueueSnackbar('Session expired. Please login again.', { variant: 'warning' });
-        logout();
-      }
+        handleAPIError(error);
     }
   };
 
@@ -175,13 +155,7 @@ const deleteCollection = async () => {
         setShowDeleteModal(false);
         setMessage({ text: 'Colección eliminada con éxito.', type: 'success' });
     } catch (error) {
-        console.error('Error deleting collection:', error);
-        setMessage({ text: 'Error al eliminar la colección.', type: 'error' });
-        if (error.response && error.response.status === 403) {
-          navigate('/', { replace: true });
-          enqueueSnackbar('Session expired. Please login again.', { variant: 'warning' });
-          logout();
-        }
+        handleAPIError(error);
     }
 };
 
@@ -226,13 +200,7 @@ const deleteCollection = async () => {
       setShowAddModal(false);
       setMessage('Colección añadida con éxito.');
     } catch (error) {
-      console.error('Error creating collection:', error);
-      setMessage('Error al añadir colección.');
-      if (error.response && error.response.status === 403) {
-        navigate('/', { replace: true });
-        enqueueSnackbar('Session expired. Please login again.', { variant: 'warning' });
-        logout();
-      }
+        handleAPIError(error);
     }
   };
 
