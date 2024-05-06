@@ -78,16 +78,20 @@ const NotesManagement = () => {
         setIsEditingExistingNote(true);
       }
     
-      const createNote = async (note) => {
+      const createNote = async (noteData) => {
         const token = localStorage.getItem('token');
         try {
-          const response = await axios.post(`http://localhost:3000/notes/`, note, {
+          // Asegúrate de incluir userId en el objeto de la nota
+          const response = await axios.post(`http://localhost:3000/notes/admin-add`, {
+            userId,
+            ...noteData
+          }, {
             headers: { Authorization: `Bearer ${token}` }
           });
           setNotes(prevNotes => [...prevNotes, response.data]);
         }
         catch(error){
-          console.error('Error creating note:', error);
+          handleAPIError(error);
         }
       }
       
@@ -128,22 +132,23 @@ const NotesManagement = () => {
         }
     };
     
-      useEffect(() => {
-        const fetchNotes = async () => {
-          try {
-            const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:3000/notes/${userId}`, {
-              headers: { Authorization: `Bearer ${token}` }
-            });
-            setNotes(response.data);
-            setLoading(false);
-          } catch (error) {
-            handleAPIError(error);
-          }
-        };
-      
-        fetchNotes();
-      }, []); 
+    useEffect(() => {
+      const fetchNotes = async () => {
+        try {
+          const token = localStorage.getItem('token');
+          const response = await axios.get(`http://localhost:3000/notes/`, {
+            headers: { Authorization: `Bearer ${token}` },
+            params: { userId }
+          });
+          setNotes(response.data);
+          setLoading(false);
+        } catch (error) {
+          handleAPIError(error);
+        }
+      };
+    
+      fetchNotes();
+    }, []);
 
       return (
           <>
