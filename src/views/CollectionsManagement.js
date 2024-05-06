@@ -11,7 +11,6 @@ import { useAuth } from '../components/AuthContext';
 import EditNoteModal from './EditNoteModal';
 import AddNotesToCollectionModal from '../components/AddNotesToCollectionModal';
 import axios from 'axios';
-import { useNotes } from '../context/NotesContext';
 import '../styles/CollectionListPage.css'
 
 const CollectionsManagement = () => {
@@ -29,7 +28,6 @@ const CollectionsManagement = () => {
   const navigate = useNavigate();
   const { logout } = useAuth();
   const { enqueueSnackbar } = useSnackbar();
-  const { updateNote } = useNotes();
 
   useEffect(() => {
     const fetchCollectionsAndNotes = async () => { 
@@ -165,16 +163,22 @@ const CollectionsManagement = () => {
   };
 
   const saveEditedNote = async (updatedNote) => {
-    console.log("Saving note", updatedNote);
-    updateNote(updatedNote._id, updatedNote).then(() => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.put(`http://localhost:3000/notes/admin-update/${updatedNote._id}`, {
+        userId,
+        ...updatedNote
+      }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
       setCollections(prevCollections => prevCollections.map(collection => ({
         ...collection,
         notes: collection.notes.map(note => note._id === updatedNote._id ? { ...note, ...updatedNote } : note)
       })));
-    })
-    .catch(error => {
+    }
+    catch(error){
       handleAPIError(error);
-    });
+    }
   };
 
   const handleCloseModal = () => {

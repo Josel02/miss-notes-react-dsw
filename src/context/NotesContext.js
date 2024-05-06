@@ -16,7 +16,7 @@ export const NotesProvider = ({ children }) => {
 
   const updateNote = async (id, updatedNote) => {
     try {
-      const token = sessionStorage.getItem('token');
+      const token = localStorage.getItem('token');
       const response = await axios.put(`http://localhost:3000/notes/${id}`, updatedNote, {
         headers: { Authorization: `Bearer ${token}` }
       });
