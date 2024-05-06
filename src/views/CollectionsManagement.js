@@ -223,7 +223,8 @@ const CollectionsManagement = () => {
                   placement="top"
                   overlay={<Tooltip id={`tooltip-edit-${collection._id}`}>Editar</Tooltip>}
                 >
-                  <Button variant="link" onClick={() => {
+                  <Button variant="link" onClick={(e) => {
+                    e.stopPropagation();
                     setCurrentCollection({ id: collection._id, name: collection.name });
                     setShowEditModal(true);
                   }}><FiEdit /></Button>
@@ -232,7 +233,8 @@ const CollectionsManagement = () => {
                   placement="top"
                   overlay={<Tooltip id={`tooltip-delete-${collection._id}`}>Eliminar</Tooltip>}
                 >
-                  <Button variant="link" onClick={() => {
+                  <Button variant="link" onClick={(e) => {
+                    e.stopPropagation();
                     setCurrentCollection({ id: collection._id, name: collection.name });
                     setShowDeleteModal(true);
                   }}><FiTrash2 /></Button>
@@ -241,7 +243,8 @@ const CollectionsManagement = () => {
                   placement="top"
                   overlay={<Tooltip id={`tooltip-add-${collection._id}`}>Añadir notas</Tooltip>}
                 >
-                <Button variant="link" onClick={() => {
+                <Button variant="link" onClick={(e) => {
+                    e.stopPropagation();
                     setCurrentCollection({ id: collection._id, name: collection.name, notes: collection.notes });
                     setShowAddNotesModal(true);
                   }}><FiPlusCircle /></Button> 
