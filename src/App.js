@@ -13,6 +13,7 @@ import CollectionListPage from './views/CollectionList/CollectionListPage';
 import './styles/Bootstrap.css';
 import NotesManagement from './views/NotesManagement';
 import UserProfile from './views/UserProfile';
+import CollectionsManagement from './views/CollectionsManagement';
 
 
 function App() {
@@ -33,6 +34,7 @@ function App() {
           <Route path="/collections" element={<Layout><CollectionListPage /></Layout>} />
           <Route path="/management" element={<Layout><Management /></Layout>} />
           <Route path="/notesManagement/:userId" element={<Layout><NotesManagement /></Layout>} />
+          <Route path="/collectionsManagement/:userId" element={<Layout><CollectionsManagement /></Layout>} />
           <Route path="/profile" element={<Layout><UserProfile /></Layout>} />
         </Routes>
       </NotesProvider>
