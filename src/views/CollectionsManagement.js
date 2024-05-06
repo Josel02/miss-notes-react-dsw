@@ -108,7 +108,8 @@ const CollectionsManagement = () => {
   const handleEditCollection = async (newName) => {
     try {
       const token = localStorage.getItem('token');
-      await axios.put(`http://localhost:3000/collections/${currentCollection.id}`, {
+      await axios.put(`http://localhost:3000/collections/admin-update/${currentCollection.id}`, {
+        userId: userId,
         name: newName
       }, {
         headers: { Authorization: `Bearer ${token}` }
@@ -125,7 +126,7 @@ const CollectionsManagement = () => {
     } catch (error) {
         handleAPIError(error);
     }
-  };
+  };  
 
   const deleteNote = async (noteId) => {
     try {
@@ -206,6 +207,7 @@ const deleteCollection = async () => {
 
   return (
     <>
+      <h2 className='mt-2 ms-2'>Colecciones del usuario</h2>
       {message && <Alert variant={message.type === 'success' ? 'success' : 'danger'} className="collection-alert">
         {message.text}
       </Alert>}
