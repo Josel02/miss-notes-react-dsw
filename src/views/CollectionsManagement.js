@@ -173,12 +173,7 @@ const CollectionsManagement = () => {
       })));
     })
     .catch(error => {
-      console.error('Error saving note:', error);
-      if (error.response && error.response.status === 403) {
-        navigate('/', { replace: true });
-        enqueueSnackbar('Session expired. Please login again.', { variant: 'warning' });
-        logout();
-      }
+      handleAPIError(error);
     });
   };
 
@@ -192,8 +187,9 @@ const CollectionsManagement = () => {
   const handleCreateCollection = async (collectionName) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.post('http://localhost:3000/collections', {
-        name: collectionName
+      const response = await axios.post('http://localhost:3000/collections/admin-add', {
+        name: collectionName,
+        userId: userId
       }, {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -201,7 +197,7 @@ const CollectionsManagement = () => {
       setShowAddModal(false);
       setMessage('Colección añadida con éxito.');
     } catch (error) {
-        handleAPIError(error);
+      handleAPIError(error);
     }
   };
 
@@ -264,7 +260,7 @@ const CollectionsManagement = () => {
           </Accordion>
         ))
       ) : (
-        <Alert variant="info">No hay colecciones disponibles.</Alert>
+        <Alert variant="info">Este usuario no tiene ninguna colección.</Alert>
       )}
       <Button style={{ position: 'fixed', right: '20px', bottom: '20px', zIndex: '1000', borderRadius: '50%' }} onClick={() => setShowAddModal(true)} className="collection-add-btn">
         +
