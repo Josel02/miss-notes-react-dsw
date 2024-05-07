@@ -49,13 +49,3 @@
     color: var(--davys-gray);
     border-color: var(--amaranth-pink);
 }
-
-.collection-modal-content {
-    background-color: var(--white);
-    border: 2px solid var(--pale-purple);
-}
-
-.collection-modal-header {
-    background-color: var(--pale-purple);
-    color: var(--white);
-}
