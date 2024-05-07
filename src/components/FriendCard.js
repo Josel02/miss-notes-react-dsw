@@ -1,6 +1,6 @@
-// FriendCard.js
-import React from 'react';
-import { Card, CardContent, Typography, Avatar } from '@mui/material';
+import React, { useState } from 'react';
+import { Card, Button } from 'react-bootstrap';
+import '../styles/Friends/FriendCard.css';
 
 const stringToColor = (string) => {
     let hash = 0;
@@ -15,28 +15,32 @@ const stringToColor = (string) => {
     return colour;
 }
 
-const getAvatar = (name) => {
-    return {
-        sx: {
-            bgcolor: stringToColor(name),
-            color: 'white'
-        },
-        children: `${name[0].toUpperCase()}`
-    };
+const getInitials = (name) => {
+    return name.split(' ').map((n) => n[0]).join('').toUpperCase();
 };
 
-const FriendCard = ({ name, email }) => {
+const FriendCard = ({ name, email, onDelete }) => {
+    const [hover, setHover] = useState(false);
+
     return (
-        <Card>
-            <CardContent>
-                <Avatar {...getAvatar(name)} />
-                <Typography variant="h5" component="div">
-                    {name}
-                </Typography>
-                <Typography color="text.secondary">
-                    {email}
-                </Typography>
-            </CardContent>
+        <Card
+            onMouseEnter={() => setHover(true)}
+            onMouseLeave={() => setHover(false)}
+            className="text-center friend-card"
+            style={{ width: '18rem', margin: 'auto' }}
+        >
+            <Card.Header className="friend-card-header-circle" style={{ backgroundColor: stringToColor(name) }}>
+                <div className="friend-card-initials-circle">{getInitials(name)}</div>
+            </Card.Header>
+            <Card.Body>
+                <Card.Title>{name}</Card.Title>
+                <Card.Text>{email}</Card.Text>
+                <div className={`friend-card-delete-button ${hover ? 'friend-card-delete-button-visible' : ''}`}>
+                    <Button variant="outline-primary" onClick={onDelete}>
+                        Eliminar
+                    </Button>
+                </div>
+            </Card.Body>
         </Card>
     );
 };
