@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Alert, Accordion, Button, Modal, Tooltip, OverlayTrigger } from 'react-bootstrap';
+import { Alert, Accordion, Button, Modal, Tooltip, OverlayTrigger, FormControl } from 'react-bootstrap';
 import { FiEdit, FiTrash2, FiPlusCircle } from 'react-icons/fi';
 import Masonry from '@mui/lab/Masonry';
 import NoteCard from '../../components/NoteCard';
@@ -12,13 +12,13 @@ import EditNoteModal from '../EditNoteModal';
 import AddNotesToCollectionModal from '../../components/AddNotesToCollectionModal';
 import axios from 'axios';
 import { useNotes } from '../../context/NotesContext';
+import useSearchBar from '../../components/SearchBar';
 import '../../styles/CollectionListPage.css'
 
 const CollectionListPage = () => {
   const [collections, setCollections] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showAddModal, setShowAddModal] = useState(false);
-  const [message, setMessage] = useState('');
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [currentCollection, setCurrentCollection] = useState({ id: '', name: '' });
   const [showEditModal, setShowEditModal] = useState(false);
@@ -29,6 +29,10 @@ const CollectionListPage = () => {
   const { logout } = useAuth();
   const { enqueueSnackbar } = useSnackbar();
   const { updateNote } = useNotes();
+  const [filteredCollections, setSearchTerm] = useSearchBar(collections, {
+    keys: ['name'],
+    threshold: 0.3
+  });
 
   useEffect(() => {
     const fetchCollectionsAndNotes = async () => { 
@@ -52,6 +56,22 @@ const CollectionListPage = () => {
     };
     fetchCollectionsAndNotes();
   }, []);
+
+  const handleAPIError = (error) => {
+    console.error('API error:', error);
+    if (error.response && error.response.status === 403) {
+    navigate('/', { replace: true });
+    enqueueSnackbar('Session expired. Please login again.', { variant: 'warning' });
+    logout();
+    } 
+    else if (error.response && error.response.status === 404) {
+        navigate('/management', { replace: true });
+        enqueueSnackbar(error.response.data.message, { variant: 'info' });
+    }
+    else {
+        enqueueSnackbar('Error al procesar la solicitud.', { variant: 'error' });
+    }
+  };
 
   const handleAddNotesToCollection = async (selectedNotes) => {
     const token = localStorage.getItem('token');
@@ -85,13 +105,7 @@ const CollectionListPage = () => {
     } catch (error) {
       console.error('Error adding notes to collection:', error);
       if (error.response) {
-        if (error.response.status === 403) {
-          navigate('/', { replace: true });
-          enqueueSnackbar('Session expired. Please login again.', { variant: 'warning' });
-          logout();
-        } else {
-          enqueueSnackbar(`Failed to add notes: ${error.response.data.message}`, { variant: 'error' });
-        }
+        handleAPIError(error);
       }
     }
   };
@@ -112,15 +126,9 @@ const CollectionListPage = () => {
       });
       setCollections(updatedCollections);
       setShowEditModal(false);
-      setMessage('Nombre de la colección actualizado con éxito.');
+      enqueueSnackbar('Nombre de la colección actualizado con éxito.', { variant: 'success' });
     } catch (error) {
-      console.error('Error updating collection:', error);
-      setMessage('Error al actualizar el nombre de la colección.');
-      if (error.response && error.response.status === 403) {
-        navigate('/', { replace: true });
-        enqueueSnackbar('Session expired. Please login again.', { variant: 'warning' });
-        logout();
-      }
+      handleAPIError(error);
     }
   };
 
@@ -133,19 +141,11 @@ const CollectionListPage = () => {
         ...collection,
         notes: collection.notes.filter(note => note._id !== noteId)
       })));
-      setMessage({ text: 'Nota eliminada con éxito.', type: 'success' });
+      enqueueSnackbar('Nota eliminada con éxito.', { variant: 'success' });
     } catch (error) {
-      console.error('Error deleting note:', error);
-      setMessage({ text: 'Error al eliminar la nota.', type: 'error' });
-      if (error.response && error.response.status === 403) {
-        navigate('/', { replace: true });
-        enqueueSnackbar('Session expired. Please login again.', { variant: 'warning' });
-        logout();
-      }
+      handleAPIError(error);
     }
   };
-
-
 
 const deleteCollection = async () => {
     try {
@@ -156,15 +156,9 @@ const deleteCollection = async () => {
         // Actualizar el estado para eliminar la colección del estado local
         setCollections(prevCollections => prevCollections.filter(collection => collection._id !== currentCollection.id));
         setShowDeleteModal(false);
-        setMessage({ text: 'Colección eliminada con éxito.', type: 'success' });
+        enqueueSnackbar('Colección eliminada con éxito.', { variant: 'success' });
     } catch (error) {
-        console.error('Error deleting collection:', error);
-        setMessage({ text: 'Error al eliminar la colección.', type: 'error' });
-        if (error.response && error.response.status === 403) {
-          navigate('/', { replace: true });
-          enqueueSnackbar('Session expired. Please login again.', { variant: 'warning' });
-          logout();
-        }
+        handleAPIError(error);
     }
 };
 
@@ -207,27 +201,26 @@ const deleteCollection = async () => {
       });
       setCollections([...collections, response.data]);
       setShowAddModal(false);
-      setMessage('Colección añadida con éxito.');
+      enqueueSnackbar('Colección añadida con éxito.', { variant: 'success' });
     } catch (error) {
-      console.error('Error creating collection:', error);
-      setMessage('Error al añadir colección.');
-      if (error.response && error.response.status === 403) {
-        navigate('/', { replace: true });
-        enqueueSnackbar('Session expired. Please login again.', { variant: 'warning' });
-        logout();
-      }
+      handleAPIError(error);
     }
   };
 
   return (
     <>
-      {message && <Alert variant={message.type === 'success' ? 'success' : 'danger'} className="collection-alert">
-        {message.text}
-      </Alert>}
+      <div className='d-flex justify-content-center'>
+        <FormControl
+          type="text"
+          placeholder="Buscar colecciones"
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="mb-3 mt-2 rounded-pill w-50"
+        />
+      </div>
       {loading ? (
         <div>Cargando colecciones...</div>
       ) : collections.length > 0 ? (
-        collections.map((collection) => (
+        filteredCollections.map((collection) => (
           <Accordion defaultActiveKey="0" key={collection._id} className="collection-item">
             <Accordion.Item eventKey="0">
               <Accordion.Header className="collection-header">

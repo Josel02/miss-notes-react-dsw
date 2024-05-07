@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Alert, Accordion, Button, Modal, Tooltip, OverlayTrigger } from 'react-bootstrap';
+import { Alert, Accordion, Button, Modal, Tooltip, OverlayTrigger, FormControl } from 'react-bootstrap';
 import { FiEdit, FiTrash2, FiPlusCircle } from 'react-icons/fi';
 import Masonry from '@mui/lab/Masonry';
 import NoteCard from '../components/NoteCard';
@@ -12,6 +12,7 @@ import EditNoteModal from './EditNoteModal';
 import AddNotesToCollectionModal from '../components/AddNotesToCollectionModal';
 import axios from 'axios';
 import '../styles/CollectionListPage.css'
+import useSearchBar from '../components/SearchBar';
 
 const CollectionsManagement = () => {
   const { userId } = useParams();
@@ -28,6 +29,10 @@ const CollectionsManagement = () => {
   const navigate = useNavigate();
   const { logout } = useAuth();
   const { enqueueSnackbar } = useSnackbar();
+  const [filteredCollections, setSearchTerm] = useSearchBar(collections, {
+    keys: ['name'],
+    threshold: 0.3
+  });
 
   useEffect(() => {
     const fetchCollectionsAndNotes = async () => { 
@@ -38,7 +43,7 @@ const CollectionsManagement = () => {
                 params: { userId }
             });
         await setCollections(response.data);
-
+            console.log('Collections:', response.data)
         response = await axios.get(`http://localhost:3000/notes/`, {
             headers: { Authorization: `Bearer ${token}` },
             params: { userId }
@@ -211,10 +216,18 @@ const CollectionsManagement = () => {
       {message && <Alert variant={message.type === 'success' ? 'success' : 'danger'} className="collection-alert">
         {message.text}
       </Alert>}
+      <div className='d-flex justify-content-center'>
+        <FormControl
+          type="text"
+          placeholder="Buscar colecciones"
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="mb-3 mt-2 rounded-pill w-50"
+        />
+      </div>
       {loading ? (
         <div>Cargando colecciones...</div>
       ) : collections.length > 0 ? (
-        collections.map((collection) => (
+        filteredCollections.map((collection) => (
           <Accordion defaultActiveKey="0" key={collection._id} className="collection-item">
             <Accordion.Item eventKey="0">
               <Accordion.Header className="collection-header">

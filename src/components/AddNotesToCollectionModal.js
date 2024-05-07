@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form, FormControl, FormCheck } from 'react-bootstrap';
+import useSearchBar from './SearchBar';
 import '../styles/AddNotesToCollectionModal.css';
 
 const AddNotesToCollectionModal = ({ show, handleClose, notes, handleSave, initialSelectedNotes }) => {
     const [selectedNotes, setSelectedNotes] = useState(new Set());
-    const [searchTerm, setSearchTerm] = useState("");
     const [selectAll, setSelectAll] = useState(false);
+    const [filteredNotes, setSearchTerm] = useSearchBar(notes, {
+        keys: ['title'],
+        threshold: 0.3
+    });
 
     useEffect(() => {
         if (initialSelectedNotes) {
@@ -37,14 +41,6 @@ const AddNotesToCollectionModal = ({ show, handleClose, notes, handleSave, initi
         setSelectAll(isChecked);
     };
 
-    const handleFilter = event => {
-        setSearchTerm(event.target.value.toLowerCase());
-    };
-
-    const filteredNotes = notes.filter(note =>
-        note.title.toLowerCase().includes(searchTerm)
-    );
-
     return (
         <Modal show={show} onHide={handleClose} centered>
             <Modal.Header closeButton>
@@ -54,7 +50,7 @@ const AddNotesToCollectionModal = ({ show, handleClose, notes, handleSave, initi
                 <FormControl
                     type="text"
                     placeholder="Buscar notas"
-                    onChange={handleFilter}
+                    onChange={(e) => setSearchTerm(e.target.value)}
                     className="mb-3"
                 />
                 <Form>
