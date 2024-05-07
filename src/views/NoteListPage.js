@@ -151,7 +151,7 @@ const NoteListPage = () => {
         <div className='d-flex justify-content-center'>
           <FormControl
             type="text"
-            placeholder="Buscar por título"
+            placeholder="Buscar notas"
             onChange={(e) => setSearchTerm(e.target.value)}
             className="mb-3 mt-2 rounded-pill w-50"
           />

@@ -2,10 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import NoteCard from '../components/NoteCard';
 import Masonry from '@mui/lab/Masonry';
-import { Alert, Button } from 'react-bootstrap';
+import { Alert, Button, FormControl } from 'react-bootstrap';
 import { useSnackbar } from 'notistack';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../components/AuthContext';
+import useSearchBar from '../components/SearchBar';
 import axios from 'axios';
 import EditNoteModal from './EditNoteModal';
 
@@ -24,6 +25,10 @@ const NotesManagement = () => {
       title: '',
       content: []
     }
+    const [filteredNotes, setSearchTerm] = useSearchBar(notes, {
+      keys: ['title'],
+      threshold: 0.3
+    });
 
     const addNewNote = () => {
         setEditingNote(emptyNote);
@@ -158,6 +163,14 @@ const NotesManagement = () => {
                 {message.text}
               </Alert>
             )}
+          <div className='d-flex justify-content-center'>
+            <FormControl
+              type="text"
+              placeholder="Buscar notas"
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="mb-3 mt-2 rounded-pill w-50"
+            />
+          </div>
             <Button variant="outline-primary" 
               style={{ 
               position: 'fixed', right: '20px', 
@@ -171,7 +184,7 @@ const NotesManagement = () => {
               <div>Cargando notas...</div>
             ) : notes.length > 0 ? (
               <Masonry columns={{ xs: 1, sm: 2, md: 3, lg: 4 }} spacing={2}>
-                {notes.map(note => (
+                {filteredNotes.map(note => (
                   <div key={note._id}>
                     <NoteCard note={note} onEdit={() => handleEditNote(note)} onDelete={() => deleteNote(note._id)} />
                   </div>
