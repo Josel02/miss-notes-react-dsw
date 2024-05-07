@@ -1,8 +1,7 @@
-// FriendList.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Grid } from '@mui/material';
-import FriendCard from '../../components/FriendCard';
+import Masonry from '@mui/lab/Masonry'; // Importa Masonry desde MUI
+import FriendCard from '../../components/FriendCard'; // Asegúrate de que la ruta es correcta
 
 const FriendList = () => {
     const [friends, setFriends] = useState([]);
@@ -24,13 +23,13 @@ const FriendList = () => {
     }, []);
 
     return (
-        <Grid container spacing={2}>
+        <Masonry columns={{ xs: 1, sm: 2, md: 3, lg: 4 }} spacing={2}>
             {friends.map(friend => (
-                <Grid item key={friend._id} xs={12} sm={6} md={4}>
+                <div key={friend._id}>
                     <FriendCard name={friend.name} email={friend.email} />
-                </Grid>
+                </div>
             ))}
-        </Grid>
+        </Masonry>
     );
 };
 
