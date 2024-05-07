@@ -81,7 +81,7 @@ const AddNotesToCollectionModal = ({ show, handleClose, notes, handleSave, initi
                 <Button variant="secondary" onClick={handleClose}>
                     Cerrar
                 </Button>
-                <Button variant="primary" onClick={() => handleSave(Array.from(selectedNotes))}>
+                <Button variant="primary" className='btn-primary-custom' onClick={() => handleSave(Array.from(selectedNotes))}>
                     Añadir Notas
                 </Button>
             </Modal.Footer>

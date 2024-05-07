@@ -39,7 +39,7 @@ const UserCard = ({ user, onEdit, onDelete }) => {
         <hr />
         {renderUserInfo(user)}
         <div className="action-buttons">
-          <Button variant="primary" onClick={() => onEdit(user)}>Editar</Button>
+          <Button variant="primary" className='btn-primary-custom' onClick={() => onEdit(user)}>Editar</Button>
           <Button variant="outline-primary" onClick={() => onDelete(user)}>Eliminar</Button>
         </div>
       </Card.Body>

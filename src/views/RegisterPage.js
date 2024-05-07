@@ -155,7 +155,7 @@ const RegisterPage = () => {
                     {errors.confirmPassword && <div className="error-message">{errors.confirmPassword}</div>}
                 </Form.Group>
     
-                <Button variant="primary" type="submit" className='btn-login-register'>Registrarse</Button>
+                <Button variant="primary" type="submit" className='btn-login-register btn-primary-custom'>Registrarse</Button>
                 <div className="mt-3 text-center">
                     <Link to="/login" className="text-decoration-underline text-decoration-underline-login-register">¿Ya tienes cuenta? Inicia sesión</Link>
                 </div>

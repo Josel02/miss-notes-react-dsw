@@ -47,7 +47,7 @@ const NoteCard = ({ note, onEdit, onDelete }) => {
           {note.content.map(renderNoteContent)}
         </div>
         <div className="action-buttons">
-          <Button variant="primary" onClick={() => onEdit(note)}>Editar</Button>
+          <Button variant="primary" className='btn-primary-custom' onClick={() => onEdit(note)}>Editar</Button>
           <Button variant="outline-primary" onClick={onDelete}>Eliminar</Button>
         </div>
       </Card.Body>

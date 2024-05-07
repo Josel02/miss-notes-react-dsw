@@ -46,7 +46,7 @@ const AddCollectionModal = ({ show, handleClose, handleSave }) => {
       </Modal.Body>
       <Modal.Footer>
         <Button variant="secondary" onClick={closeModal}>Cerrar</Button>
-        <Button variant="primary" onClick={saveCollection}>Guardar</Button>
+        <Button variant="primary" className='btn-primary-custom' onClick={saveCollection}>Guardar</Button>
       </Modal.Footer>
     </Modal>
   );
