@@ -15,6 +15,7 @@ import NotesManagement from './views/NotesManagement';
 import UserProfile from './views/UserProfile';
 import CollectionsManagement from './views/CollectionsManagement';
 import FriendList from './views/Friends/FriendList';
+import AddFriends from './views/Friends/AddFriends';
 
 function App() {
   return (
@@ -36,8 +37,8 @@ function App() {
           <Route path="/notesManagement/:userId" element={<Layout><NotesManagement /></Layout>} />
           <Route path="/collectionsManagement/:userId" element={<Layout><CollectionsManagement /></Layout>} />
           <Route path="/profile" element={<Layout><UserProfile /></Layout>} />
-          <Route path="/friends/list" element={<Layout><FriendList /></Layout>} /> {/* Ruta para la lista de amigos */}
-
+          <Route path="/friends/list" element={<Layout><FriendList /></Layout>} />
+          <Route path="/friends/add" element={<Layout><AddFriends /></Layout>} />
         </Routes>
       </NotesProvider>
     </Router>

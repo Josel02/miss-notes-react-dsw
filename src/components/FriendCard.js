@@ -19,7 +19,7 @@ const getInitials = (name) => {
     return name.split(' ').map((n) => n[0]).join('').toUpperCase();
 };
 
-const FriendCard = ({ name, email, onDelete }) => {
+const FriendCard = ({ name, email, onDelete=null, onAdd=null, adding }) => {
     const [hover, setHover] = useState(false);
 
     return (
@@ -27,7 +27,6 @@ const FriendCard = ({ name, email, onDelete }) => {
             onMouseEnter={() => setHover(true)}
             onMouseLeave={() => setHover(false)}
             className="text-center friend-card"
-            style={{ width: '18rem', margin: 'auto' }}
         >
             <Card.Header className="friend-card-header-circle" style={{ backgroundColor: stringToColor(name) }}>
                 <div className="friend-card-initials-circle">{getInitials(name)}</div>
@@ -36,9 +35,15 @@ const FriendCard = ({ name, email, onDelete }) => {
                 <Card.Title>{name}</Card.Title>
                 <Card.Text>{email}</Card.Text>
                 <div className={`friend-card-delete-button ${hover ? 'friend-card-delete-button-visible' : ''}`}>
-                    <Button variant="outline-primary" onClick={onDelete}>
-                        Eliminar
-                    </Button>
+                    {adding ? (
+                        <Button variant="outline-primary" onClick={onAdd}>
+                            Agregar
+                        </Button>
+                    ) : (
+                        <Button variant="outline-primary" onClick={onDelete}>
+                            Eliminar
+                        </Button>
+                    )}
                 </div>
             </Card.Body>
         </Card>

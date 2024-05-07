@@ -26,7 +26,7 @@ const FriendList = () => {
         <Masonry columns={{ xs: 1, sm: 2, md: 3, lg: 4 }} spacing={2}>
             {friends.map(friend => (
                 <div key={friend._id}>
-                    <FriendCard name={friend.name} email={friend.email} />
+                    <FriendCard name={friend.name} email={friend.email} adding={false} />
                 </div>
             ))}
         </Masonry>
