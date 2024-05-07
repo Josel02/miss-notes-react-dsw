@@ -3,10 +3,11 @@ import Masonry from '@mui/lab/Masonry';
 import axios from 'axios';
 import { useAuth } from '../components/AuthContext';
 import NoteCard from '../components/NoteCard';
-import { Alert, Button } from 'react-bootstrap';
+import { Alert, Button, FormControl } from 'react-bootstrap';
 import { useSnackbar } from 'notistack';
 import { useNavigate } from 'react-router-dom';
 import EditNoteModal from './EditNoteModal';
+import useSearchBar from '../components/SearchBar';
 
 const NoteListPage = () => {
   const [notes, setNotes] = useState([]);
@@ -21,6 +22,10 @@ const NoteListPage = () => {
     title: '',
     content: []
   }
+  const [filteredNotes, setSearchTerm] = useSearchBar(notes, {
+    keys: ['title'],
+    threshold: 0.3
+  });
 
   const addNewNote = () => {
     setEditingNote(emptyNote);
@@ -116,7 +121,6 @@ const NoteListPage = () => {
     }
   };
   
-
   useEffect(() => {
     const fetchNotes = async () => {
       try {
@@ -144,6 +148,14 @@ const NoteListPage = () => {
             {message.text}
           </Alert>
         )}
+        <div className='d-flex justify-content-center'>
+          <FormControl
+            type="text"
+            placeholder="Buscar por título"
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="mb-3 mt-2 rounded-pill w-50"
+          />
+        </div>
         <Button variant="outline-primary" 
           style={{ 
           position: 'fixed', right: '20px', 
@@ -157,7 +169,7 @@ const NoteListPage = () => {
           <div>Cargando notas...</div>
         ) : notes.length > 0 ? (
           <Masonry columns={{ xs: 1, sm: 2, md: 3, lg: 4 }} spacing={2}>
-            {notes.map(note => (
+            {filteredNotes.map(note => (
               <div key={note._id}>
                 <NoteCard note={note} onEdit={() => handleEditNote(note)} onDelete={() => deleteNote(note._id)} />
               </div>
