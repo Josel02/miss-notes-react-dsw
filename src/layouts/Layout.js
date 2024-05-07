@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import LogoutIcon from '@mui/icons-material/Logout';
-import { Dropdown, NavDropdown, NavItem } from 'react-bootstrap';
+import { NavDropdown } from 'react-bootstrap';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import PersonIcon from '@mui/icons-material/Person';
 import { useAuth } from '../components/AuthContext';
@@ -62,6 +62,9 @@ const Layout = ({ children }) => {
                         <NavDropdown.Item as={Link} to="/friends/list">
                           Lista de Amigos
                         </NavDropdown.Item>
+                        <NavDropdown.Item as={Link} to="/friends/add">
+                          Añadir amigos
+                        </NavDropdown.Item>
                     </NavDropdown>
                     <li className="nav-item">
                       <Link className="nav-link" to="/profile">
@@ -81,19 +84,17 @@ const Layout = ({ children }) => {
                 <li className="nav-item">
                   <Link className="nav-link" to="/collections">Colecciones</Link>
                 </li>
-                <Dropdown as="li" className="nav-item">
-                  <Dropdown.Toggle className="nav-link">
-                    Mis Amigos
-                  </Dropdown.Toggle>
-                  <Dropdown.Menu>
-                    <Dropdown.Item as={Link} to="/friends/requests">
-                      Solicitudes de Amistad
-                    </Dropdown.Item>
-                    <Dropdown.Item as={Link} to="/friends/list">
-                      Lista de Amigos
-                    </Dropdown.Item>
-                  </Dropdown.Menu>
-                </Dropdown>
+                <NavDropdown title="Mis amigos">
+                  <NavDropdown.Item as={Link} to="/friends/requests">
+                    Solicitudes de Amistad
+                  </NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="/friends/list">
+                    Lista de Amigos
+                  </NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="/friends/add">
+                    Añadir amigos
+                  </NavDropdown.Item>
+                </NavDropdown>
                 <li className="nav-item">
                   <Link className="nav-link" to="/profile">
                     <i className="bi bi-person-circle"></i> Perfil
