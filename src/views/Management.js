@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import UserCard from '../components/UserCard';
 import Masonry from '@mui/lab/Masonry';
-import { Alert } from 'react-bootstrap';
+import { Alert, FormControl } from 'react-bootstrap';
 import { useSnackbar } from 'notistack';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../components/AuthContext';
 import axios from 'axios';
+import useSearchBar from '../components/SearchBar';
 import EditUserModal from './EditUserModal';
 
 const Management = () => {
@@ -15,6 +16,10 @@ const Management = () => {
   const { logout } = useAuth();
   const [loading, setLoading] = useState(true);
   const { enqueueSnackbar } = useSnackbar();
+  const [filteredUsers, setSearchTerm, searchTerm] = useSearchBar(users, {
+    keys: ['name'],
+    threshold: 0.3
+  });
 
     useEffect(() => {
         fetchUsers();
@@ -37,7 +42,7 @@ const Management = () => {
           const response = await axios.get(`http://localhost:3000/users/`, {
               headers: { Authorization: `Bearer ${token}` }
             });
-            setUsers(response.data);
+            await setUsers(response.data);
             setLoading(false);
       }
       catch(error){
@@ -89,16 +94,26 @@ const Management = () => {
       {loading ? (
         <div>Cargando usuarios...</div>
       ) : users.length > 0 ? (
-        <Masonry columns={{ xs: 1, sm: 1, md: 2, lg: 3 }} spacing={1} className='mt-2'>
-        {users.map(user => (
-          <UserCard
-            key={user._id}
-            user={user}
-            onEdit={() => handleEditUser(user)}
-            onDelete={() => handleDelete(user)}
+        <>
+        <div className='d-flex justify-content-center'>
+          <FormControl
+            type="text"
+            placeholder="Buscar usuarios"
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="mb-3 mt-2 rounded-pill w-50"
           />
-        ))}
+          </div>
+          <Masonry columns={{ xs: 1, sm: 1, md: 2, lg: 3 }} spacing={1} className='mt-2'>
+          {filteredUsers.map(user => (
+                  <UserCard
+                    key={user._id}
+                    user={user}
+                    onEdit={() => handleEditUser(user)}
+                    onDelete={() => handleDelete(user)}
+                  />
+            ))}
         </Masonry>
+        </>
       ) : (
         <Alert className="mt-2" variant="info">No hay usuarios registrados.</Alert>
       )}
