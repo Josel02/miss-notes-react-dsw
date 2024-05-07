@@ -14,7 +14,7 @@ import './styles/Bootstrap.css';
 import NotesManagement from './views/NotesManagement';
 import UserProfile from './views/UserProfile';
 import CollectionsManagement from './views/CollectionsManagement';
-
+import FriendSection from './views/Friends/FriendSection';
 
 function App() {
   return (
@@ -36,6 +36,8 @@ function App() {
           <Route path="/notesManagement/:userId" element={<Layout><NotesManagement /></Layout>} />
           <Route path="/collectionsManagement/:userId" element={<Layout><CollectionsManagement /></Layout>} />
           <Route path="/profile" element={<Layout><UserProfile /></Layout>} />
+          <Route path="/friends/*" element={<Layout><FriendSection /></Layout>} /> {/* Ruta para la sección de amigos */}
+
         </Routes>
       </NotesProvider>
     </Router>

@@ -55,10 +55,14 @@ const Layout = ({ children }) => {
                       <Link className="nav-link" to="/collections">Colecciones</Link>
                     </li>
                     <li className="nav-item">
+                      <Link className="nav-link" to="/friends">Mis Amigos</Link>
+                    </li>
+                    <li className="nav-item">
                       <Link className="nav-link" to="/profile">
                         <i className="bi bi-person-circle"></i> Perfil
                       </Link>
                     </li>
+
                   </>
                 )}
               </>
