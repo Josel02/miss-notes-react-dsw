@@ -29,7 +29,7 @@ const Layout = ({ children }) => {
 
   return (
     <>
-      <nav className="navbar navbar-expand-lg navbar-light bg-light">
+      <nav className="navbar navbar-expand-lg navbar-light bg-light sticky-top">
         <Link className="navbar-brand ms-2" to="/">Miss Notes</Link>
         <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
           <span className="navbar-toggler-icon" />
@@ -79,6 +79,9 @@ const Layout = ({ children }) => {
                   <Link className="nav-link" to="/profile">
                     <i className="bi bi-person-circle"></i> Perfil
                   </Link>
+                </li>
+                <li className="nav-item">
+                      <Link className="nav-link" to="/friends">Mis Amigos</Link>
                 </li>
               </>
             )}
