@@ -23,23 +23,57 @@ const Management = () => {
         fetchUsers();
         }, []);
 
-    const handleAPIError = (error) => {
-        console.error('API error:', error);
-        if (error.response && error.response.status === 403) {
-        navigate('/', { replace: true });
-        enqueueSnackbar('Session expired. Please login again.', { variant: 'warning' });
-        logout();
-        } else {
-            enqueueSnackbar('Error al procesar la solicitud.', { variant: 'error' });
+        const handleAPIError = (error) => {
+          console.error('API error:', error);
+          if (error.response && error.response.status === 403) {
+          navigate('/', { replace: true });
+          enqueueSnackbar('Session expired. Please login again.', { variant: 'warning' });
+          logout();
+          } 
+          else if (error.response && error.response.status === 404) {
+              enqueueSnackbar(error.response.data.message, { variant: 'info' });
+          }
+          else if (error.response && error.response.status === 400) {
+              enqueueSnackbar("Ya le has enviado una solicitud de amistad a este usuario", { variant: 'info' });
+          }
+          else {
+              enqueueSnackbar('Error al procesar la solicitud.', { variant: 'error' });
+          }
+      };
+
+      const onAdd = async (receiverId) => {
+        try {
+          const token = localStorage.getItem('token');
+          const response = await axios.post('http://localhost:3000/friends/sendFriendRequest', {
+            receiverId
+          }, {
+            headers: { Authorization: `Bearer ${token}` }
+          });
+          console.log('Friend request sent successfully.');
+          enqueueSnackbar('Solicitud de amistad enviada con éxito.', { variant: 'success' });
+          return response.data.friendshipId;
+        } catch (error) {
+          handleAPIError(error);
         }
-    };
+      };
+
+      const getStatusFromUser = (user) => {
+        if (user.friendshipStatus === 'Requested' && user.friendshipRole === 'Receiver') {
+          return 'received';
+        } else if (user.friendshipStatus === 'Requested' && user.friendshipRole === 'Requester') {
+          return 'requested';
+        } else if (user.friendshipStatus === 'None') {
+          return 'none';
+        }
+      };
 
     const fetchUsers = async () => {
       try{
           const token = localStorage.getItem('token');
-          const response = await axios.get(`http://localhost:3000/users/`, {
+          const response = await axios.get(`http://localhost:3000/users/nonFriendList`, {
               headers: { Authorization: `Bearer ${token}` }
             });
+            console.log("response data", response.data)
             setUsers(response.data);
             setLoading(false);
       }
@@ -69,7 +103,8 @@ const Management = () => {
                         key={user._id}
                         name={user.name}
                         email={user.email}
-                        adding={true}
+                        onAdd={() => onAdd(user._id)}
+                        status={getStatusFromUser(user)}
                       />
                 ))}
             </Masonry>

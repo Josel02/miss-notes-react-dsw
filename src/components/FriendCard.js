@@ -13,14 +13,34 @@ const stringToColor = (string) => {
         colour += ('00' + value.toString(16)).substr(-2);
     }
     return colour;
-}
+};
 
 const getInitials = (name) => {
     return name.split(' ').map((n) => n[0]).join('').toUpperCase();
 };
 
-const FriendCard = ({ name, email, onDelete=null, onAdd=null, adding }) => {
+const FriendCard = ({ name, email, onDelete=null, onAdd=null, onAccept=null, onReject=null, onCancel=null, status=null }) => {
     const [hover, setHover] = useState(false);
+
+    const renderButtons = (status) => {
+        switch(status) {
+            case 'friend':
+                return <Button variant="outline-primary" onClick={onDelete}>Eliminar</Button>;
+            case 'none':
+                return <Button variant="outline-primary" onClick={onAdd}>Añadir</Button>;
+            case 'received':
+                return (
+                    <>
+                        <Button className='btn-primary-custom me-2' onClick={onAccept}>Aceptar</Button>
+                        <Button variant="outline-primary" onClick={onReject}>Rechazar</Button>
+                    </>
+                );
+            case 'requested':
+                return <Button variant="outline-primary" onClick={onCancel}>Cancelar Solicitud</Button>;
+            default:
+                return null;
+        }
+    };
 
     return (
         <Card
@@ -35,15 +55,7 @@ const FriendCard = ({ name, email, onDelete=null, onAdd=null, adding }) => {
                 <Card.Title>{name}</Card.Title>
                 <Card.Text>{email}</Card.Text>
                 <div className={`friend-card-delete-button ${hover ? 'friend-card-delete-button-visible' : ''}`}>
-                    {adding ? (
-                        <Button variant="outline-primary" onClick={onAdd}>
-                            Agregar
-                        </Button>
-                    ) : (
-                        <Button variant="outline-primary" onClick={onDelete}>
-                            Eliminar
-                        </Button>
-                    )}
+                    {renderButtons(status)}
                 </div>
             </Card.Body>
         </Card>
