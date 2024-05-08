@@ -4,7 +4,7 @@ import { FormControl } from 'react-bootstrap';
 import Masonry from '@mui/lab/Masonry';
 import { useSnackbar } from 'notistack';
 import FriendCard from '../../components/FriendCard';
-import { removeFriend } from '../../context/FriendsContext';
+import { removeFriend, revokeFriendRequest } from '../../context/FriendsContext';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../components/AuthContext';
 import useSharedSearchBar from '../../components/SaredSearchBar';
@@ -63,6 +63,20 @@ const FriendList = () => {
         }
     }
 
+    const onRevoke = async (friendshipId) => {
+        try {
+          const token = localStorage.getItem('token');
+          // Revocar la solicitud de amistad usando la función revokeFriendRequest.
+          await revokeFriendRequest(friendshipId, token, enqueueSnackbar);
+          // Filtrar las solicitudes pendientes para eliminar la que se ha revocado.
+          const updatedRequests = pendingRequests.filter(request => request._id !== friendshipId);
+          // Actualizar el estado con la nueva lista de solicitudes pendientes.
+          setPendingRequests(updatedRequests);
+        } catch (error) {
+          handleAPIError(error);
+        }
+    };    
+
     const handleAPIError = (error) => {
         console.error('API error:', error);
         if (error.response && error.response.status === 403) {
@@ -112,7 +126,7 @@ const FriendList = () => {
                     <FriendCard 
                         name={request.receiver.name}
                         email={request.receiver.email}
-                        onClick={null}
+                        onClick={() => onRevoke(request._id)}
                         status={"requested"}
                     />
                 </div>
