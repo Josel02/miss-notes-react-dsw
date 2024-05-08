@@ -16,6 +16,7 @@ import UserProfile from './views/UserProfile';
 import CollectionsManagement from './views/CollectionsManagement';
 import FriendList from './views/Friends/FriendList';
 import AddFriends from './views/Friends/AddFriends';
+import FriendRequests from './views/Friends/FriendRequests';
 
 function App() {
   return (
@@ -39,6 +40,7 @@ function App() {
           <Route path="/profile" element={<Layout><UserProfile /></Layout>} />
           <Route path="/friends/list" element={<Layout><FriendList /></Layout>} />
           <Route path="/friends/add" element={<Layout><AddFriends /></Layout>} />
+          <Route path="/friends/requests" element={<Layout><FriendRequests /></Layout>} />
         </Routes>
       </NotesProvider>
     </Router>
