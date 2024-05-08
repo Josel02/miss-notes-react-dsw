@@ -95,7 +95,7 @@ const FriendList = () => {
         }
       };
 
-    return (
+      return (
         <>
         <div className='d-flex justify-content-center'>
           <FormControl
@@ -106,34 +106,41 @@ const FriendList = () => {
           />
         </div>
         <h2>My friends</h2>
-        <Masonry columns={{ xs: 1, sm: 2, md: 3, lg: 4 }} spacing={2}>
-            {filteredFriends.map(friend => (
-                <div key={friend._id}>
-                    <FriendCard 
-                        name={friend.name}
-                        email={friend.email}
-                        onClick={() => onRemove(friend._id)}
-                        status={"friend"}
-                    />
-                </div>
-            ))}
-        </Masonry>
-        <hr/>
+        {filteredFriends.length > 0 && (
+            <>
+                <Masonry columns={{ xs: 1, sm: 2, md: 3, lg: 4 }} spacing={2}>
+                    {filteredFriends.map(friend => (
+                        <div key={friend._id}>
+                            <FriendCard 
+                                name={friend.name}
+                                email={friend.email}
+                                onClick={() => onRemove(friend._id)}
+                                status={"friend"}
+                            />
+                        </div>
+                    ))}
+                </Masonry>
+                <hr/>
+            </>
+        )}
         <h2>Your requests</h2>
-        <Masonry columns={{ xs: 1, sm: 2, md: 3, lg: 4 }} spacing={2}>
-            {filteredRequests.map(request => (
-                <div key={request._id}>
-                    <FriendCard 
-                        name={request.receiver.name}
-                        email={request.receiver.email}
-                        onClick={() => onRevoke(request._id)}
-                        status={"requested"}
-                    />
-                </div>
-            ))}
-        </Masonry>
+        {filteredRequests.length > 0 && (
+            <Masonry columns={{ xs: 1, sm: 2, md: 3, lg: 4 }} spacing={2}>
+                {filteredRequests.map(request => (
+                    <div key={request._id}>
+                        <FriendCard 
+                            name={request.receiver.name}
+                            email={request.receiver.email}
+                            onClick={() => onRevoke(request._id)}
+                            status={"requested"}
+                        />
+                    </div>
+                ))}
+            </Masonry>
+        )}
         </>
     );
+    
 };
 
 export default FriendList;
