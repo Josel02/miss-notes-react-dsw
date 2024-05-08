@@ -4,23 +4,23 @@ import { Modal, Button, Form } from 'react-bootstrap';
 const AddCollectionModal = ({ show, handleClose, handleSave }) => {
   const [collectionName, setCollectionName] = useState('');
 
-  // Llamar a handleSave del padre y pasar el nombre de la nueva colección
+  // Call the parent's handleSave and pass the name of the new collection
   const saveCollection = () => {
     if (collectionName.trim()) {
       handleSave(collectionName);
-      setCollectionName('');  // Limpiar el input después de guardar
-      handleClose();  // Cerrar modal
+      setCollectionName('');  // Clear the input after saving
+      handleClose();  // Close modal
     } else {
-      alert('El nombre de la colección no puede estar vacío.');
+      alert('The collection name cannot be empty.');
     }
   };
 
-  // Manejar cambio en el input
+  // Handle input change
   const handleInputChange = (e) => {
     setCollectionName(e.target.value);
   };
 
-  // Función para cerrar modal y resetear el input
+  // Function to close the modal and reset the input
   const closeModal = () => {
     setCollectionName('');
     handleClose();
@@ -29,15 +29,15 @@ const AddCollectionModal = ({ show, handleClose, handleSave }) => {
   return (
     <Modal show={show} onHide={closeModal} centered>
       <Modal.Header closeButton>
-        <Modal.Title>Añadir nueva colección</Modal.Title>
+        <Modal.Title>Add New Collection</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Form>
           <Form.Group controlId="collectionName">
-            <Form.Label>Nombre de la colección</Form.Label>
+            <Form.Label>Collection Name</Form.Label>
             <Form.Control
               type="text"
-              placeholder="Introduce el nombre de la colección"
+              placeholder="Enter the collection name"
               value={collectionName}
               onChange={handleInputChange}
             />
@@ -45,8 +45,8 @@ const AddCollectionModal = ({ show, handleClose, handleSave }) => {
         </Form>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={closeModal}>Cerrar</Button>
-        <Button variant="primary" onClick={saveCollection}>Guardar</Button>
+        <Button variant="secondary" onClick={closeModal}>Close</Button>
+        <Button variant="primary" className='btn-primary-custom' onClick={saveCollection}>Save</Button>
       </Modal.Footer>
     </Modal>
   );

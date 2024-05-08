@@ -61,14 +61,14 @@ const EditNoteModal = ({ show, handleClose, note, onSave}) => {
     return (
         <Modal show={show} onHide={handleHide} size="lg">
             <Modal.Header closeButton>
-                <Modal.Title>Editar nota</Modal.Title>
+                <Modal.Title>Edit note</Modal.Title>
             </Modal.Header>
             <Modal.Body>
             <Form.Group className="mb-3" controlId="noteTitle">
-          <Form.Label style={{ fontSize: '1rem', fontWeight: 'bold' }}>Título</Form.Label>
+          <Form.Label style={{ fontSize: '1rem', fontWeight: 'bold' }}>Title</Form.Label>
           <Form.Control
             type="text"
-            placeholder="Introduce el título de la nota"
+            placeholder="Introduce the title of the note"
             value={localTitle}
             onChange={(e) => handleTitleChange(e.target.value)}/>
           </Form.Group>

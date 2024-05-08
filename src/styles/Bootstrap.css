@@ -1,4 +1,4 @@
-.btn-primary{
+.btn-primary-custom{
     background-color: var(--amaranth-pink);
     color: var(--white);
     font-weight: bold; /* Texto en negrita */
@@ -12,7 +12,7 @@
     border: var(--amaranth-pink) 2px solid; 
 }
 
-.btn-primary:hover {
+.btn-primary-custom:hover {
     background-color: var(--pink-lavender);
     color: var(--lavender-blush);
 }

@@ -11,9 +11,9 @@ const UserCard = ({ user, onEdit, onDelete }) => {
 
   const renderUserInfo = (user) => (
     <div>
-      <p><strong>Nombre:</strong> {user.name}</p>
+      <p><strong>Name:</strong> {user.name}</p>
       <p><strong>Email:</strong> {user.email}</p>
-      <p><strong>Rol:</strong> {user.role}</p>
+      <p><strong>Role:</strong> {user.role}</p>
     </div>
   );
 
@@ -23,24 +23,24 @@ const UserCard = ({ user, onEdit, onDelete }) => {
         <Card.Title className="text-center">{user.name}</Card.Title>
         <hr />
         <div className="links-container links-enhanced">
-        <Link to={`/notesManagement/${user._id}`} className="btn btn-link link-btn-enhanced vertical-link">
+          <Link to={`/notesManagement/${user._id}`} className="btn btn-link link-btn-enhanced vertical-link">
             <DescriptionIcon style={{ display: 'block', margin: 'auto'}} />
-            Notas
+            Notes
           </Link>
           <Link to={`/collectionsManagement/${user._id}`} className="btn btn-link link-btn-enhanced vertical-link">
             <CollectionsIcon style={{ display: 'block', margin: 'auto' }} />
-            Colecciones
+            Collections
           </Link>
           <Link to="/relationsManagement" className="btn btn-link link-btn-enhanced vertical-link">
             <GroupIcon style={{ display: 'block', margin: 'auto' }} />
-            Relaciones
+            Relationships
           </Link>
         </div>
         <hr />
         {renderUserInfo(user)}
         <div className="action-buttons">
-          <Button variant="primary" onClick={() => onEdit(user)}>Editar</Button>
-          <Button variant="outline-primary" onClick={() => onDelete(user)}>Eliminar</Button>
+          <Button variant="primary" className='btn-primary-custom' onClick={() => onEdit(user)}>Edit</Button>
+          <Button variant="outline-primary" onClick={() => onDelete(user)}>Delete</Button>
         </div>
       </Card.Body>
     </Card>

@@ -11,7 +11,7 @@ import { useAuth } from '../components/AuthContext';
 import EditNoteModal from './EditNoteModal';
 import AddNotesToCollectionModal from '../components/AddNotesToCollectionModal';
 import axios from 'axios';
-import '../styles/CollectionListPage.css'
+import '../styles/CollectionListPage.css';
 import useSearchBar from '../components/SearchBar';
 
 const CollectionsManagement = () => {
@@ -69,7 +69,7 @@ const CollectionsManagement = () => {
         enqueueSnackbar(error.response.data.message, { variant: 'info' });
     }
     else {
-        enqueueSnackbar('Error al procesar la solicitud.', { variant: 'error' });
+        enqueueSnackbar('Error processing request.', { variant: 'error' });
     }
   };
 
@@ -83,7 +83,7 @@ const CollectionsManagement = () => {
   
       const payload = {
         noteIds: selectedNotes,
-        userId: userId // Añadiendo userId al payload
+        userId: userId // Adding userId to payload
       };
   
       const response = await axios.put(
@@ -102,7 +102,7 @@ const CollectionsManagement = () => {
         return collection;
       }));
   
-      setShowAddNotesModal(false); // Asumiendo que hay un modal que debe ser cerrado
+      setShowAddNotesModal(false); // Assuming there's a modal that needs to be closed
     } catch (error) {
       handleAPIError(error);
     }
@@ -125,7 +125,7 @@ const CollectionsManagement = () => {
       });
       setCollections(updatedCollections);
       setShowEditModal(false);
-      setMessage('Nombre de la colección actualizado con éxito.');
+      setMessage('Collection name updated successfully.');
     } catch (error) {
         handleAPIError(error);
     }
@@ -141,7 +141,7 @@ const CollectionsManagement = () => {
         ...collection,
         notes: collection.notes.filter(note => note._id !== noteId)
       })));
-      setMessage({ text: 'Nota eliminada con éxito.', type: 'success' });
+      setMessage({ text: 'Note deleted successfully.', type: 'success' });
     } catch (error) {
         handleAPIError(error);
     }
@@ -154,10 +154,10 @@ const CollectionsManagement = () => {
         headers: { Authorization: `Bearer ${token}` },
         data: { userId: userId }
       });
-      // Actualizar el estado para eliminar la colección del estado local
+      // Update state to remove collection from local state
       setCollections(prevCollections => prevCollections.filter(collection => collection._id !== currentCollection.id));
       setShowDeleteModal(false);
-      setMessage({ text: 'Colección eliminada con éxito.', type: 'success' });
+      setMessage({ text: 'Collection deleted successfully.', type: 'success' });
     } catch (error) {
       handleAPIError(error);
     }
@@ -204,7 +204,7 @@ const CollectionsManagement = () => {
       });
       setCollections([...collections, response.data]);
       setShowAddModal(false);
-      setMessage('Colección añadida con éxito.');
+      setMessage('Collection added successfully.');
     } catch (error) {
       handleAPIError(error);
     }
@@ -212,20 +212,20 @@ const CollectionsManagement = () => {
 
   return (
     <>
-      <h2 className='mt-2 ms-2'>Colecciones del usuario</h2>
+      <h2 className='mt-2 ms-2'>User Collections</h2>
       {message && <Alert variant={message.type === 'success' ? 'success' : 'danger'} className="collection-alert">
         {message.text}
       </Alert>}
       <div className='d-flex justify-content-center'>
         <FormControl
           type="text"
-          placeholder="Buscar colecciones"
+          placeholder="Search collections"
           onChange={(e) => setSearchTerm(e.target.value)}
           className="mb-3 mt-2 rounded-pill w-50"
         />
       </div>
       {loading ? (
-        <div>Cargando colecciones...</div>
+        <div>Loading collections...</div>
       ) : collections.length > 0 ? (
         filteredCollections.map((collection) => (
           <Accordion defaultActiveKey="0" key={collection._id} className="collection-item">
@@ -234,7 +234,7 @@ const CollectionsManagement = () => {
                 {collection.name}
                 <OverlayTrigger
                   placement="top"
-                  overlay={<Tooltip id={`tooltip-edit-${collection._id}`}>Editar</Tooltip>}
+                  overlay={<Tooltip id={`tooltip-edit-${collection._id}`}>Edit</Tooltip>}
                 >
                   <Button variant="link" onClick={(e) => {
                     e.stopPropagation();
@@ -244,7 +244,7 @@ const CollectionsManagement = () => {
                 </OverlayTrigger>
                 <OverlayTrigger
                   placement="top"
-                  overlay={<Tooltip id={`tooltip-delete-${collection._id}`}>Eliminar</Tooltip>}
+                  overlay={<Tooltip id={`tooltip-delete-${collection._id}`}>Delete</Tooltip>}
                 >
                   <Button variant="link" onClick={(e) => {
                     e.stopPropagation();
@@ -254,7 +254,7 @@ const CollectionsManagement = () => {
                 </OverlayTrigger>
                 <OverlayTrigger
                   placement="top"
-                  overlay={<Tooltip id={`tooltip-add-${collection._id}`}>Añadir notas</Tooltip>}
+                  overlay={<Tooltip id={`tooltip-add-${collection._id}`}>Add Notes</Tooltip>}
                 >
                 <Button variant="link" onClick={(e) => {
                     e.stopPropagation();
@@ -280,7 +280,7 @@ const CollectionsManagement = () => {
           </Accordion>
         ))
       ) : (
-        <Alert variant="info">Este usuario no tiene ninguna colección.</Alert>
+        <Alert variant="info">This user has no collections.</Alert>
       )}
       <Button style={{ position: 'fixed', right: '20px', bottom: '20px', zIndex: '1000', borderRadius: '50%' }} onClick={() => setShowAddModal(true)} className="collection-add-btn">
         +
@@ -308,12 +308,12 @@ const CollectionsManagement = () => {
       />
       <Modal key={showDeleteModal} show={showDeleteModal} onHide={() => setShowDeleteModal(false)} centered className="collection-modal-content">
         <Modal.Header closeButton className="collection-modal-header">
-          <Modal.Title>Confirmar eliminación</Modal.Title>
+          <Modal.Title>Confirm deletion</Modal.Title>
         </Modal.Header>
-        <Modal.Body>¿Estás seguro de que deseas eliminar esta colección?</Modal.Body>
+        <Modal.Body>Are you sure you want to delete this collection?</Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>Cancelar</Button>
-          <Button variant="danger" onClick={deleteCollection}>Eliminar</Button>
+          <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>Cancel</Button>
+          <Button variant="danger" onClick={deleteCollection}>Delete</Button>
         </Modal.Footer>
       </Modal>
       {editingNote && (

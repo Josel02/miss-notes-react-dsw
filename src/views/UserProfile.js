@@ -60,7 +60,7 @@ const UserProfile = () => {
         enqueueSnackbar(error.response.data.message, { variant: 'info' });
     }
     else {
-        enqueueSnackbar('Error al procesar la solicitud.', { variant: 'error' });
+        enqueueSnackbar('Error processing request.', { variant: 'error' });
     }
   };
 
@@ -88,13 +88,13 @@ const UserProfile = () => {
   const validateField = (name, value) => {
     let isValid = true;
     if (name === 'email' && !/\S+@\S+\.\S+/.test(value)) {
-      setErrors(prev => ({ ...prev, email: 'Formato de correo no válido' }));
+      setErrors(prev => ({ ...prev, email: 'Invalid email format' }));
       isValid = false;
     } else if (name === 'newPassword' && value.length < 8) {
-      setErrors(prev => ({ ...prev, newPassword: 'La contraseña debe tener al menos 8 caracteres' }));
+      setErrors(prev => ({ ...prev, newPassword: 'Password must be at least 8 characters long' }));
       isValid = false;
     } else if (name === 'confirmNewPassword' && value !== user.newPassword) {
-      setErrors(prev => ({ ...prev, confirmNewPassword: 'Las contraseñas no coinciden' }));
+      setErrors(prev => ({ ...prev, confirmNewPassword: 'Passwords do not match' }));
       isValid = false;
     } else {
       const { [name]: removedError, ...rest } = errors;
@@ -105,7 +105,7 @@ const UserProfile = () => {
 
   const saveProfileChanges = async () => {
     if (!validateField('email', user.email) || !validateField('name', user.name)) {
-      enqueueSnackbar('Por favor, resuelve los errores antes de enviar.', { variant: 'error' });
+      enqueueSnackbar('Please fix the errors before submitting.', { variant: 'error' });
       return;
     }
 
@@ -114,7 +114,7 @@ const UserProfile = () => {
       await axios.put('http://localhost:3000/users/me', updateData, {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       });
-      enqueueSnackbar('Perfil actualizado con éxito!', { variant: 'success' });
+      enqueueSnackbar('Profile updated successfully!', { variant: 'success' });
       setIsEditing(false);
       setUser(prev => ({ ...prev, currentPassword: '', newPassword: '', confirmNewPassword: '' }));
     } catch (error) {
@@ -124,7 +124,7 @@ const UserProfile = () => {
 
   const changePassword = async () => {
     if (!validateField('newPassword', user.newPassword) || !validateField('confirmNewPassword', user.confirmNewPassword)) {
-      enqueueSnackbar('Por favor, resuelve los errores antes de enviar.', { variant: 'error' });
+      enqueueSnackbar('Please fix the errors before submitting.', { variant: 'error' });
       return;
     }
   
@@ -132,10 +132,10 @@ const UserProfile = () => {
       await axios.post('http://localhost:3000/users/me/change-password', user, {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       });
-      enqueueSnackbar('Contraseña cambiada con éxito!', { variant: 'success' });
+      enqueueSnackbar('Password changed successfully!', { variant: 'success' });
       setIsChangingPassword(false);
   
-      // Limpia los campos de contraseña después de un cambio exitoso
+      // Clear password fields after successful change
       setUser(prev => ({
         ...prev,
         currentPassword: '',
@@ -150,19 +150,19 @@ const UserProfile = () => {
   
 
   const handleDelete = async () => {
-    // Confirmar con el usuario antes de eliminar el perfil
-    if (window.confirm("¿Estás seguro de que deseas eliminar tu perfil? Esta acción no se puede deshacer.")) {
+    // Confirm with the user before deleting the profile
+    if (window.confirm("Are you sure you want to delete your profile? This action cannot be undone.")) {
       try {
         const token = localStorage.getItem('token');
         await axios.delete('http://localhost:3000/users/me', {
           headers: { Authorization: `Bearer ${token}` }
         });
-        enqueueSnackbar('Perfil eliminado con éxito!', { variant: 'success' });
+        enqueueSnackbar('Profile deleted successfully!', { variant: 'success' });
   
-        // Redirigir al usuario a la página de inicio
+        // Redirect user to home page
         navigate('/');
 
-        // Usar logout del AuthContext para limpiar el estado y el almacenamiento local
+        // Use logout from AuthContext to clear state and local storage
         logout();
       } catch (error) {
         handleAPIError(error);
@@ -175,13 +175,13 @@ const UserProfile = () => {
     <div className="user-profile-container">
       <div className="user-profile">
         <div className="user-profile-section">
-          <h2>Perfil de Usuario</h2>
+          <h2>User Profile</h2>
         </div>
         <form onSubmit={e => e.preventDefault()}>
           <div className="personal-details section">
-            <h3>Detalles Personales</h3>
+            <h3>Personal Details</h3>
             <div className="form-group">
-              <label htmlFor="name">Nombre</label>
+              <label htmlFor="name">Name</label>
               <input
                 type="text"
                 id="name"
@@ -193,7 +193,7 @@ const UserProfile = () => {
               />
             </div>
             <div className="form-group">
-              <label htmlFor="email">Correo Electrónico</label>
+              <label htmlFor="email">Email</label>
               <input
                 type="email"
                 id="email"
@@ -205,7 +205,7 @@ const UserProfile = () => {
               />
             </div>
             <div className="form-group">
-              <label>Rol</label>
+              <label>Role</label>
               <input
                 type="text"
                 value={user.role}
@@ -214,14 +214,14 @@ const UserProfile = () => {
               />
             </div>
             {isEditing && (
-              <button type="button" onClick={saveProfileChanges} className="btn save-btn">Guardar Cambios</button>
+              <button type="button" onClick={saveProfileChanges} className="btn save-btn">Save Changes</button>
             )}
           </div>
           {isEditing && (
             <div className="password-section section">
-              <h3>Cambiar Contraseña</h3>
+              <h3>Change Password</h3>
               <div className="form-group">
-                <label htmlFor="currentPassword">Contraseña Actual</label>
+                <label htmlFor="currentPassword">Current Password</label>
                 <input
                   type="password"
                   id="currentPassword"
@@ -232,7 +232,7 @@ const UserProfile = () => {
                 />
               </div>
               <div className="form-group">
-                <label htmlFor="newPassword">Nueva Contraseña</label>
+                <label htmlFor="newPassword">New Password</label>
                 <input
                   type="password"
                   id="newPassword"
@@ -243,7 +243,7 @@ const UserProfile = () => {
                 />
               </div>
               <div className="form-group">
-                <label htmlFor="confirmNewPassword">Confirmar Nueva Contraseña</label>
+                <label htmlFor="confirmNewPassword">Confirm New Password</label>
                 <input
                   type="password"
                   id="confirmNewPassword"
@@ -253,19 +253,19 @@ const UserProfile = () => {
                   autoComplete="new-password"
                 />
               </div>
-              <button type="button" onClick={changePassword} className="btn change-password-btn">Cambiar Contraseña</button>
+              <button type="button" onClick={changePassword} className="btn change-password-btn">Change Password</button>
             </div>
           )}
           {!isEditing && (
-            <button type="button" onClick={() => setIsEditing(true)} className="btn edit-profile-btn">Editar Perfil</button>
+            <button type="button" onClick={() => setIsEditing(true)} className="btn edit-profile-btn">Edit Profile</button>
           )}
           {Object.values(errors).map((error, i) => (
             <div key={i} className="error-message">{error}</div>
           ))}
           {isEditing && (
             <div className="cancel-button-container">
-              <button type="button" onClick={handleDelete} className="btn delete-profile-btn">Eliminar Perfil</button>
-              <button type="button" onClick={handleCancel} className="btn cancel-btn">Cancelar</button>
+              <button type="button" onClick={handleDelete} className="btn delete-profile-btn">Delete Profile</button>
+              <button type="button" onClick={handleCancel} className="btn cancel-btn">Cancel</button>
             </div>
           )}
         </form>

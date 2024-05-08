@@ -44,19 +44,19 @@ const AddNotesToCollectionModal = ({ show, handleClose, notes, handleSave, initi
     return (
         <Modal show={show} onHide={handleClose} centered>
             <Modal.Header closeButton>
-                <Modal.Title>Añadir notas a la colección</Modal.Title>
+                <Modal.Title>Add notes to collection</Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 <FormControl
                     type="text"
-                    placeholder="Buscar notas"
+                    placeholder="Search notes"
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="mb-3"
                 />
                 <Form>
                     <FormCheck
                         type="checkbox"
-                        label="Seleccionar todas"
+                        label="Select all"
                         checked={selectAll}
                         onChange={(e) => handleSelectAll(e.target.checked)}
                         className="mb-2 select-all-checkbox"
@@ -75,10 +75,10 @@ const AddNotesToCollectionModal = ({ show, handleClose, notes, handleSave, initi
             </Modal.Body>
             <Modal.Footer>
                 <Button variant="secondary" onClick={handleClose}>
-                    Cerrar
+                    Close
                 </Button>
-                <Button variant="primary" onClick={() => handleSave(Array.from(selectedNotes))}>
-                    Añadir Notas
+                <Button variant="primary" className='btn-primary-custom' onClick={() => handleSave(Array.from(selectedNotes))}>
+                    Add Notes
                 </Button>
             </Modal.Footer>
         </Modal>

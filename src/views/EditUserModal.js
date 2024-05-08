@@ -9,30 +9,30 @@ const EditUserModal = ({ show, handleClose, user }) => {
 
   useEffect(() => {
     if (user) {
-        setLocalName(user.name);
-        setLocalEmail(user.email);
-        setLocalRole(user.role);
+      setLocalName(user.name);
+      setLocalEmail(user.email);
+      setLocalRole(user.role);
     }
   }, [user]);
 
   const handleNameChange = (e) => {
     if (e !== localName) {
-        setIsChanged(true);
-        setLocalName(e);
+      setIsChanged(true);
+      setLocalName(e);
     }
   };
 
   const handleEmailChange = (e) => {
     if (e !== localEmail) {
-        setIsChanged(true);
-        setLocalEmail(e);
+      setIsChanged(true);
+      setLocalEmail(e);
     }
   };
 
   const handleRoleChange = (e) => {
     if (e !== localRole) {
-        setIsChanged(true);
-        setLocalRole(e);
+      setIsChanged(true);
+      setLocalRole(e);
     }
   };
 
@@ -47,20 +47,20 @@ const EditUserModal = ({ show, handleClose, user }) => {
     } else {
       handleClose();
     }
-  }
+  };
 
   return (
     <Modal show={show} onHide={handleHide} size="lg" centered>
       <Modal.Header closeButton>
-        <Modal.Title>Editar Usuario</Modal.Title>
+        <Modal.Title>Edit User</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Form>
           <Form.Group className="mb-3" controlId="userName">
-            <Form.Label style={{ fontWeight: 'bold' }}>Nombre</Form.Label>
+            <Form.Label style={{ fontWeight: 'bold' }}>Name</Form.Label>
             <Form.Control
               type="text"
-              placeholder="Introduce el nombre del usuario"
+              placeholder="Enter user name"
               value={localName}
               onChange={(e) => handleNameChange(e.target.value)}
             />
@@ -69,15 +69,15 @@ const EditUserModal = ({ show, handleClose, user }) => {
             <Form.Label style={{ fontWeight: 'bold' }}>Email</Form.Label>
             <Form.Control
               type="email"
-              placeholder="Introduce el email del usuario"
+              placeholder="Enter user email"
               value={localEmail}
               onChange={(e) => handleEmailChange(e.target.value)}
             />
           </Form.Group>
           <Form.Group className="mb-3" controlId="userRole">
-            <Form.Label style={{ fontWeight: 'bold' }}>Rol</Form.Label>
-            <Form.Select 
-              value={localRole} 
+            <Form.Label style={{ fontWeight: 'bold' }}>Role</Form.Label>
+            <Form.Select
+              value={localRole}
               onChange={(e) => handleRoleChange(e.target.value)}>
               <option value="User">User</option>
               <option value="Admin">Admin</option>

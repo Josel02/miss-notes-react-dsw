@@ -99,24 +99,24 @@ const NoteListPage = () => {
     try {
       const token = localStorage.getItem('token');
 
-      // Llamada API para eliminar la nota
+      // API call to delete the note
       await axios.delete(`http://localhost:3000/notes/${noteId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       
-      // Actualizar el estado para remover la nota eliminada
+      // Update state to remove the deleted note
       setNotes(prevNotes => prevNotes.filter(note => note._id !== noteId));
       
-      setMessage({ text: 'Nota eliminada con éxito.', type: 'success' });
+      setMessage({ text: 'Note deleted successfully.', type: 'success' });
     } catch (error) {
-      console.error('Error al eliminar la nota:', error);
+      console.error('Error deleting note:', error);
       if (error.response && error.response.status === 403) {
         navigate('/', { replace: true });
         enqueueSnackbar('Session expired. Please login again.', { variant: 'warning' });
         logout();
       }
       else{
-        setMessage({ text: 'Error al eliminar la nota.', type: 'error' });
+        setMessage({ text: 'Error deleting note.', type: 'error' });
       }
     }
   };
@@ -151,7 +151,7 @@ const NoteListPage = () => {
         <div className='d-flex justify-content-center'>
           <FormControl
             type="text"
-            placeholder="Buscar notas"
+            placeholder="Search notes"
             onChange={(e) => setSearchTerm(e.target.value)}
             className="mb-3 mt-2 rounded-pill w-50"
           />
@@ -166,7 +166,7 @@ const NoteListPage = () => {
           +
         </Button>
         {loading ? (
-          <div>Cargando notas...</div>
+          <div>Loading notes...</div>
         ) : notes.length > 0 ? (
           <Masonry columns={{ xs: 1, sm: 2, md: 3, lg: 4 }} spacing={2}>
             {filteredNotes.map(note => (
@@ -176,7 +176,7 @@ const NoteListPage = () => {
             ))}
           </Masonry>
         ) : (
-          <Alert variant="info">Todavía no hay ninguna nota, ¿Por qué no añades una?</Alert>
+          <Alert variant="info">There are no notes yet. Why not add one?</Alert>
         )}
         {editingNote && (
           <EditNoteModal
