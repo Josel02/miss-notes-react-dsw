@@ -140,7 +140,6 @@ const Management = () => {
       const response = await axios.get(`http://localhost:3000/users/nonFriendList`, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      console.log("response data", response.data)
       setUsers(response.data);
       setLoading(false);
     }

@@ -23,7 +23,6 @@ const FriendRequests = () => {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 await setPendingRequests(response.data);
-                console.log("Response requests: ", response.data);
             } catch (error) {
                 handleAPIError(error);
             }

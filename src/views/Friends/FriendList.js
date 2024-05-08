@@ -43,14 +43,12 @@ const FriendList = () => {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 await setPendingRequests(response.data);
-                console.log("Response requests: ", response.data);
             } catch (error) {
                 handleAPIError(error);
             }
         };
 
         fetchFriendsAndPendingRequests();
-        console.log(friends);
     }, []);
 
     const onRemove = async (friendshipId) => {

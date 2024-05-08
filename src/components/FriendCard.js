@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Card, Button } from 'react-bootstrap';
 import '../styles/Friends/FriendCard.css';
+import '../styles/Card.css';
 
 const stringToColor = (string) => {
     let hash = 0;
@@ -20,7 +21,6 @@ const getInitials = (name) => {
 };
 
 const FriendCard = ({ name, email, onClick, onReject=null, status }) => {
-    const [hover, setHover] = useState(false);
 
     const renderButtons = (status) => {
         switch(status) {
@@ -44,8 +44,6 @@ const FriendCard = ({ name, email, onClick, onReject=null, status }) => {
 
     return (
         <Card
-            onMouseEnter={() => setHover(true)}
-            onMouseLeave={() => setHover(false)}
             className="text-center friend-card"
         >
             <Card.Header className="friend-card-header-circle" style={{ backgroundColor: stringToColor(name) }}>
@@ -54,7 +52,7 @@ const FriendCard = ({ name, email, onClick, onReject=null, status }) => {
             <Card.Body>
                 <Card.Title>{name}</Card.Title>
                 <Card.Text>{email}</Card.Text>
-                <div className={`friend-card-delete-button ${hover ? 'friend-card-delete-button-visible' : ''}`}>
+                <div className={"action-buttons"}>
                     {renderButtons(status)}
                 </div>
             </Card.Body>
