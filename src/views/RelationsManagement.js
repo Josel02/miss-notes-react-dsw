@@ -42,7 +42,7 @@ const RelationsManagement = () => {
                 });
                 await setFriends(response.data);
 
-                response = await axios.get('http://localhost:3000/friends/listFriendshipsRequested', {
+                response = await axios.get(`http://localhost:3000/friends/listFriendshipsRequested/${userId}`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 await setsentRequests(response.data);
@@ -89,7 +89,7 @@ const RelationsManagement = () => {
           enqueueSnackbar(error.response.data.message, { variant: 'info' });
         }
         else if (error.response && error.response.status === 400) {
-          enqueueSnackbar("You have already sent a friend request to this user", { variant: 'info' });
+          enqueueSnackbar(error.response.data.message, { variant: 'info' });
         }
         else {
           enqueueSnackbar('Error processing the request.', { variant: 'error' });
