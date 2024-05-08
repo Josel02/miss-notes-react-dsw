@@ -19,7 +19,7 @@ const getInitials = (name) => {
     return name.split(' ').map((n) => n[0]).join('').toUpperCase();
 };
 
-const FriendCard = ({ name, email, onClick, onDismiss=null, status }) => {
+const FriendCard = ({ name, email, onClick, onReject=null, status }) => {
     const [hover, setHover] = useState(false);
 
     const renderButtons = (status) => {
@@ -32,7 +32,7 @@ const FriendCard = ({ name, email, onClick, onDismiss=null, status }) => {
                 return (
                     <>
                         <Button className='btn-primary-custom me-2' onClick={onClick}>Accept</Button>
-                        <Button variant="outline-primary" onClick={onDismiss}>Reject</Button>
+                        <Button variant="outline-primary" onClick={onReject}>Reject</Button>
                     </>
                 );
             case 'requested':

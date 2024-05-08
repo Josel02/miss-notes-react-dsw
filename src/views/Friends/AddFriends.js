@@ -7,7 +7,7 @@ import { useAuth } from '../../components/AuthContext';
 import axios from 'axios';
 import useSearchBar from '../../components/SearchBar';
 import FriendCard from '../../components/FriendCard';
-import { sendFriendRequest, revokeFriendRequest } from '../../context/FriendsContext';
+import { sendFriendRequest, revokeFriendRequest, rejectFriendRequest } from '../../context/FriendsContext';
 
 const Management = () => {
   const [users, setUsers] = useState([]);
@@ -74,6 +74,22 @@ const Management = () => {
     }
   };
 
+  const onReject = async (friendshipId) => {
+    try {
+      const token = localStorage.getItem('token');
+      await rejectFriendRequest(friendshipId, token, enqueueSnackbar);
+      const updatedUsers = users.map(user => {
+        if (user.friendshipId === friendshipId) {
+          return { ...user, friendshipStatus: 'None', friendshipRole: 'None' };
+        }
+        return user;
+      });
+      setUsers(updatedUsers);
+    } catch (error) {
+      handleAPIError(error);
+    }
+  };
+
   const getStatusFromUser = (user) => {
     if (user.friendshipStatus === 'Requested' && user.friendshipRole === 'Receiver') {
       return 'received';
@@ -85,15 +101,21 @@ const Management = () => {
   };
 
   const getOnClickFunction = (user) => {
-    switch (user.friendshipStatus) {
+    switch (user.friendshipRole) {
       case 'None':
-        return () => onAdd(user._id);  // Returns a function that calls onAdd with the user's receiverId
-      case 'Requested':
-        return () => onRevoke(user.friendshipId);  // Similarly for other actions
-      case 'Received':
+        return () => onAdd(user._id);
+      case 'Requester':
+        return () => onRevoke(user.friendshipId); 
+      case 'Receiver':
         return () => onAdd(user._id);
       default:
         return () => {};  // Does no action if the status is not recognized
+    }
+  };
+
+  const getOnRejectFunction = (user) => {
+    if (user.friendshipRole === 'Receiver') {
+      return () => onReject(user.friendshipId);
     }
   };
 
@@ -134,7 +156,7 @@ const Management = () => {
                     name={user.name}
                     email={user.email}
                     onClick={getOnClickFunction(user)}
-                    /*onDismiss={getOnDismissFunction(user)}*/
+                    onReject={getOnRejectFunction(user)}
                     status={getStatusFromUser(user)}
                   />
             ))}
