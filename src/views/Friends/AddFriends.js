@@ -7,6 +7,7 @@ import { useAuth } from '../../components/AuthContext';
 import axios from 'axios';
 import useSearchBar from '../../components/SearchBar';
 import FriendCard from '../../components/FriendCard';
+import { sendFriendRequest } from '../../context/FriendsContext';
 
 const Management = () => {
   const [users, setUsers] = useState([]);
@@ -44,14 +45,7 @@ const Management = () => {
       const onAdd = async (receiverId) => {
         try {
           const token = localStorage.getItem('token');
-          const response = await axios.post('http://localhost:3000/friends/sendFriendRequest', {
-            receiverId
-          }, {
-            headers: { Authorization: `Bearer ${token}` }
-          });
-          console.log('Friend request sent successfully.');
-          enqueueSnackbar('Solicitud de amistad enviada con éxito.', { variant: 'success' });
-          return response.data.friendshipId;
+          await sendFriendRequest(receiverId, token, enqueueSnackbar);
         } catch (error) {
           handleAPIError(error);
         }
