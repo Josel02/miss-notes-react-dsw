@@ -15,3 +15,15 @@ export const sendFriendRequest = async (receiverId, token, enqueueSnackbar) => {
       throw error;
     }
 };
+
+export const revokeFriendRequest = async (friendshipId, token, enqueueSnackbar) => {
+    try {
+      await axios.delete(`${apiUrl}/revokeFriendRequest/${friendshipId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      enqueueSnackbar('Solicitud de amistad revocada con éxito.', { variant: 'success' });
+    } catch (error) {
+      console.error('API error:', error);
+      throw error;
+    }
+};

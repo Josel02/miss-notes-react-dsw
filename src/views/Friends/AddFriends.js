@@ -7,7 +7,7 @@ import { useAuth } from '../../components/AuthContext';
 import axios from 'axios';
 import useSearchBar from '../../components/SearchBar';
 import FriendCard from '../../components/FriendCard';
-import { sendFriendRequest } from '../../context/FriendsContext';
+import { sendFriendRequest, revokeFriendRequest } from '../../context/FriendsContext';
 
 const Management = () => {
   const [users, setUsers] = useState([]);
@@ -45,10 +45,26 @@ const Management = () => {
       const onAdd = async (receiverId) => {
         try {
           const token = localStorage.getItem('token');
-          await sendFriendRequest(receiverId, token, enqueueSnackbar);
+          const friendshipId = await sendFriendRequest(receiverId, token, enqueueSnackbar);
           const updatedUsers = users.map(user => {
             if (user._id === receiverId) {
-              return { ...user, friendshipStatus: 'Requested', friendshipRole: 'Requester' };
+              return { ...user, friendshipId, friendshipStatus: 'Requested', friendshipRole: 'Requester' };
+            }
+            return user;
+          });
+          setUsers(updatedUsers);
+        } catch (error) {
+          handleAPIError(error);
+        }
+      };
+
+      const onRevoke = async (friendshipId) => {
+        try {
+          const token = localStorage.getItem('token');
+          await revokeFriendRequest(friendshipId, token, enqueueSnackbar);
+          const updatedUsers = users.map(user => {
+            if (user.friendshipId === friendshipId) {
+              return { ...user, friendshipStatus: 'None', friendshipRole: 'None' };
             }
             return user;
           });
@@ -73,7 +89,7 @@ const Management = () => {
           case 'None':
             return () => onAdd(user._id);  // Devuelve una función que llama a onAdd con el receiverId del usuario
           case 'Requested':
-            return () => onAdd(user._id);  // Similar para otras acciones
+            return () => onRevoke(user.friendshipId);  // Similar para otras acciones
           case 'Received':
             return () => onAdd(user._id);
           default:
