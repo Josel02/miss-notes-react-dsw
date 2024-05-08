@@ -5,12 +5,12 @@ const EditCollectionModal = ({ show, handleClose, handleSave, initialName }) => 
   const [collectionName, setCollectionName] = useState('');
 
   useEffect(() => {
-    setCollectionName(initialName);  // Asegúrate de actualizar el estado cuando el nombre inicial cambie
+    setCollectionName(initialName);  // Make sure to update the state when the initial name changes
   }, [initialName]);
 
   const saveChanges = () => {
     if (!collectionName.trim()) {
-      alert("El nombre de la colección no puede estar vacío.");
+      alert("The collection name cannot be empty.");
       return;
     }
     handleSave(collectionName);
@@ -20,15 +20,15 @@ const EditCollectionModal = ({ show, handleClose, handleSave, initialName }) => 
   return (
     <Modal show={show} onHide={handleClose} centered>
       <Modal.Header closeButton>
-        <Modal.Title>Editar nombre de la colección</Modal.Title>
+        <Modal.Title>Edit Collection Name</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Form>
           <Form.Group controlId="collectionName">
-            <Form.Label>Nombre de la colección</Form.Label>
+            <Form.Label>Collection Name</Form.Label>
             <Form.Control
               type="text"
-              placeholder="Introduce el nuevo nombre de la colección"
+              placeholder="Enter the new collection name"
               value={collectionName}
               onChange={(e) => setCollectionName(e.target.value)}
             />
@@ -36,8 +36,8 @@ const EditCollectionModal = ({ show, handleClose, handleSave, initialName }) => 
         </Form>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={handleClose}>Cerrar</Button>
-        <Button variant="primary" className='btn-primary-custom' onClick={saveChanges}>Guardar Cambios</Button>
+        <Button variant="secondary" onClick={handleClose}>Close</Button>
+        <Button variant="primary" className='btn-primary-custom' onClick={saveChanges}>Save Changes</Button>
       </Modal.Footer>
     </Modal>
   );

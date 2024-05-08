@@ -20,131 +20,131 @@ const Management = () => {
     threshold: 0.3
   });
 
-    useEffect(() => {
-        fetchUsers();
-        }, []);
+  useEffect(() => {
+    fetchUsers();
+  }, []);
 
-        const handleAPIError = (error) => {
-          console.error('API error:', error);
-          if (error.response && error.response.status === 403) {
-          navigate('/', { replace: true });
-          enqueueSnackbar('Session expired. Please login again.', { variant: 'warning' });
-          logout();
-          } 
-          else if (error.response && error.response.status === 404) {
-              enqueueSnackbar(error.response.data.message, { variant: 'info' });
-          }
-          else if (error.response && error.response.status === 400) {
-              enqueueSnackbar("Ya le has enviado una solicitud de amistad a este usuario", { variant: 'info' });
-          }
-          else {
-              enqueueSnackbar('Error al procesar la solicitud.', { variant: 'error' });
-          }
-      };
+  const handleAPIError = (error) => {
+    console.error('API error:', error);
+    if (error.response && error.response.status === 403) {
+      navigate('/', { replace: true });
+      enqueueSnackbar('Session expired. Please login again.', { variant: 'warning' });
+      logout();
+    } 
+    else if (error.response && error.response.status === 404) {
+      enqueueSnackbar(error.response.data.message, { variant: 'info' });
+    }
+    else if (error.response && error.response.status === 400) {
+      enqueueSnackbar("You have already sent a friend request to this user", { variant: 'info' });
+    }
+    else {
+      enqueueSnackbar('Error processing the request.', { variant: 'error' });
+    }
+  };
 
-      const onAdd = async (receiverId) => {
-        try {
-          const token = localStorage.getItem('token');
-          const friendshipId = await sendFriendRequest(receiverId, token, enqueueSnackbar);
-          const updatedUsers = users.map(user => {
-            if (user._id === receiverId) {
-              return { ...user, friendshipId, friendshipStatus: 'Requested', friendshipRole: 'Requester' };
-            }
-            return user;
-          });
-          setUsers(updatedUsers);
-        } catch (error) {
-          handleAPIError(error);
+  const onAdd = async (receiverId) => {
+    try {
+      const token = localStorage.getItem('token');
+      const friendshipId = await sendFriendRequest(receiverId, token, enqueueSnackbar);
+      const updatedUsers = users.map(user => {
+        if (user._id === receiverId) {
+          return { ...user, friendshipId, friendshipStatus: 'Requested', friendshipRole: 'Requester' };
         }
-      };
+        return user;
+      });
+      setUsers(updatedUsers);
+    } catch (error) {
+      handleAPIError(error);
+    }
+  };
 
-      const onRevoke = async (friendshipId) => {
-        try {
-          const token = localStorage.getItem('token');
-          await revokeFriendRequest(friendshipId, token, enqueueSnackbar);
-          const updatedUsers = users.map(user => {
-            if (user.friendshipId === friendshipId) {
-              return { ...user, friendshipStatus: 'None', friendshipRole: 'None' };
-            }
-            return user;
-          });
-          setUsers(updatedUsers);
-        } catch (error) {
-          handleAPIError(error);
+  const onRevoke = async (friendshipId) => {
+    try {
+      const token = localStorage.getItem('token');
+      await revokeFriendRequest(friendshipId, token, enqueueSnackbar);
+      const updatedUsers = users.map(user => {
+        if (user.friendshipId === friendshipId) {
+          return { ...user, friendshipStatus: 'None', friendshipRole: 'None' };
         }
-      };
+        return user;
+      });
+      setUsers(updatedUsers);
+    } catch (error) {
+      handleAPIError(error);
+    }
+  };
 
-      const getStatusFromUser = (user) => {
-        if (user.friendshipStatus === 'Requested' && user.friendshipRole === 'Receiver') {
-          return 'received';
-        } else if (user.friendshipStatus === 'Requested' && user.friendshipRole === 'Requester') {
-          return 'requested';
-        } else if (user.friendshipStatus === 'None') {
-          return 'none';
-        }
-      };
+  const getStatusFromUser = (user) => {
+    if (user.friendshipStatus === 'Requested' && user.friendshipRole === 'Receiver') {
+      return 'received';
+    } else if (user.friendshipStatus === 'Requested' && user.friendshipRole === 'Requester') {
+      return 'requested';
+    } else if (user.friendshipStatus === 'None') {
+      return 'none';
+    }
+  };
 
-      const getOnClickFunction = (user) => {
-        switch (user.friendshipStatus) {
-          case 'None':
-            return () => onAdd(user._id);  // Devuelve una función que llama a onAdd con el receiverId del usuario
-          case 'Requested':
-            return () => onRevoke(user.friendshipId);  // Similar para otras acciones
-          case 'Received':
-            return () => onAdd(user._id);
-          default:
-            return () => {};  // No realiza ninguna acción si no se reconoce el estado
-        }
-      };
+  const getOnClickFunction = (user) => {
+    switch (user.friendshipStatus) {
+      case 'None':
+        return () => onAdd(user._id);  // Returns a function that calls onAdd with the user's receiverId
+      case 'Requested':
+        return () => onRevoke(user.friendshipId);  // Similarly for other actions
+      case 'Received':
+        return () => onAdd(user._id);
+      default:
+        return () => {};  // Does no action if the status is not recognized
+    }
+  };
 
-    const fetchUsers = async () => {
-      try{
-          const token = localStorage.getItem('token');
-          const response = await axios.get(`http://localhost:3000/users/nonFriendList`, {
-              headers: { Authorization: `Bearer ${token}` }
-            });
-            console.log("response data", response.data)
-            setUsers(response.data);
-            setLoading(false);
-      }
-      catch(error){
-        handleAPIError(error);
-      }
-    };
+  const fetchUsers = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`http://localhost:3000/users/nonFriendList`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      console.log("response data", response.data)
+      setUsers(response.data);
+      setLoading(false);
+    }
+    catch(error) {
+      handleAPIError(error);
+    }
+  };
 
-    return (
-        <div>
-          {loading ? (
-            <div>Cargando usuarios...</div>
-          ) : users.length > 0 ? (
-            <>
-            <h2>Agregar amigos</h2>
-            <div className='d-flex justify-content-center'>
-              <FormControl
-                type="text"
-                placeholder="Buscar usuarios"
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="mb-3 mt-2 rounded-pill w-50"
-              />
-            </div>
-              <Masonry columns={{ xs: 1, sm: 2, md: 3, lg: 4 }} spacing={2} className='mt-2'>
-              {filteredUsers.map(user => (
-                      <FriendCard
-                        key={user._id}
-                        name={user.name}
-                        email={user.email}
-                        onClick={getOnClickFunction(user)}
-                        /*onDismiss={getOnDismissFunction(user)}*/
-                        status={getStatusFromUser(user)}
-                      />
-                ))}
-            </Masonry>
-            </>
-          ) : (
-            <Alert className="mt-2" variant="info">No hay usuarios registrados.</Alert>
-          )}
+  return (
+    <div>
+      {loading ? (
+        <div>Loading users...</div>
+      ) : users.length > 0 ? (
+        <>
+        <h2>Add Friends</h2>
+        <div className='d-flex justify-content-center'>
+          <FormControl
+            type="text"
+            placeholder="Search users"
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="mb-3 mt-2 rounded-pill w-50"
+          />
         </div>
-      );
+          <Masonry columns={{ xs: 1, sm: 2, md: 3, lg: 4 }} spacing={2} className='mt-2'>
+          {filteredUsers.map(user => (
+                  <FriendCard
+                    key={user._id}
+                    name={user.name}
+                    email={user.email}
+                    onClick={getOnClickFunction(user)}
+                    /*onDismiss={getOnDismissFunction(user)}*/
+                    status={getStatusFromUser(user)}
+                  />
+            ))}
+        </Masonry>
+        </>
+      ) : (
+        <Alert className="mt-2" variant="info">No registered users.</Alert>
+      )}
+    </div>
+  );
 };
 
 export default Management;

@@ -69,7 +69,7 @@ const CollectionListPage = () => {
         enqueueSnackbar(error.response.data.message, { variant: 'info' });
     }
     else {
-        enqueueSnackbar('Error al procesar la solicitud.', { variant: 'error' });
+        enqueueSnackbar('Error processing the request.', { variant: 'error' });
     }
   };
 
@@ -126,7 +126,7 @@ const CollectionListPage = () => {
       });
       setCollections(updatedCollections);
       setShowEditModal(false);
-      enqueueSnackbar('Nombre de la colección actualizado con éxito.', { variant: 'success' });
+      enqueueSnackbar('Collection name successfully updated.', { variant: 'success' });
     } catch (error) {
       handleAPIError(error);
     }
@@ -141,7 +141,7 @@ const CollectionListPage = () => {
         ...collection,
         notes: collection.notes.filter(note => note._id !== noteId)
       })));
-      enqueueSnackbar('Nota eliminada con éxito.', { variant: 'success' });
+      enqueueSnackbar('Note successfully deleted.', { variant: 'success' });
     } catch (error) {
       handleAPIError(error);
     }
@@ -153,10 +153,10 @@ const deleteCollection = async () => {
         await axios.delete(`http://localhost:3000/collections/${currentCollection.id}`, {
             headers: { Authorization: `Bearer ${token}` },
         });
-        // Actualizar el estado para eliminar la colección del estado local
+        // Update state to remove the collection from local state
         setCollections(prevCollections => prevCollections.filter(collection => collection._id !== currentCollection.id));
         setShowDeleteModal(false);
-        enqueueSnackbar('Colección eliminada con éxito.', { variant: 'success' });
+        enqueueSnackbar('Collection successfully deleted.', { variant: 'success' });
     } catch (error) {
         handleAPIError(error);
     }
@@ -201,7 +201,7 @@ const deleteCollection = async () => {
       });
       setCollections([...collections, response.data]);
       setShowAddModal(false);
-      enqueueSnackbar('Colección añadida con éxito.', { variant: 'success' });
+      enqueueSnackbar('Collection successfully added.', { variant: 'success' });
     } catch (error) {
       handleAPIError(error);
     }
@@ -212,13 +212,13 @@ const deleteCollection = async () => {
       <div className='d-flex justify-content-center'>
         <FormControl
           type="text"
-          placeholder="Buscar colecciones"
+          placeholder="Search collections"
           onChange={(e) => setSearchTerm(e.target.value)}
           className="mb-3 mt-2 rounded-pill w-50"
         />
       </div>
       {loading ? (
-        <div>Cargando colecciones...</div>
+        <div>Loading collections...</div>
       ) : collections.length > 0 ? (
         filteredCollections.map((collection) => (
           <Accordion defaultActiveKey="0" key={collection._id} className="collection-item">
@@ -227,7 +227,7 @@ const deleteCollection = async () => {
                 {collection.name}
                 <OverlayTrigger
                   placement="top"
-                  overlay={<Tooltip id={`tooltip-edit-${collection._id}`}>Editar</Tooltip>}
+                  overlay={<Tooltip id={`tooltip-edit-${collection._id}`}>Edit</Tooltip>}
                 >
                   <Button variant="link" onClick={(e) => {
                     e.stopPropagation();
@@ -237,7 +237,7 @@ const deleteCollection = async () => {
                 </OverlayTrigger>
                 <OverlayTrigger
                   placement="top"
-                  overlay={<Tooltip id={`tooltip-delete-${collection._id}`}>Eliminar</Tooltip>}
+                  overlay={<Tooltip id={`tooltip-delete-${collection._id}`}>Delete</Tooltip>}
                 >
                   <Button variant="link" onClick={(e) => {
                     e.stopPropagation();
@@ -247,7 +247,7 @@ const deleteCollection = async () => {
                 </OverlayTrigger>
                 <OverlayTrigger
                   placement="top"
-                  overlay={<Tooltip id={`tooltip-add-${collection._id}`}>Añadir notas</Tooltip>}
+                  overlay={<Tooltip id={`tooltip-add-${collection._id}`}>Add notes</Tooltip>}
                 >
                 <Button variant="link" onClick={(e) => {
                     e.stopPropagation();
@@ -255,7 +255,7 @@ const deleteCollection = async () => {
                     setShowAddNotesModal(true);
                   }}><FiPlusCircle /></Button> 
                 </OverlayTrigger>
-              </Accordion.Header>
+                </Accordion.Header>
               <Accordion.Body>
                 <Masonry columns={{ xs: 1, sm: 2, md: 3, lg: 4 }} spacing={2}>
                   {collection.notes.map(note => (
@@ -273,7 +273,7 @@ const deleteCollection = async () => {
           </Accordion>
         ))
       ) : (
-        <Alert variant="info">No hay colecciones disponibles.</Alert>
+        <Alert variant="info">No collections available.</Alert>
       )}
       <Button style={{ position: 'fixed', right: '20px', bottom: '20px', zIndex: '1000', borderRadius: '50%' }} onClick={() => setShowAddModal(true)} className="collection-add-btn">
         +
@@ -301,14 +301,14 @@ const deleteCollection = async () => {
       />
       <Modal key={showDeleteModal} show={showDeleteModal} onHide={() => setShowDeleteModal(false)} centered className="collection-modal-content">
         <Modal.Header closeButton className="collection-modal-header">
-          <Modal.Title>Confirmar eliminación</Modal.Title>
+          <Modal.Title>Confirm deletion</Modal.Title>
         </Modal.Header>
-        <Modal.Body>¿Estás seguro de que deseas eliminar esta colección?</Modal.Body>
+        <Modal.Body>Are you sure you want to delete this collection?</Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>Cancelar</Button>
-          <Button variant="primary" className='btn-primary-custom' onClick={deleteCollection}>Eliminar</Button>
-        </Modal.Footer>
-      </Modal>
+          <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>Cancel</Button>
+          <Button variant="primary" className='btn-primary-custom' onClick={deleteCollection}>Delete</Button>
+        </Modal.Footer
+      ></Modal>
       {editingNote && (
         <EditNoteModal
           show={!!editingNote}

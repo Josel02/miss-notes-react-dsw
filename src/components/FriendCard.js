@@ -25,18 +25,18 @@ const FriendCard = ({ name, email, onClick, onDismiss=null, status }) => {
     const renderButtons = (status) => {
         switch(status) {
             case 'friend':
-                return <Button variant="outline-primary" onClick={onClick}>Eliminar</Button>;
+                return <Button variant="outline-primary" onClick={onClick}>Delete</Button>;
             case 'none':
-                return <Button variant="outline-primary" onClick={onClick}>Añadir</Button>;
+                return <Button variant="outline-primary" onClick={onClick}>Add</Button>;
             case 'received':
                 return (
                     <>
-                        <Button className='btn-primary-custom me-2' onClick={onClick}>Aceptar</Button>
-                        <Button variant="outline-primary" onClick={onDismiss}>Rechazar</Button>
+                        <Button className='btn-primary-custom me-2' onClick={onClick}>Accept</Button>
+                        <Button variant="outline-primary" onClick={onDismiss}>Reject</Button>
                     </>
                 );
             case 'requested':
-                return <Button variant="outline-primary" onClick={onClick}>Cancelar Solicitud</Button>;
+                return <Button variant="outline-primary" onClick={onClick}>Cancel Request</Button>;
             default:
                 return null;
         }

@@ -7,13 +7,13 @@ import '../styles/LoginRegister.css';
 const LoginPage = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [loginError, setLoginError] = useState(''); // Estado para manejar los mensajes de error
+    const [loginError, setLoginError] = useState(''); // State to handle error messages
     const navigate = useNavigate();
     const { login } = useAuth();
 
     const handleLogin = async (e) => {
         e.preventDefault();
-        // Asegurémonos de limpiar el estado de error en cada intento de inicio de sesión
+        // Make sure to clear the error state on each login attempt
         setLoginError('');
         axios.post('http://localhost:3000/users/login', { email, password })
             .then((response) => {
@@ -24,10 +24,10 @@ const LoginPage = () => {
                 navigate('/');
             })
             .catch((error) => {
-                // Asegurémonos de capturar el mensaje de error del servidor o establecer uno por defecto
+                // Make sure to capture the server error message or set a default one
                 const errorMessage = error.response && error.response.data.message 
                     ? error.response.data.message 
-                    : 'Ocurrió un error inesperado. Por favor, intenta de nuevo más tarde.';
+                    : 'An unexpected error occurred. Please try again later.';
                 setLoginError(errorMessage);
             });
     };
@@ -35,10 +35,10 @@ const LoginPage = () => {
     return (
         <>
             <div className="login-container">
-                <h2 className="login-title">Iniciar Sesión</h2>
+                <h2 className="login-title">Log In</h2>
                 <form onSubmit={handleLogin}>
                     <div className="mb-3">
-                        <label htmlFor="email" className="form-label-login-register">Correo Electrónico</label>
+                        <label htmlFor="email" className="form-label-login-register">Email Address</label>
                         <input 
                             type="email" 
                             className="form-control-login-register form-control" 
@@ -49,7 +49,7 @@ const LoginPage = () => {
                         />
                     </div>
                     <div className="mb-3">
-                        <label htmlFor="password" className="form-label-login-register">Contraseña</label>
+                        <label htmlFor="password" className="form-label-login-register">Password</label>
                         <input 
                             type="password" 
                             className="form-control-login-register form-control" 
@@ -60,9 +60,9 @@ const LoginPage = () => {
                         />
                     </div>
                     {loginError && <div className="alert alert-danger" role="alert">{loginError}</div>}
-                    <button type="submit" className="btn btn-primary-custom btn-login-register">Iniciar Sesión</button>
+                    <button type="submit" className="btn btn-primary-custom btn-login-register">Log In</button>
                     <div className="mt-3 text-center">
-                        <Link to="/register" className="text-decoration-underline text-decoration-underline-login-register">¿No tienes cuenta? Regístrate</Link>
+                        <Link to="/register" className="text-decoration-underline text-decoration-underline-login-register">Don't have an account? Sign Up</Link>
                     </div>
                 </form>
             </div>

@@ -47,7 +47,7 @@ const NotesManagement = () => {
             enqueueSnackbar(error.response.data.message, { variant: 'info' });
         }
         else {
-            enqueueSnackbar('Error al procesar la solicitud.', { variant: 'error' });
+            enqueueSnackbar('Error processing the request.', { variant: 'error' });
         }
     };
     
@@ -86,7 +86,7 @@ const NotesManagement = () => {
       const createNote = async (noteData) => {
         const token = localStorage.getItem('token');
         try {
-          // Asegúrate de incluir userId en el objeto de la nota
+          // Make sure to include userId in the note object
           const response = await axios.post(`http://localhost:3000/notes/admin-add`, {
             userId,
             ...noteData
@@ -122,15 +122,15 @@ const NotesManagement = () => {
         try {
           const token = localStorage.getItem('token');
       
-          // Llamada API para eliminar la nota
+          // API call to delete the note
           await axios.delete(`http://localhost:3000/notes/admin-delete/${noteId}`, {
             headers: { Authorization: `Bearer ${token}` }
           });
       
-          // Actualizar el estado para remover la nota eliminada
+          // Update state to remove the deleted note
           setNotes(prevNotes => prevNotes.filter(note => note._id !== noteId));
       
-          setMessage({ text: 'Nota eliminada con éxito.', type: 'success' });
+          setMessage({ text: 'Note deleted successfully.', type: 'success' });
         } 
         catch (error) {
           handleAPIError(error);
@@ -157,7 +157,7 @@ const NotesManagement = () => {
 
       return (
           <>
-          <h2 className='mt-2 ms-2'>Notas del usuario</h2>
+          <h2 className='mt-2 ms-2'>User Notes</h2>
             {message.text && (
               <Alert variant={message.type === 'success' ? 'success' : 'danger'}>
                 {message.text}
@@ -166,7 +166,7 @@ const NotesManagement = () => {
           <div className='d-flex justify-content-center'>
             <FormControl
               type="text"
-              placeholder="Buscar notas"
+              placeholder="Search notes"
               onChange={(e) => setSearchTerm(e.target.value)}
               className="mb-3 mt-2 rounded-pill w-50"
             />
@@ -181,7 +181,7 @@ const NotesManagement = () => {
               +
             </Button>
             {loading ? (
-              <div>Cargando notas...</div>
+              <div>Loading notes...</div>
             ) : notes.length > 0 ? (
               <Masonry columns={{ xs: 1, sm: 2, md: 3, lg: 4 }} spacing={2}>
                 {filteredNotes.map(note => (
@@ -191,7 +191,7 @@ const NotesManagement = () => {
                 ))}
               </Masonry>
             ) : (
-              <Alert variant="info">Este usuario no tiene ninguna nota</Alert>
+              <Alert variant="info">This user has no notes</Alert>
             )}
             {editingNote && (
               <EditNoteModal

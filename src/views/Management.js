@@ -32,7 +32,7 @@ const Management = () => {
         enqueueSnackbar('Session expired. Please login again.', { variant: 'warning' });
         logout();
         } else {
-            enqueueSnackbar('Error al procesar la solicitud.', { variant: 'error' });
+            enqueueSnackbar('Error processing request.', { variant: 'error' });
         }
     };
 
@@ -60,8 +60,8 @@ const Management = () => {
             const response = await axios.delete(`http://localhost:3000/users/${user._id}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
-            enqueueSnackbar('Usuario eliminado con éxito.', { variant: 'success' });
-            // Filtrar al usuario eliminado del estado de usuarios
+            enqueueSnackbar('User deleted successfully.', { variant: 'success' });
+            // Filter out the deleted user from the users state
             const filteredUsers = users.filter(item => item._id !== user._id);
             setUsers(filteredUsers);
         } catch (error) {
@@ -77,7 +77,7 @@ const Management = () => {
                 const response = await axios.put(`http://localhost:3000/users/${editingUser._id}`, user, {
                   headers: { Authorization: `Bearer ${token}` }
                 });
-                enqueueSnackbar('Usuario actualizado con éxito.', { variant: 'success' });
+                enqueueSnackbar('User updated successfully.', { variant: 'success' });
     
                 const updatedUsers = users.map(item => item._id === editingUser._id ? { ...item, ...response.data.user } : item);
                 setUsers(updatedUsers);
@@ -92,13 +92,13 @@ const Management = () => {
   return (
     <div>
       {loading ? (
-        <div>Cargando usuarios...</div>
+        <div>Loading users...</div>
       ) : users.length > 0 ? (
         <>
         <div className='d-flex justify-content-center'>
           <FormControl
             type="text"
-            placeholder="Buscar usuarios"
+            placeholder="Search users"
             onChange={(e) => setSearchTerm(e.target.value)}
             className="mb-3 mt-2 rounded-pill w-50"
           />
@@ -115,7 +115,7 @@ const Management = () => {
         </Masonry>
         </>
       ) : (
-        <Alert className="mt-2" variant="info">No hay usuarios registrados.</Alert>
+        <Alert className="mt-2" variant="info">No registered users.</Alert>
       )}
       {editingUser && (
           <EditUserModal

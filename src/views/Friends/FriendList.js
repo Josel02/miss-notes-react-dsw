@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import Masonry from '@mui/lab/Masonry'; // Importa Masonry desde MUI
-import FriendCard from '../../components/FriendCard'; // Asegúrate de que la ruta es correcta
+import Masonry from '@mui/lab/Masonry'; // Import Masonry from MUI
+import FriendCard from '../../components/FriendCard'; // Make sure the path is correct
 
 const FriendList = () => {
     const [friends, setFriends] = useState([]);
