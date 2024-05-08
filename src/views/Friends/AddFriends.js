@@ -7,7 +7,7 @@ import { useAuth } from '../../components/AuthContext';
 import axios from 'axios';
 import useSearchBar from '../../components/SearchBar';
 import FriendCard from '../../components/FriendCard';
-import { sendFriendRequest, revokeFriendRequest, rejectFriendRequest } from '../../context/FriendsContext';
+import { sendFriendRequest, revokeFriendRequest, rejectFriendRequest, acceptFriendRequest } from '../../context/FriendsContext';
 
 const Management = () => {
   const [users, setUsers] = useState([]);
@@ -90,6 +90,21 @@ const Management = () => {
     }
   };
 
+  const onAccept = async (friendshipId) => {
+    try {
+      const token = localStorage.getItem('token');
+      await acceptFriendRequest(friendshipId, token, enqueueSnackbar);
+      
+      // Filtrar para quitar el usuario cuya solicitud de amistad fue aceptada
+      const remainingUsers = users.filter(user => user.friendshipId !== friendshipId);
+      setUsers(remainingUsers);
+      enqueueSnackbar('You can see your new friend in your friend list!', { variant: 'success' });
+  
+    } catch (error) {
+      handleAPIError(error);
+    }
+  };
+
   const getStatusFromUser = (user) => {
     if (user.friendshipStatus === 'Requested' && user.friendshipRole === 'Receiver') {
       return 'received';
@@ -107,9 +122,9 @@ const Management = () => {
       case 'Requester':
         return () => onRevoke(user.friendshipId); 
       case 'Receiver':
-        return () => onAdd(user._id);
+        return () => onAccept(user.friendshipId);
       default:
-        return () => {};  // Does no action if the status is not recognized
+        return () => {};
     }
   };
 

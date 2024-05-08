@@ -39,3 +39,15 @@ export const rejectFriendRequest = async (friendshipId, token, enqueueSnackbar) 
     throw error;
   }
 };
+
+export const acceptFriendRequest = async (friendshipId, token, enqueueSnackbar) => {
+  try {
+    await axios.patch(`${apiUrl}/acceptFriendRequest/${friendshipId}`, {}, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    enqueueSnackbar('Friend request accepted successfully.', { variant: 'success' });
+  } catch (error) {
+    console.error('API error:', error);
+    throw error;
+  }
+};
