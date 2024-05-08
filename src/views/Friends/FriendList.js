@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { FormControl } from 'react-bootstrap';
+import { FormControl, Alert } from 'react-bootstrap';
 import Masonry from '@mui/lab/Masonry';
 import { useSnackbar } from 'notistack';
 import FriendCard from '../../components/FriendCard';
@@ -106,7 +106,7 @@ const FriendList = () => {
           />
         </div>
         <h2>My friends</h2>
-        {filteredFriends.length > 0 && (
+        {filteredFriends.length > 0 ? (
             <>
                 <Masonry columns={{ xs: 1, sm: 2, md: 3, lg: 4 }} spacing={2}>
                     {filteredFriends.map(friend => (
@@ -122,9 +122,13 @@ const FriendList = () => {
                 </Masonry>
                 <hr/>
             </>
+        ) : (
+            <Alert variant="info">
+                {searchTerm ? "No friends match your search." : "You have no friends added."}
+            </Alert>
         )}
         <h2>Your requests</h2>
-        {filteredRequests.length > 0 && (
+        {filteredRequests.length > 0 ? (
             <Masonry columns={{ xs: 1, sm: 2, md: 3, lg: 4 }} spacing={2}>
                 {filteredRequests.map(request => (
                     <div key={request._id}>
@@ -137,6 +141,8 @@ const FriendList = () => {
                     </div>
                 ))}
             </Masonry>
+        ) : (
+            <Alert variant="info">No pending friend requests.</Alert>
         )}
         </>
     );
