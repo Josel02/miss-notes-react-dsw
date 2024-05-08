@@ -46,6 +46,13 @@ const Management = () => {
         try {
           const token = localStorage.getItem('token');
           await sendFriendRequest(receiverId, token, enqueueSnackbar);
+          const updatedUsers = users.map(user => {
+            if (user._id === receiverId) {
+              return { ...user, friendshipStatus: 'Requested', friendshipRole: 'Requester' };
+            }
+            return user;
+          });
+          setUsers(updatedUsers);
         } catch (error) {
           handleAPIError(error);
         }
