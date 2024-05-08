@@ -68,6 +68,19 @@ const Management = () => {
         }
       };
 
+      const getOnClickFunction = (user) => {
+        switch (user.friendshipStatus) {
+          case 'None':
+            return () => onAdd(user._id);  // Devuelve una función que llama a onAdd con el receiverId del usuario
+          case 'Requested':
+            return () => onAdd(user._id);  // Similar para otras acciones
+          case 'Received':
+            return () => onAdd(user._id);
+          default:
+            return () => {};  // No realiza ninguna acción si no se reconoce el estado
+        }
+      };
+
     const fetchUsers = async () => {
       try{
           const token = localStorage.getItem('token');
@@ -104,7 +117,8 @@ const Management = () => {
                         key={user._id}
                         name={user.name}
                         email={user.email}
-                        onAdd={() => onAdd(user._id)}
+                        onClick={getOnClickFunction(user)}
+                        /*onDismiss={getOnDismissFunction(user)}*/
                         status={getStatusFromUser(user)}
                       />
                 ))}

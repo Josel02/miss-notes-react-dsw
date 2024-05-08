@@ -19,24 +19,24 @@ const getInitials = (name) => {
     return name.split(' ').map((n) => n[0]).join('').toUpperCase();
 };
 
-const FriendCard = ({ name, email, onDelete=null, onAdd=null, onAccept=null, onReject=null, onCancel=null, status=null }) => {
+const FriendCard = ({ name, email, onClick, onDismiss=null, status }) => {
     const [hover, setHover] = useState(false);
 
     const renderButtons = (status) => {
         switch(status) {
             case 'friend':
-                return <Button variant="outline-primary" onClick={onDelete}>Eliminar</Button>;
+                return <Button variant="outline-primary" onClick={onClick}>Eliminar</Button>;
             case 'none':
-                return <Button variant="outline-primary" onClick={onAdd}>Añadir</Button>;
+                return <Button variant="outline-primary" onClick={onClick}>Añadir</Button>;
             case 'received':
                 return (
                     <>
-                        <Button className='btn-primary-custom me-2' onClick={onAccept}>Aceptar</Button>
-                        <Button variant="outline-primary" onClick={onReject}>Rechazar</Button>
+                        <Button className='btn-primary-custom me-2' onClick={onClick}>Aceptar</Button>
+                        <Button variant="outline-primary" onClick={onDismiss}>Rechazar</Button>
                     </>
                 );
             case 'requested':
-                return <Button variant="outline-primary" onClick={onCancel}>Cancelar Solicitud</Button>;
+                return <Button variant="outline-primary" onClick={onClick}>Cancelar Solicitud</Button>;
             default:
                 return null;
         }
