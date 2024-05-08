@@ -1,32 +1,55 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { FormControl } from 'react-bootstrap';
 import Masonry from '@mui/lab/Masonry';
 import { useSnackbar } from 'notistack';
 import FriendCard from '../../components/FriendCard';
 import { removeFriend } from '../../context/FriendsContext';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../components/AuthContext';
+import useSharedSearchBar from '../../components/SaredSearchBar';
 
 const FriendList = () => {
     const [friends, setFriends] = useState([]);
+    const [pendingRequests, setPendingRequests] = useState([]);
     const { logout } = useAuth();
     const { enqueueSnackbar } = useSnackbar();
     const navigate = useNavigate();
+    // Estado compartido para la barra de búsqueda
+    const [searchTerm, setSearchTerm] = useState('');
+
+    // Búsqueda para amigos
+    const [filteredFriends] = useSharedSearchBar(friends, {
+        keys: ['name'],
+        threshold: 0.3
+    }, searchTerm);
+
+    // Búsqueda para solicitudes pendientes
+    const [filteredRequests] = useSharedSearchBar(pendingRequests, {
+        keys: ['receiver.name'],
+        threshold: 0.3
+    }, searchTerm);
 
     useEffect(() => {
-        const fetchFriends = async () => {
+        const fetchFriendsAndPendingRequests = async () => {
             const token = localStorage.getItem('token');
             try {
-                const response = await axios.get('http://localhost:3000/friends/listFriends', {
+                let response = await axios.get('http://localhost:3000/friends/listFriends', {
                     headers: { Authorization: `Bearer ${token}` }
                 });
-                setFriends(response.data);
+                await setFriends(response.data);
+
+                response = await axios.get('http://localhost:3000/friends/listFriendshipsRequested', {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                await setPendingRequests(response.data);
+                console.log("Response requests: ", response.data);
             } catch (error) {
                 console.error('Error fetching friends:', error);
             }
         };
 
-        fetchFriends();
+        fetchFriendsAndPendingRequests();
         console.log(friends);
     }, []);
 
@@ -60,9 +83,17 @@ const FriendList = () => {
 
     return (
         <>
+        <div className='d-flex justify-content-center'>
+          <FormControl
+            type="text"
+            placeholder="Search users"
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="mb-3 mt-2 rounded-pill w-50"
+          />
+        </div>
         <h2>My friends</h2>
         <Masonry columns={{ xs: 1, sm: 2, md: 3, lg: 4 }} spacing={2}>
-            {friends.map(friend => (
+            {filteredFriends.map(friend => (
                 <div key={friend._id}>
                     <FriendCard 
                         name={friend.name}
@@ -75,6 +106,18 @@ const FriendList = () => {
         </Masonry>
         <hr/>
         <h2>Your requests</h2>
+        <Masonry columns={{ xs: 1, sm: 2, md: 3, lg: 4 }} spacing={2}>
+            {filteredRequests.map(request => (
+                <div key={request._id}>
+                    <FriendCard 
+                        name={request.receiver.name}
+                        email={request.receiver.email}
+                        onClick={null}
+                        status={"requested"}
+                    />
+                </div>
+            ))}
+        </Masonry>
         </>
     );
 };
