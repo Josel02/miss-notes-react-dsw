@@ -60,11 +60,19 @@ export const acceptFriendRequest = async (friendshipId, token, enqueueSnackbar, 
   }
 };
 
-export const removeFriend = async (friendshipId, token, enqueueSnackbar, admin=false) => {
+export const removeFriend = async (friendshipId, token, enqueueSnackbar, admin=false, userId=null) => {
   try {
-    await axios.delete(`${apiUrl}/deleteFriendship/${friendshipId}`, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
+    if (admin){
+      await axios.delete(`${apiUrl}/adminDeleteFriendship/${friendshipId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+        data: { userId }
+      });
+    }
+    else{
+      await axios.delete(`${apiUrl}/deleteFriendship/${friendshipId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+    }
     enqueueSnackbar('Friend removed successfully.', { variant: 'success' });
   } catch (error) {
     console.error('API error:', error);

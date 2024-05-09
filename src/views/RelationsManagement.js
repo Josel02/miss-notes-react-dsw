@@ -67,8 +67,9 @@ const RelationsManagement = () => {
     const onRemove = async (friendshipId) => {
         try {
             const token = localStorage.getItem('token');
-            await removeFriend(friendshipId, token, enqueueSnackbar);
-            setFriends(friends.filter(friend => friend._id !== friendshipId));
+            await removeFriend(friendshipId, token, enqueueSnackbar, true, userId);
+            const updatedFriends = friends.filter(friend => friend._id !== friendshipId);
+            setFriends(updatedFriends);
         } catch (error) {
             handleAPIError(error);
         }
