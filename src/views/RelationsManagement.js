@@ -5,7 +5,7 @@ import { FormControl, Alert } from 'react-bootstrap';
 import Masonry from '@mui/lab/Masonry';
 import { useSnackbar } from 'notistack';
 import FriendCard from '../components/FriendCard';
-import { removeFriend, revokeFriendRequest } from '../context/FriendsContext';
+import { removeFriend, revokeFriendRequest, acceptFriendRequest, rejectFriendRequest } from '../context/FriendsContext';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../components/AuthContext';
 import useSharedSearchBar from '../components/SaredSearchBar';
@@ -89,6 +89,39 @@ const RelationsManagement = () => {
         }
     };
 
+    const onAccept = async (friendshipId) => {
+        try {
+            const token = localStorage.getItem('token');
+            await acceptFriendRequest(friendshipId, token, enqueueSnackbar, true, userId);
+    
+            // Encuentra el amigo aceptado en la lista de solicitudes recibidas
+            const acceptedFriend = receivedRequests.find(request => request._id === friendshipId);
+            if (!acceptedFriend) return;
+            console.log("acceptedFriend", acceptedFriend)
+            // Eliminar el amigo aceptado de la lista de solicitudes recibidas
+            const remainingRequests = receivedRequests.filter(request => request._id !== friendshipId);
+            setReceivedRequests(remainingRequests);
+    
+            // Añadir el amigo aceptado a la lista de amigos
+            setFriends([...friends, acceptedFriend]);
+        } catch (error) {
+            handleAPIError(error);
+        }
+    };
+    
+
+      const onReject = async (friendshipId) => {
+        try {
+          const token = localStorage.getItem('token');
+          await rejectFriendRequest(friendshipId, token, enqueueSnackbar);
+
+          const remainingRequests = receivedRequests.filter(pendingRequest => pendingRequest._id !== friendshipId);
+          setReceivedRequests(remainingRequests);
+        } catch (error) {
+          handleAPIError(error);
+        }
+      };
+
     const handleAPIError = (error) => {
         console.error('API error:', error);
         if (error.response && error.response.status === 403) {
@@ -125,8 +158,8 @@ const RelationsManagement = () => {
                     {filteredFriends.map(friend => (
                         <div key={friend._id}>
                             <FriendCard 
-                                name={friend.name}
-                                email={friend.email}
+                                name={friend.name || friend.requester.name}
+                                email={friend.email || friend.requester.email}
                                 onClick={() => onRemove(friend._id)}
                                 status={"friend"}
                             />
@@ -166,7 +199,8 @@ const RelationsManagement = () => {
                             <FriendCard 
                                 name={request.requester.name}
                                 email={request.requester.email}
-                                onClick={null}
+                                onClick={() => onAccept(request._id)}
+                                onReject={() => onReject(request._id)}
                                 status={"received"}
                             />
                         </div>
