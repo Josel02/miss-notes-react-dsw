@@ -31,7 +31,7 @@ const UserCard = ({ user, onEdit, onDelete }) => {
             <CollectionsIcon style={{ display: 'block', margin: 'auto' }} />
             Collections
           </Link>
-          <Link to="/relationsManagement" className="btn btn-link link-btn-enhanced vertical-link">
+          <Link to={`/relationsManagement/${user._id}`} className="btn btn-link link-btn-enhanced vertical-link">
             <GroupIcon style={{ display: 'block', margin: 'auto' }} />
             Relationships
           </Link>

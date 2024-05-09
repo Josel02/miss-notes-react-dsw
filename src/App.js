@@ -17,6 +17,7 @@ import CollectionsManagement from './views/CollectionsManagement';
 import FriendList from './views/Friends/FriendList';
 import AddFriends from './views/Friends/AddFriends';
 import FriendRequests from './views/Friends/FriendRequests';
+import RelationsManagement from './views/RelationsManagement';
 
 function App() {
   return (
@@ -37,6 +38,7 @@ function App() {
           <Route path="/management" element={<Layout><Management /></Layout>} />
           <Route path="/notesManagement/:userId" element={<Layout><NotesManagement /></Layout>} />
           <Route path="/collectionsManagement/:userId" element={<Layout><CollectionsManagement /></Layout>} />
+          <Route path="/relationsManagement/:userId" element={<Layout><RelationsManagement /></Layout>} />
           <Route path="/profile" element={<Layout><UserProfile /></Layout>} />
           <Route path="/friends/list" element={<Layout><FriendList /></Layout>} />
           <Route path="/friends/add" element={<Layout><AddFriends /></Layout>} />
