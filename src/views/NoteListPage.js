@@ -8,12 +8,15 @@ import { useSnackbar } from 'notistack';
 import { useNavigate } from 'react-router-dom';
 import EditNoteModal from './EditNoteModal';
 import useSearchBar from '../components/SearchBar';
+import ShareModal from '../components/ShareNoteModal';
 
 const NoteListPage = () => {
   const [notes, setNotes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState({ text: '', type: '' });
   const [editingNote, setEditingNote] = useState(null);
+  const [sharingNote, setSharingNote] = useState(null);
+  const [friends, setFriends] = useState([]);
   const [isEditingExistingNote, setIsEditingExistingNote] = useState(false);
   const navigate = useNavigate();
   const { logout } = useAuth();
@@ -122,13 +125,20 @@ const NoteListPage = () => {
   };
   
   useEffect(() => {
-    const fetchNotes = async () => {
+    const fetchNotesAndFriends = async () => {
       try {
         const token = localStorage.getItem('token');
-        const response = await axios.get(`http://localhost:3000/notes/user`, {
+        let response = await axios.get(`http://localhost:3000/notes/user`, {
           headers: { Authorization: `Bearer ${token}` }});
-      setNotes(response.data);
-      setLoading(false);
+        setNotes(response.data);
+        console.log("Notes: ", response.data)
+        setLoading(false);
+
+        response = await axios.get('http://localhost:3000/friends/listFriends', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        console.log("Friends: ", response.data)
+        setFriends(response.data);
       } catch (error) {
         if (error.response && error.response.status === 403) {
           navigate('/', { replace: true });
@@ -138,7 +148,7 @@ const NoteListPage = () => {
       }
     };
 
-    fetchNotes();
+    fetchNotesAndFriends();
   }, [enqueueSnackbar, logout, navigate]);
 
   return (
@@ -171,7 +181,12 @@ const NoteListPage = () => {
           <Masonry columns={{ xs: 1, sm: 2, md: 3, lg: 4 }} spacing={2}>
             {filteredNotes.map(note => (
               <div key={note._id}>
-                <NoteCard note={note} onEdit={() => handleEditNote(note)} onDelete={() => deleteNote(note._id)} />
+                <NoteCard 
+                  note={note} 
+                  onEdit={() => handleEditNote(note)} 
+                  onDelete={() => deleteNote(note._id)} 
+                  onShare={() => setSharingNote(note)}
+                  />
               </div>
             ))}
           </Masonry>
@@ -186,6 +201,16 @@ const NoteListPage = () => {
             onSave={null}
           />
         )}
+        {sharingNote && (
+        <ShareModal
+          show={!!sharingNote}
+          handleClose={() => setSharingNote(null)}
+          friends={friends}
+          selectedFriendEmails={sharingNote.sharedWith || []}
+          handleFriendSelection={null}
+          shareNote={null}
+        />
+      )}
       </>
   );
   
