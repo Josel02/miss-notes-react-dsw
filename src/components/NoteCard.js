@@ -4,7 +4,7 @@ import '../styles/NoteCard.css';
 import '../styles/Card.css';
 import { FiShare2 } from 'react-icons/fi';
 
-const NoteCard = ({ note, onEdit, onDelete, onShare, status="nonShared", sharedWith=[], editable=true }) => {
+const NoteCard = ({ note, onEdit=null, onDelete, onShare, status="nonShared", sharedWith=[], editable=true }) => {
 
   const renderNoteContent = (content) => {
     switch (content.type){

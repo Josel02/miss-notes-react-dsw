@@ -219,14 +219,10 @@ const deleteCollection = async () => {
         ...collection,
         notes: collection.notes.map(note => note._id === updatedNote._id ? { ...note, ...updatedNote } : note)
       })));
+      enqueueSnackbar('Note successfully updated.', { variant: 'success' });
     })
     .catch(error => {
-      console.error('Error saving note:', error);
-      if (error.response && error.response.status === 403) {
-        navigate('/', { replace: true });
-        enqueueSnackbar('Session expired. Please login again.', { variant: 'warning' });
-        logout();
-      }
+      handleAPIError(error);
     });
   };
 
@@ -420,7 +416,7 @@ const deleteCollection = async () => {
                     <div key={note._id}>
                       <NoteCard
                         note={note}
-                        onEdit={() => handleEditNote(note)}
+                        onEdit={note.isEditable ? () => handleEditNote(note) : null}
                         onDelete={() => deleteNote(note._id)}
                         status="inSharedCollection"
                         editable={note.isEditable}
