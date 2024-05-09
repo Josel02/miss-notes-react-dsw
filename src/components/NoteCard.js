@@ -4,7 +4,7 @@ import '../styles/NoteCard.css';
 import '../styles/Card.css';
 import { FiShare2 } from 'react-icons/fi';
 
-const NoteCard = ({ note, onEdit, onDelete, onShare }) => {
+const NoteCard = ({ note, onEdit, onDelete, onShare, status="nonShared" }) => {
 
   const renderNoteContent = (content) => {
     switch (content.type){
@@ -40,11 +40,25 @@ const NoteCard = ({ note, onEdit, onDelete, onShare }) => {
     }
   };
 
+  const stringToColor = (string) => {
+    let hash = 0;
+    for (let i = 0; i < string.length; i++) {
+        hash = string.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    let colour = '#';
+    for (let i = 0; i < 3; i++) {
+        const value = (hash >> (i * 8)) & 0xFF;
+        colour += ('00' + value.toString(16)).substr(-2);
+    }
+    return colour;
+};
+
   return (
     <Card className="note-card card" style={{ margin: '10px' }}>
       <Card.Body>
         <div className="d-flex justify-content-between align-items-center">
           <Card.Title>{note.title}</Card.Title>
+          { status === "nonShared" && ( 
           <OverlayTrigger
             placement="top"
             overlay={<Tooltip id={`tooltip-share-${note._id}`}>Share</Tooltip>}
@@ -54,6 +68,7 @@ const NoteCard = ({ note, onEdit, onDelete, onShare }) => {
               onShare(note);
             }}><FiShare2 /></Button>
           </OverlayTrigger>
+          )}
         </div>
         <div>
           {note.content.map(renderNoteContent)}
@@ -62,6 +77,9 @@ const NoteCard = ({ note, onEdit, onDelete, onShare }) => {
           <Button variant="primary" className='btn-primary-custom' onClick={() => onEdit(note)}>Edit</Button>
           <Button variant="outline-primary" onClick={onDelete}>Delete</Button>
         </div>
+        { status === "shared" && (
+          <hr />
+        )}
       </Card.Body>
     </Card>
   );

@@ -232,6 +232,24 @@ const NoteListPage = () => {
         ) : (
           <Alert variant="info">There are no notes yet. Why not add one?</Alert>
         )}
+        <hr />
+        <h2 className='ms-2'>Shared with me</h2>
+        {sharedNotes.length > 0 ? (
+          <Masonry columns={{ xs: 1, sm: 2, md: 3, lg: 4 }} spacing={2}>
+            {sharedNotes.map(note => (
+              <div key={note._id}>
+                <NoteCard 
+                  note={note} 
+                  onEdit={() => handleEditNote(note)} 
+                  onDelete={() => deleteNote(note._id)} 
+                  status="shared"
+                />
+              </div>
+            ))}
+          </Masonry>
+        ) : (
+          <Alert variant="info">There are no notes shared with you.</Alert>
+        )}
         {editingNote && (
           <EditNoteModal
             show={!!editingNote}
