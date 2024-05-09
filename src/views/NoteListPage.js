@@ -16,6 +16,7 @@ const NoteListPage = () => {
   const [message, setMessage] = useState({ text: '', type: '' });
   const [editingNote, setEditingNote] = useState(null);
   const [sharingNote, setSharingNote] = useState(null);
+  const [sharedNotes, setSharedNotes] = useState([]);
   const [friends, setFriends] = useState([]);
   const [isEditingExistingNote, setIsEditingExistingNote] = useState(false);
   const navigate = useNavigate();
@@ -76,7 +77,7 @@ const NoteListPage = () => {
       setNotes(prevNotes => [...prevNotes, response.data]);
     }
     catch(error){
-      console.error('Error creating note:', error);
+      handleAPIError(error);
     }
   }
   
@@ -88,12 +89,7 @@ const NoteListPage = () => {
       });
     }
     catch(error){
-      console.error('Error saving note:', error);
-      if (error.response && error.response.status === 403) {
-        navigate('/', { replace: true });
-        enqueueSnackbar('Session expired. Please login again.', { variant: 'warning' });
-        logout();
-      }
+      handleAPIError(error);
     }
 
   };
@@ -112,15 +108,7 @@ const NoteListPage = () => {
       
       setMessage({ text: 'Note deleted successfully.', type: 'success' });
     } catch (error) {
-      console.error('Error deleting note:', error);
-      if (error.response && error.response.status === 403) {
-        navigate('/', { replace: true });
-        enqueueSnackbar('Session expired. Please login again.', { variant: 'warning' });
-        logout();
-      }
-      else{
-        setMessage({ text: 'Error deleting note.', type: 'error' });
-      }
+      handleAPIError(error);
     }
   };
 
@@ -143,14 +131,25 @@ const NoteListPage = () => {
       enqueueSnackbar('Note shared successfully', { variant: 'success' });
     }
     catch(error){
-      console.error('Error sharing note:', error);
-      if (error.response && error.response.status === 403) {
-        navigate('/', { replace: true });
-        enqueueSnackbar('Session expired. Please login again.', { variant: 'warning' });
-        logout();
-      }
+      handleAPIError(error);
     }
   }
+
+  const handleAPIError = (error) => {
+    console.error('API error:', error);
+    if (error.response && error.response.status === 403) {
+    navigate('/', { replace: true });
+    enqueueSnackbar('Session expired. Please login again.', { variant: 'warning' });
+    logout();
+    } 
+    else if (error.response && error.response.status === 404) {
+        navigate('/', { replace: true });
+        enqueueSnackbar(error.response.data.message, { variant: 'info' });
+    }
+    else {
+        enqueueSnackbar('Error processing the request.', { variant: 'error' });
+    }
+};
   
   useEffect(() => {
     const fetchNotesAndFriends = async () => {
@@ -168,15 +167,26 @@ const NoteListPage = () => {
         console.log("Friends: ", response.data)
         setFriends(response.data);
       } catch (error) {
-        if (error.response && error.response.status === 403) {
-          navigate('/', { replace: true });
-          enqueueSnackbar('Session expired. Please login again.', { variant: 'warning' });
-          logout();
-        }
+        handleAPIError(error);
+      }
+    };
+
+    const fetchSharedNotes = async () => {
+      try{
+        const token = localStorage.getItem('token');
+        const response = await axios.get('http://localhost:3000/notes/shared-with-me', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        console.log("Shared notes: ", response.data)
+        setSharedNotes(response.data);
+      }
+      catch(error){
+        handleAPIError(error);
       }
     };
 
     fetchNotesAndFriends();
+    fetchSharedNotes();
   }, [enqueueSnackbar, logout, navigate]);
 
   return (
@@ -194,6 +204,7 @@ const NoteListPage = () => {
             className="mb-3 mt-2 rounded-pill w-50"
           />
         </div>
+        <h2 className='ms-2'>My notes</h2>
         <Button variant="outline-primary" 
           style={{ 
           position: 'fixed', right: '20px', 
