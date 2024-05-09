@@ -197,84 +197,74 @@ const NoteListPage = () => {
   }, [enqueueSnackbar, logout, navigate]);
 
   return (
+    <>
+    <div className='d-flex justify-content-center'>
+      <FormControl
+        type="text"
+        placeholder="Search notes"
+        onChange={(e) => setSearchTerm(e.target.value)}
+        className="mb-3 mt-2 rounded-pill w-50"
+      />
+    </div>
+    <h2>My Notes</h2>
+    {filteredNotes.length > 0 ? (
       <>
-        {message.text && (
-          <Alert variant={message.type === 'success' ? 'success' : 'danger'}>
-            {message.text}
-          </Alert>
-        )}
-        <div className='d-flex justify-content-center'>
-          <FormControl
-            type="text"
-            placeholder="Search notes"
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="mb-3 mt-2 rounded-pill w-50"
-          />
-        </div>
-        <h2 className='ms-2'>My notes</h2>
-        <Button variant="outline-primary" 
-          style={{ 
-          position: 'fixed', right: '20px', 
-          bottom: '20px', zIndex: '1000', 
-          borderRadius: '50%', width: '55px', 
-          height: '55px', fontSize: '28px' }}
-          onClick={addNewNote}>
-          +
-        </Button>
-        {loading ? (
-          <div>Loading notes...</div>
-        ) : notes.length > 0 ? (
-          <Masonry columns={{ xs: 1, sm: 2, md: 3, lg: 4 }} spacing={2}>
-            {filteredNotes.map(note => (
-              <div key={note._id}>
-                <NoteCard 
-                  note={note} 
-                  onEdit={() => handleEditNote(note)} 
-                  onDelete={() => deleteNote(note._id)} 
-                  onShare={() => setSharingNote(note)}
-                  />
-              </div>
-            ))}
-          </Masonry>
-        ) : (
-          <Alert variant="info">There are no notes yet. Why not add one?</Alert>
-        )}
+        <Masonry columns={{ xs: 1, sm: 2, md: 3, lg: 4 }} spacing={2}>
+          {filteredNotes.map(note => (
+            <div key={note._id}>
+              <NoteCard 
+                note={note} 
+                onEdit={() => handleEditNote(note)} 
+                onDelete={() => deleteNote(note._id)} 
+                onShare={() => setSharingNote(note)}
+              />
+            </div>
+          ))}
+        </Masonry>
         <hr />
-        <h2 className='ms-2'>Shared with me</h2>
-        {sharedNotes.length > 0 ? (
-          <Masonry columns={{ xs: 1, sm: 2, md: 3, lg: 4 }} spacing={2}>
-            {filteredSharedNotes.map(note => (
-              <div key={note._id}>
-                <NoteCard 
-                  note={note} 
-                  onEdit={() => handleEditNote(note)} 
-                  onDelete={() => deleteNote(note._id)} 
-                  status="shared"
-                />
-              </div>
-            ))}
-          </Masonry>
-        ) : (
-          <Alert variant="info">There are no notes shared with you.</Alert>
-        )}
-        {editingNote && (
-          <EditNoteModal
-            show={!!editingNote}
-            handleClose={(note, isCambios) => handleSaveNote(note, isCambios)}
-            note={editingNote}
-            onSave={null}
-          />
-        )}
-        {sharingNote && (
-        <ShareModal
-          show={!!sharingNote}
-          handleClose={() => setSharingNote(null)}
-          friends={friends}
-          selectedFriendEmails={sharingNote.sharedWith || []}
-          shareNote={shareNote}
-        />
-      )}
       </>
+    ) : (
+      <Alert variant="info">
+        {searchTerm ? "No notes match your search." : "You have no notes added."}
+      </Alert>
+    )}
+    <h2>Notes Shared with Me</h2>
+    {filteredSharedNotes.length > 0 ? (
+      <Masonry columns={{ xs: 1, sm: 2, md: 3, lg: 4 }} spacing={2}>
+        {filteredSharedNotes.map(note => (
+          <div key={note._id}>
+            <NoteCard 
+              note={note} 
+              onEdit={() => handleEditNote(note)} 
+              onDelete={() => deleteNote(note._id)} 
+              status="shared"
+            />
+          </div>
+        ))}
+      </Masonry>
+    ) : (
+      <Alert variant="info">
+        {searchTerm ? "No notes match your search." : "You have no notes shared with you."}
+      </Alert>
+    )}
+    {editingNote && (
+      <EditNoteModal
+        show={!!editingNote}
+        handleClose={(note, isCambios) => handleSaveNote(note, isCambios)}
+        note={editingNote}
+        onSave={null}
+      />
+    )}
+    {sharingNote && (
+      <ShareModal
+        show={!!sharingNote}
+        handleClose={() => setSharingNote(null)}
+        friends={friends}
+        selectedFriendEmails={sharingNote.sharedWith || []}
+        shareNote={shareNote}
+      />
+    )}
+  </>  
   );
   
 };
