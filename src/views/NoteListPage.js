@@ -3,7 +3,6 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { Alert, Button, FormControl } from 'react-bootstrap';
 import { useSnackbar } from 'notistack';
-
 import Masonry from '@mui/lab/Masonry';
 import NoteCard from '../components/NoteCard';
 import EditNoteModal from './EditNoteModal';
@@ -29,14 +28,14 @@ const NoteListPage = () => {
     threshold: 0.3
   });
 
-    // Función que maneja el cierre del modal y decide si guardar
-    const handleCloseModal = (note, hasChanges) => {
-      if (hasChanges) {
-        handleSaveNote(note, true);  // Aquí pasamos 'true' para simular que siempre hay cambios.
-      }
-      setEditingNote(null);
-      setIsEditingExistingNote(false);
-    };
+  // Función que maneja el cierre del modal y decide si guardar
+  const handleCloseModal = (note, hasChanges) => {
+    if (hasChanges) {
+      handleSaveNote(note, true);  // Aquí pasamos 'true' para simular que siempre hay cambios.
+    }
+    setEditingNote(null);
+    setIsEditingExistingNote(false);
+  };
 
   const handleShareClick = (note) => {
     setSelectedNote(note);
@@ -152,6 +151,20 @@ const NoteListPage = () => {
     }
   };
 
+  const deleteNote = async (noteId) => {
+    const token = localStorage.getItem('token');
+    try {
+      await axios.delete(`http://localhost:3000/notes/${noteId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setNotes(prevNotes => prevNotes.filter(note => note._id !== noteId));
+      enqueueSnackbar('Note deleted successfully', { variant: 'success' });
+    } catch (error) {
+      console.error('Error deleting note:', error);
+      enqueueSnackbar('Error deleting note. Please try again.', { variant: 'error' });
+    }
+  };
+
   useEffect(() => {
     const fetchNotes = async () => {
       try {
@@ -201,26 +214,15 @@ const NoteListPage = () => {
               key={note._id}
               note={note}
               onEdit={() => { setEditingNote(note); setIsEditingExistingNote(true); }}
-              onDelete={async (noteId) => {
-                const token = localStorage.getItem('token');
-                try {
-                  await axios.delete(`http://localhost:3000/notes/${noteId}`, {
-                    headers: { Authorization: `Bearer ${token}` }
-                  });
-                  setNotes(prevNotes => prevNotes.filter(n => n._id !== noteId));
-                  enqueueSnackbar('Note deleted successfully', { variant: 'success' });
-                } catch (error) {
-                  console.error('Error deleting note:', error);
-                  enqueueSnackbar('Error deleting note. Please try again.', { variant: 'error' });
-                }
-              }}
-              onShare={handleShareClick}
+              onDelete={() => deleteNote(note._id)}  // Pasando el método adecuadamente
+              onShare={() => handleShareClick(note)}
             />
           ))}
         </Masonry>
       ) : (
         <Alert variant="info">There are no notes yet. Why not add one?</Alert>
       )}
+
       {editingNote && (
         <EditNoteModal
           show={!!editingNote}
