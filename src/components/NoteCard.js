@@ -4,7 +4,7 @@ import '../styles/NoteCard.css';
 import '../styles/Card.css';
 import { FiShare2 } from 'react-icons/fi';
 
-const NoteCard = ({ note, onEdit, onDelete, onShare, status="nonShared" }) => {
+const NoteCard = ({ note, onEdit, onDelete, onShare, status="nonShared", sharedWith=[] }) => {
 
   const renderNoteContent = (content) => {
     switch (content.type){
@@ -19,13 +19,13 @@ const NoteCard = ({ note, onEdit, onDelete, onShare, status="nonShared" }) => {
       case 'checked list':
         return (
           <ListGroup key={content._id || content.tempId}>
-          <ListGroup.Item className={content.data[0].checked ? 'checked' : 'unchecked'}>
-            {content.data[0].checked && (
-              <span className="check-icon"></span>
-            )}
-            <span className="item-text">{content.data[0].text}</span>
-          </ListGroup.Item>
-        </ListGroup>
+            <ListGroup.Item className={content.data[0].checked ? 'checked' : 'unchecked'}>
+              {content.data[0].checked && (
+                <span className="check-icon"></span>
+              )}
+              <span className="item-text">{content.data[0].text}</span>
+            </ListGroup.Item>
+          </ListGroup>
         );
       case 'image':
         return (
@@ -34,7 +34,7 @@ const NoteCard = ({ note, onEdit, onDelete, onShare, status="nonShared" }) => {
               src={content.data}
               style={{ maxWidth: '100%' }}
           />
-      );
+        );
       default:
         return null;
     }
@@ -51,23 +51,27 @@ const NoteCard = ({ note, onEdit, onDelete, onShare, status="nonShared" }) => {
         colour += ('00' + value.toString(16)).substr(-2);
     }
     return colour;
-};
+  };
+
+  const getInitials = (name) => {
+    return name.split(' ').map((n) => n[0]).join('').toUpperCase();
+  };
 
   return (
     <Card className="note-card card" style={{ margin: '10px' }}>
       <Card.Body>
         <div className="d-flex justify-content-between align-items-center">
           <Card.Title>{note.title}</Card.Title>
-          { status === "nonShared" && ( 
-          <OverlayTrigger
-            placement="top"
-            overlay={<Tooltip id={`tooltip-share-${note._id}`}>Share</Tooltip>}
-          >
-            <Button variant="link" onClick={(e) => {
-              e.stopPropagation();
-              onShare(note);
-            }}><FiShare2 /></Button>
-          </OverlayTrigger>
+          { status === "nonShared" && (
+            <OverlayTrigger
+              placement="top"
+              overlay={<Tooltip id={`tooltip-share-${note._id}`}>Share</Tooltip>}
+            >
+              <Button variant="link" onClick={(e) => {
+                e.stopPropagation();
+                onShare(note);
+              }}><FiShare2 /></Button>
+            </OverlayTrigger>
           )}
         </div>
         <div>
@@ -78,7 +82,14 @@ const NoteCard = ({ note, onEdit, onDelete, onShare, status="nonShared" }) => {
           <Button variant="outline-primary" onClick={onDelete}>Delete</Button>
         </div>
         { status === "shared" && (
-          <hr />
+          <>
+            <hr />
+            {sharedWith.map(name => (
+              <div key={name} className='friend-card-header-circle' style={{ backgroundColor: stringToColor(name) }}>
+                <div className="friend-card-initials-circle">{getInitials(name)}</div>
+              </div>
+            ))}
+          </>
         )}
       </Card.Body>
     </Card>

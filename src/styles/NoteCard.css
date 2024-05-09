@@ -35,3 +35,21 @@
     text-decoration: line-through; 
     color: #6c757d; 
   }
+
+  .note-card .friend-card-header-circle {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    margin: 10px auto;
+    overflow: hidden;
+    border: none;
+}
+
+.note-card .friend-card-initials-circle {
+    font-size: 1.5em;
+    color: white;
+    line-height: 40px; /* Esto debe ser igual a height y width para centrar el texto verticalmente */
+}
