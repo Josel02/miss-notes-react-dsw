@@ -83,7 +83,9 @@ const NoteCard = ({ note, onEdit, onDelete, onShare, status="nonShared", sharedW
         </div>
         <div className="action-buttons mt-3">
           <Button variant="primary" className='btn-primary-custom' onClick={() => onEdit(note)}>Edit</Button>
-          <Button variant="outline-primary" onClick={onDelete}>Delete</Button>
+          { status !== "inSharedCollection" &&
+            <Button variant="outline-primary" onClick={onDelete}>Delete</Button>
+          }
         </div>
         {sharedWith.length !== 0 && (
         <>
