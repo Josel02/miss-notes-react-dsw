@@ -1,9 +1,10 @@
 import React from 'react';
-import { Card, Button, ListGroup } from 'react-bootstrap';
+import { Card, Button, ListGroup, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import '../styles/NoteCard.css';
 import '../styles/Card.css';
+import { FiShare2 } from 'react-icons/fi';
 
-const NoteCard = ({ note, onEdit, onDelete }) => {
+const NoteCard = ({ note, onEdit, onDelete, onShare }) => {
 
   const renderNoteContent = (content) => {
     switch (content.type){
@@ -42,7 +43,18 @@ const NoteCard = ({ note, onEdit, onDelete }) => {
   return (
     <Card className="note-card card" style={{ margin: '10px' }}>
       <Card.Body>
-        <Card.Title>{note.title}</Card.Title>
+        <div className="d-flex justify-content-between align-items-center">
+          <Card.Title>{note.title}</Card.Title>
+          <OverlayTrigger
+            placement="top"
+            overlay={<Tooltip id={`tooltip-share-${note._id}`}>Share</Tooltip>}
+          >
+            <Button variant="link" onClick={(e) => {
+              e.stopPropagation();
+              onShare(note);
+            }}><FiShare2 /></Button>
+          </OverlayTrigger>
+        </div>
         <div>
           {note.content.map(renderNoteContent)}
         </div>
