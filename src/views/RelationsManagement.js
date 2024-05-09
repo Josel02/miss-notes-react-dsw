@@ -78,7 +78,7 @@ const RelationsManagement = () => {
         try {
           const token = localStorage.getItem('token');
           // Revocar la solicitud de amistad usando la función revokeFriendRequest.
-          await revokeFriendRequest(friendshipId, token, enqueueSnackbar);
+          await revokeFriendRequest(friendshipId, token, enqueueSnackbar, true, userId);
           // Filtrar las solicitudes pendientes para eliminar la que se ha revocado.
           const updatedRequests = sentRequests.filter(request => request._id !== friendshipId);
           // Actualizar el estado con la nueva lista de solicitudes pendientes.
@@ -86,7 +86,7 @@ const RelationsManagement = () => {
         } catch (error) {
           handleAPIError(error);
         }
-    };    
+    };
 
     const handleAPIError = (error) => {
         console.error('API error:', error);
@@ -96,6 +96,7 @@ const RelationsManagement = () => {
           logout();
         } 
         else if (error.response && error.response.status === 404) {
+          navigate('/management', { replace: true });
           enqueueSnackbar(error.response.data.message, { variant: 'info' });
         }
         else if (error.response && error.response.status === 400) {

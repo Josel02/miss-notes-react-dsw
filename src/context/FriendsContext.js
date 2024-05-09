@@ -16,11 +16,19 @@ export const sendFriendRequest = async (receiverId, token, enqueueSnackbar) => {
     }
 };
 
-export const revokeFriendRequest = async (friendshipId, token, enqueueSnackbar) => {
+export const revokeFriendRequest = async (friendshipId, token, enqueueSnackbar, admin=false, userId=null) => {
     try {
-      await axios.delete(`${apiUrl}/revokeFriendRequest/${friendshipId}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      if (admin){
+        await axios.delete(`${apiUrl}/adminRevokeFriendRequest/${friendshipId}`, {
+          headers: { Authorization: `Bearer ${token}` },
+          data: { userId }
+        });
+      }
+      else{
+        await axios.delete(`${apiUrl}/revokeFriendRequest/${friendshipId}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+      }
       enqueueSnackbar('Friend request revoked successfully.', { variant: 'success' });
     } catch (error) {
       console.error('API error:', error);
@@ -28,7 +36,7 @@ export const revokeFriendRequest = async (friendshipId, token, enqueueSnackbar) 
     }
 };
 
-export const rejectFriendRequest = async (friendshipId, token, enqueueSnackbar) => {
+export const rejectFriendRequest = async (friendshipId, token, enqueueSnackbar, admin=false) => {
   try {
     await axios.patch(`${apiUrl}/rejectFriendRequest/${friendshipId}`, {}, {
       headers: { Authorization: `Bearer ${token}` }
@@ -40,7 +48,7 @@ export const rejectFriendRequest = async (friendshipId, token, enqueueSnackbar) 
   }
 };
 
-export const acceptFriendRequest = async (friendshipId, token, enqueueSnackbar) => {
+export const acceptFriendRequest = async (friendshipId, token, enqueueSnackbar, admin=false) => {
   try {
     await axios.patch(`${apiUrl}/acceptFriendRequest/${friendshipId}`, {}, {
       headers: { Authorization: `Bearer ${token}` }
@@ -52,7 +60,7 @@ export const acceptFriendRequest = async (friendshipId, token, enqueueSnackbar) 
   }
 };
 
-export const removeFriend = async (friendshipId, token, enqueueSnackbar) => {
+export const removeFriend = async (friendshipId, token, enqueueSnackbar, admin=false) => {
   try {
     await axios.delete(`${apiUrl}/deleteFriendship/${friendshipId}`, {
       headers: { Authorization: `Bearer ${token}` }
