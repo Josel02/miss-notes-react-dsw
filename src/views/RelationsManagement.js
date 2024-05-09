@@ -117,7 +117,7 @@ const RelationsManagement = () => {
                     className="mb-3 mt-2 rounded-pill w-50"
                 />
             </div>
-            <h2>User Friends</h2>
+            <h2>User's friends</h2>
             {filteredFriends.length > 0 ? (
                 <>
                 <Masonry columns={{ xs: 1, sm: 2, md: 3, lg: 4 }} spacing={2}>
@@ -137,7 +137,7 @@ const RelationsManagement = () => {
             ) : (
                 <Alert variant="info">{searchTerm ? "No friends match your search." : "This user has no friends."}</Alert>
             )}
-            <h2>User sent Requests</h2>
+            <h2>User's sent requests</h2>
             {filteredSentRequests.length > 0 ? (
                 <>
                 <Masonry columns={{ xs: 1, sm: 2, md: 3, lg: 4 }} spacing={2}>
@@ -157,7 +157,7 @@ const RelationsManagement = () => {
             ) : (
                 <Alert variant="info">{searchTerm ? "No requests found." : "No pending friend requests for this user."}</Alert>
             )}
-            <h2>User received Requests</h2>
+            <h2>User's received requests</h2>
             {filteredReceivedRequests.length > 0 ? (
                 <Masonry columns={{ xs: 1, sm: 2, md: 3, lg: 4 }} spacing={2}>
                     {filteredReceivedRequests.map(request => (
