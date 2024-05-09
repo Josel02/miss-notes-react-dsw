@@ -152,6 +152,22 @@ const NoteListPage = () => {
     }
   }
 
+  const rejectSharedNote = async (noteId) => {
+    try{
+      const token = localStorage.getItem('token');
+      await axios.post('http://localhost:3000/notes/unshare-note', {
+        noteId
+      }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setSharedNotes(prevNotes => prevNotes.filter(note => note._id !== noteId));
+      enqueueSnackbar('Note unshared successfully', { variant: 'success' });
+    }
+    catch(error){
+      handleAPIError(error);
+    }
+  };
+
   const handleAPIError = (error) => {
     console.error('API error:', error);
     if (error.response && error.response.status === 403) {
@@ -175,13 +191,11 @@ const NoteListPage = () => {
         let response = await axios.get(`http://localhost:3000/notes/user`, {
           headers: { Authorization: `Bearer ${token}` }});
         setNotes(response.data);
-        console.log("Notes: ", response.data)
         setLoading(false);
 
         response = await axios.get('http://localhost:3000/friends/listFriends', {
           headers: { Authorization: `Bearer ${token}` }
         });
-        console.log("Friends: ", response.data)
         setFriends(response.data);
       } catch (error) {
         handleAPIError(error);
@@ -255,7 +269,7 @@ const NoteListPage = () => {
             <NoteCard 
               note={note} 
               onEdit={() => handleEditNote(note)} 
-              onDelete={() => deleteNote(note._id)} 
+              onDelete={() => rejectSharedNote(note._id)} 
               status="shared"
               sharedWith={note.sharedWith.map(friend => friend.email).concat(note.owner.email)}
               />
