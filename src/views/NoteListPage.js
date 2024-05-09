@@ -22,16 +22,6 @@ const NoteListPage = () => {
   const [showShareModal, setShowShareModal] = useState(false);
   const [selectedNote, setSelectedNote] = useState(null);
 
-
-  const updateSharedUsersInNote = (noteId, sharedWithEmails) => {
-    setNotes(prevNotes =>
-      prevNotes.map(note =>
-        note._id === noteId ? { ...note, sharedWith: sharedWithEmails.map(email => ({ email })) } : note
-      )
-    );
-  };
-  
-
   const handleShareClick = (note) => {
     setSelectedNote(note);
     setShowShareModal(true);
@@ -42,11 +32,18 @@ const NoteListPage = () => {
     setSelectedNote(null);
   };
 
+  const updateSharedUsersInNote = (noteId, sharedWithEmails) => {
+    setNotes(prevNotes =>
+      prevNotes.map(note =>
+        note._id === noteId ? { ...note, sharedWith: sharedWithEmails.map(email => ({ email })) } : note
+      )
+    );
+  };
 
   const emptyNote = {
     title: '',
     content: []
-  }
+  };
   const [filteredNotes, setSearchTerm] = useSearchBar(notes, {
     keys: ['title'],
     threshold: 0.3
@@ -58,7 +55,7 @@ const NoteListPage = () => {
   };
 
   const handleSaveNote = (updatedNote, isCambios) => {
-    if (isCambios){
+    if (isCambios) {
       let noteWithoutTempIds = processWithoutTempIds(updatedNote);
       if (isEditingExistingNote) {
         updateNote(noteWithoutTempIds);
@@ -66,50 +63,50 @@ const NoteListPage = () => {
         createNote(noteWithoutTempIds);
       }
     }
-    setEditingNote(null)
+    setEditingNote(null);
     setIsEditingExistingNote(false);
   };
 
   const processWithoutTempIds = (jsonData) => {
-    const processedData = {
+    return {
       ...jsonData,
       content: jsonData.content.map(item => {
         const { tempId, ...newItem } = item;
         return newItem;
-      })
-      .filter(item => {
-        return !(item.type === 'image' && (!item.data || item.data === ''));
-      })
+      }).filter(item => !(item.type === 'image' && (!item.data || item.data === '')))
     };
-    return processedData;
   };
 
   const handleEditNote = (note) => {
     setEditingNote(note);
     setIsEditingExistingNote(true);
-  }
+  };
 
   const createNote = async (note) => {
     const token = localStorage.getItem('token');
     try {
-      const response = await axios.post(`http://localhost:3000/notes/`, note, {
+      const response = await axios.post('http://localhost:3000/notes/', note, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setNotes(prevNotes => [...prevNotes, response.data]);
-    }
-    catch(error){
+    } catch (error) {
       console.error('Error creating note:', error);
     }
-  }
-  
+  };
+
   const updateNote = async (updatedNote) => {
-    try{
-      const token = localStorage.getItem('token');
-      const response = await axios.put(`http://localhost:3000/notes/${updatedNote._id}`, updatedNote, {
+    const token = localStorage.getItem('token');
+    try {
+      await axios.put(`http://localhost:3000/notes/${updatedNote._id}`, updatedNote, {
         headers: { Authorization: `Bearer ${token}` }
       });
-    }
-    catch(error){
+      // Actualizar el estado local después de la edición
+      setNotes(prevNotes =>
+        prevNotes.map(note =>
+          note._id === updatedNote._id ? { ...updatedNote } : note
+        )
+      );
+    } catch (error) {
       console.error('Error saving note:', error);
       if (error.response && error.response.status === 403) {
         navigate('/', { replace: true });
@@ -117,21 +114,15 @@ const NoteListPage = () => {
         logout();
       }
     }
-
   };
 
   const deleteNote = async (noteId) => {
+    const token = localStorage.getItem('token');
     try {
-      const token = localStorage.getItem('token');
-
-      // API call to delete the note
       await axios.delete(`http://localhost:3000/notes/${noteId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      
-      // Update state to remove the deleted note
       setNotes(prevNotes => prevNotes.filter(note => note._id !== noteId));
-      
       setMessage({ text: 'Note deleted successfully.', type: 'success' });
     } catch (error) {
       console.error('Error deleting note:', error);
@@ -139,21 +130,21 @@ const NoteListPage = () => {
         navigate('/', { replace: true });
         enqueueSnackbar('Session expired. Please login again.', { variant: 'warning' });
         logout();
-      }
-      else{
+      } else {
         setMessage({ text: 'Error deleting note.', type: 'error' });
       }
     }
   };
-  
+
   useEffect(() => {
     const fetchNotes = async () => {
       try {
         const token = localStorage.getItem('token');
         const response = await axios.get(`http://localhost:3000/notes/user`, {
-          headers: { Authorization: `Bearer ${token}` }});
-      setNotes(response.data);
-      setLoading(false);
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        setNotes(response.data);
+        setLoading(false);
       } catch (error) {
         if (error.response && error.response.status === 403) {
           navigate('/', { replace: true });
@@ -181,12 +172,13 @@ const NoteListPage = () => {
           className="mb-3 mt-2 rounded-pill w-50"
         />
       </div>
-      <Button variant="outline-primary" 
-        style={{ 
-        position: 'fixed', right: '20px', 
-        bottom: '20px', zIndex: '1000', 
-        borderRadius: '50%', width: '55px', 
-        height: '55px', fontSize: '28px' }}
+      <Button variant="outline-primary"
+        style={{
+          position: 'fixed', right: '20px',
+          bottom: '20px', zIndex: '1000',
+          borderRadius: '50%', width: '55px',
+          height: '55px', fontSize: '28px'
+        }}
         onClick={addNewNote}>
         +
       </Button>
@@ -196,9 +188,9 @@ const NoteListPage = () => {
         <Masonry columns={{ xs: 1, sm: 2, md: 3, lg: 4 }} spacing={2}>
           {filteredNotes.map(note => (
             <div key={note._id}>
-              <NoteCard 
-                note={note} 
-                onEdit={() => handleEditNote(note)} 
+              <NoteCard
+                note={note}
+                onEdit={() => handleEditNote(note)}
                 onDelete={() => deleteNote(note._id)}
                 onShare={() => handleShareClick(note)}
               />
@@ -221,12 +213,12 @@ const NoteListPage = () => {
           show={showShareModal}
           handleClose={handleCloseShareModal}
           noteId={selectedNote._id}
-          sharedWith={selectedNote.sharedWith.map(user => user.email)} // Pasando los correos de los usuarios compartidos
+          sharedWith={selectedNote.sharedWith.map(user => user.email)}
           onSharedUsersUpdate={updateSharedUsersInNote}
-          />
+        />
       )}
     </>
   );
-}  
+};
 
 export default NoteListPage;
