@@ -1,35 +1,45 @@
 import React, { useState, useEffect } from 'react';
-import Masonry from '@mui/lab/Masonry';
 import axios from 'axios';
-import { useAuth } from '../components/AuthContext';
-import NoteCard from '../components/NoteCard';
+import { useNavigate } from 'react-router-dom';
 import { Alert, Button, FormControl } from 'react-bootstrap';
 import { useSnackbar } from 'notistack';
-import { useNavigate } from 'react-router-dom';
+
+import Masonry from '@mui/lab/Masonry';
+import NoteCard from '../components/NoteCard';
 import EditNoteModal from './EditNoteModal';
 import ShareModal from '../components/ShareNoteModal';
 import useSearchBar from '../components/SearchBar';
+import { useAuth } from '../components/AuthContext';
 
 const NoteListPage = () => {
   const [notes, setNotes] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [message, setMessage] = useState({ text: '', type: '' });
   const [editingNote, setEditingNote] = useState(null);
   const [isEditingExistingNote, setIsEditingExistingNote] = useState(false);
+  const [showShareModal, setShowShareModal] = useState(false);
+  const [selectedNote, setSelectedNote] = useState(null);
+  const [friends, setFriends] = useState([]);
+  const [selectedFriendEmails, setSelectedFriendEmails] = useState([]);
+
   const navigate = useNavigate();
   const { logout } = useAuth();
   const { enqueueSnackbar } = useSnackbar();
-  const [showShareModal, setShowShareModal] = useState(false);
-  const [selectedNote, setSelectedNote] = useState(null);
+  const [filteredNotes, setSearchTerm] = useSearchBar(notes, {
+    keys: ['title'],
+    threshold: 0.3
+  });
 
   const handleShareClick = (note) => {
     setSelectedNote(note);
     setShowShareModal(true);
+    setSelectedFriendEmails(note.sharedWith.map(user => user.email));
+    loadFriends();
   };
 
   const handleCloseShareModal = () => {
     setShowShareModal(false);
     setSelectedNote(null);
+    setSelectedFriendEmails([]);
   };
 
   const updateSharedUsersInNote = (noteId, sharedWithEmails) => {
@@ -40,99 +50,42 @@ const NoteListPage = () => {
     );
   };
 
-  const emptyNote = {
-    title: '',
-    content: []
-  };
-  const [filteredNotes, setSearchTerm] = useSearchBar(notes, {
-    keys: ['title'],
-    threshold: 0.3
-  });
-
-  const addNewNote = () => {
-    setEditingNote(emptyNote);
-    setIsEditingExistingNote(false);
+  const loadFriends = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.get('http://localhost:3000/friends/listFriends', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setFriends(response.data);
+    } catch (error) {
+      console.error('Failed to fetch friends:', error);
+    }
   };
 
-  const handleSaveNote = (updatedNote, isCambios) => {
-    if (isCambios) {
-      let noteWithoutTempIds = processWithoutTempIds(updatedNote);
-      if (isEditingExistingNote) {
-        updateNote(noteWithoutTempIds);
+  const handleFriendSelection = (email) => {
+    setSelectedFriendEmails(prev => {
+      if (prev.includes(email)) {
+        return prev.filter(e => e !== email);
       } else {
-        createNote(noteWithoutTempIds);
+        return [...prev, email];
       }
-    }
-    setEditingNote(null);
-    setIsEditingExistingNote(false);
+    });
   };
 
-  const processWithoutTempIds = (jsonData) => {
-    return {
-      ...jsonData,
-      content: jsonData.content.map(item => {
-        const { tempId, ...newItem } = item;
-        return newItem;
-      }).filter(item => !(item.type === 'image' && (!item.data || item.data === '')))
-    };
-  };
-
-  const handleEditNote = (note) => {
-    setEditingNote(note);
-    setIsEditingExistingNote(true);
-  };
-
-  const createNote = async (note) => {
-    const token = localStorage.getItem('token');
+  const shareNote = async () => {
     try {
-      const response = await axios.post('http://localhost:3000/notes/', note, {
+      const token = localStorage.getItem('token');
+      const friendIds = friends.filter(friend => selectedFriendEmails.includes(friend.email)).map(friend => friend.userId);
+      await axios.post('http://localhost:3000/notes/share-note', {
+        noteId: selectedNote._id, 
+        friendIds
+      }, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      setNotes(prevNotes => [...prevNotes, response.data]);
+      updateSharedUsersInNote(selectedNote._id, selectedFriendEmails);
+      handleCloseShareModal();
     } catch (error) {
-      console.error('Error creating note:', error);
-    }
-  };
-
-  const updateNote = async (updatedNote) => {
-    const token = localStorage.getItem('token');
-    try {
-      await axios.put(`http://localhost:3000/notes/${updatedNote._id}`, updatedNote, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      // Actualizar el estado local después de la edición
-      setNotes(prevNotes =>
-        prevNotes.map(note =>
-          note._id === updatedNote._id ? { ...updatedNote } : note
-        )
-      );
-    } catch (error) {
-      console.error('Error saving note:', error);
-      if (error.response && error.response.status === 403) {
-        navigate('/', { replace: true });
-        enqueueSnackbar('Session expired. Please login again.', { variant: 'warning' });
-        logout();
-      }
-    }
-  };
-
-  const deleteNote = async (noteId) => {
-    const token = localStorage.getItem('token');
-    try {
-      await axios.delete(`http://localhost:3000/notes/${noteId}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      setNotes(prevNotes => prevNotes.filter(note => note._id !== noteId));
-      setMessage({ text: 'Note deleted successfully.', type: 'success' });
-    } catch (error) {
-      console.error('Error deleting note:', error);
-      if (error.response && error.response.status === 403) {
-        navigate('/', { replace: true });
-        enqueueSnackbar('Session expired. Please login again.', { variant: 'warning' });
-        logout();
-      } else {
-        setMessage({ text: 'Error deleting note.', type: 'error' });
-      }
+      console.error('Failed to share note:', error);
     }
   };
 
@@ -140,7 +93,7 @@ const NoteListPage = () => {
     const fetchNotes = async () => {
       try {
         const token = localStorage.getItem('token');
-        const response = await axios.get(`http://localhost:3000/notes/user`, {
+        const response = await axios.get('http://localhost:3000/notes/user', {
           headers: { Authorization: `Bearer ${token}` }
         });
         setNotes(response.data);
@@ -159,11 +112,7 @@ const NoteListPage = () => {
 
   return (
     <>
-      {message.text && (
-        <Alert variant={message.type === 'success' ? 'success' : 'danger'}>
-          {message.text}
-        </Alert>
-      )}
+      <Alert variant="info" show={loading}>Loading notes...</Alert>
       <div className='d-flex justify-content-center'>
         <FormControl
           type="text"
@@ -179,22 +128,29 @@ const NoteListPage = () => {
           borderRadius: '50%', width: '55px',
           height: '55px', fontSize: '28px'
         }}
-        onClick={addNewNote}>
+        onClick={() => { setEditingNote({ title: '', content: [] }); setIsEditingExistingNote(false); }}>
         +
       </Button>
-      {loading ? (
-        <div>Loading notes...</div>
-      ) : notes.length > 0 ? (
+      {notes.length > 0 ? (
         <Masonry columns={{ xs: 1, sm: 2, md: 3, lg: 4 }} spacing={2}>
           {filteredNotes.map(note => (
-            <div key={note._id}>
-              <NoteCard
-                note={note}
-                onEdit={() => handleEditNote(note)}
-                onDelete={() => deleteNote(note._id)}
-                onShare={() => handleShareClick(note)}
-              />
-            </div>
+            <NoteCard
+              key={note._id}
+              note={note}
+              onEdit={() => { setEditingNote(note); setIsEditingExistingNote(true); }}
+              onDelete={async (noteId) => {
+                const token = localStorage.getItem('token');
+                try {
+                  await axios.delete(`http://localhost:3000/notes/${noteId}`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                  });
+                  setNotes(prevNotes => prevNotes.filter(n => n._id !== noteId));
+                } catch (error) {
+                  console.error('Error deleting note:', error);
+                }
+              }}
+              onShare={handleShareClick}
+            />
           ))}
         </Masonry>
       ) : (
@@ -203,18 +159,18 @@ const NoteListPage = () => {
       {editingNote && (
         <EditNoteModal
           show={!!editingNote}
-          handleClose={(note, isCambios) => handleSaveNote(note, isCambios)}
+          handleClose={() => { setEditingNote(null); setIsEditingExistingNote(false); }}
           note={editingNote}
-          onSave={null}
         />
       )}
       {showShareModal && selectedNote && (
         <ShareModal
           show={showShareModal}
           handleClose={handleCloseShareModal}
-          noteId={selectedNote._id}
-          sharedWith={selectedNote.sharedWith.map(user => user.email)}
-          onSharedUsersUpdate={updateSharedUsersInNote}
+          friends={friends}
+          selectedFriendEmails={selectedFriendEmails}
+          handleFriendSelection={handleFriendSelection}
+          shareNote={shareNote}
         />
       )}
     </>
