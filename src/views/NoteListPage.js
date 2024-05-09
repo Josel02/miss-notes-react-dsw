@@ -7,6 +7,7 @@ import { Alert, Button, FormControl } from 'react-bootstrap';
 import { useSnackbar } from 'notistack';
 import { useNavigate } from 'react-router-dom';
 import EditNoteModal from './EditNoteModal';
+import ShareModal from '../components/ShareNoteModal';
 import useSearchBar from '../components/SearchBar';
 
 const NoteListPage = () => {
@@ -18,6 +19,22 @@ const NoteListPage = () => {
   const navigate = useNavigate();
   const { logout } = useAuth();
   const { enqueueSnackbar } = useSnackbar();
+  const [showShareModal, setShowShareModal] = useState(false);
+  const [selectedNote, setSelectedNote] = useState(null);
+
+
+  const handleShareClick = (note) => {
+    setSelectedNote(note);
+    setShowShareModal(true);
+  };
+
+  const handleCloseShareModal = () => {
+    setShowShareModal(false);
+    setSelectedNote(null);
+  };
+
+
+
   const emptyNote = {
     title: '',
     content: []
@@ -142,53 +159,64 @@ const NoteListPage = () => {
   }, [enqueueSnackbar, logout, navigate]);
 
   return (
-      <>
-        {message.text && (
-          <Alert variant={message.type === 'success' ? 'success' : 'danger'}>
-            {message.text}
-          </Alert>
-        )}
-        <div className='d-flex justify-content-center'>
-          <FormControl
-            type="text"
-            placeholder="Search notes"
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="mb-3 mt-2 rounded-pill w-50"
-          />
-        </div>
-        <Button variant="outline-primary" 
-          style={{ 
-          position: 'fixed', right: '20px', 
-          bottom: '20px', zIndex: '1000', 
-          borderRadius: '50%', width: '55px', 
-          height: '55px', fontSize: '28px' }}
-          onClick={addNewNote}>
-          +
-        </Button>
-        {loading ? (
-          <div>Loading notes...</div>
-        ) : notes.length > 0 ? (
-          <Masonry columns={{ xs: 1, sm: 2, md: 3, lg: 4 }} spacing={2}>
-            {filteredNotes.map(note => (
-              <div key={note._id}>
-                <NoteCard note={note} onEdit={() => handleEditNote(note)} onDelete={() => deleteNote(note._id)} />
-              </div>
-            ))}
-          </Masonry>
-        ) : (
-          <Alert variant="info">There are no notes yet. Why not add one?</Alert>
-        )}
-        {editingNote && (
-          <EditNoteModal
-            show={!!editingNote}
-            handleClose={(note, isCambios) => handleSaveNote(note, isCambios)}
-            note={editingNote}
-            onSave={null}
-          />
-        )}
-      </>
+    <>
+      {message.text && (
+        <Alert variant={message.type === 'success' ? 'success' : 'danger'}>
+          {message.text}
+        </Alert>
+      )}
+      <div className='d-flex justify-content-center'>
+        <FormControl
+          type="text"
+          placeholder="Search notes"
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="mb-3 mt-2 rounded-pill w-50"
+        />
+      </div>
+      <Button variant="outline-primary" 
+        style={{ 
+        position: 'fixed', right: '20px', 
+        bottom: '20px', zIndex: '1000', 
+        borderRadius: '50%', width: '55px', 
+        height: '55px', fontSize: '28px' }}
+        onClick={addNewNote}>
+        +
+      </Button>
+      {loading ? (
+        <div>Loading notes...</div>
+      ) : notes.length > 0 ? (
+        <Masonry columns={{ xs: 1, sm: 2, md: 3, lg: 4 }} spacing={2}>
+          {filteredNotes.map(note => (
+            <div key={note._id}>
+              <NoteCard 
+                note={note} 
+                onEdit={() => handleEditNote(note)} 
+                onDelete={() => deleteNote(note._id)}
+                onShare={() => handleShareClick(note)}
+              />
+            </div>
+          ))}
+        </Masonry>
+      ) : (
+        <Alert variant="info">There are no notes yet. Why not add one?</Alert>
+      )}
+      {editingNote && (
+        <EditNoteModal
+          show={!!editingNote}
+          handleClose={(note, isCambios) => handleSaveNote(note, isCambios)}
+          note={editingNote}
+          onSave={null}
+        />
+      )}
+      {showShareModal && selectedNote && (
+        <ShareModal
+          show={showShareModal}
+          handleClose={handleCloseShareModal}
+          noteId={selectedNote._id}
+        />
+      )}
+    </>
   );
-  
-};
+}  
 
 export default NoteListPage;
