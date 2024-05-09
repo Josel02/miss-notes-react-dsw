@@ -14,6 +14,7 @@ import axios from 'axios';
 import { useNotes } from '../../context/NotesContext';
 import useSharedSearchBar from '../../components/SaredSearchBar';
 import '../../styles/CollectionListPage.css'
+import ShareModal from '../../components/ShareNoteModal';
 
 const CollectionListPage = () => {
   const [collections, setCollections] = useState([]);
@@ -29,6 +30,7 @@ const CollectionListPage = () => {
   const { enqueueSnackbar } = useSnackbar();
   const { updateNote } = useNotes();
   const [friends, setFriends] = useState([]);
+  const [sharingCollection, setSharingCollection] = useState(false);
   const [sharedCollections, setSharedCollections] = useState([]);
   const [sharedNotes, setSharedNotes] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -240,6 +242,29 @@ const deleteCollection = async () => {
     }
   };
 
+  const shareCollection = async (selectedFriends) => {
+    try{
+      const token = localStorage.getItem('token');
+      const friendIds = friends.filter(friend => selectedFriends.includes(friend.email)).map(friend => friend.userId);
+      await axios.post('http://localhost:3000/collections/share', {
+        collectionId: sharingCollection._id, 
+        friendIds
+      }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setCollections(prevCollections =>
+        prevCollections.map(collection =>
+          collection._id === sharingCollection._id ? { ...collection, sharedWith: selectedFriends.map(email => ({ email })) } : collection
+        )
+      );
+      setSharingCollection(null);
+      enqueueSnackbar('Collection shared successfully', { variant: 'success' });
+    }
+    catch(error){
+      handleAPIError(error);
+    }
+  };
+
   return (
     <>
       <div className='d-flex justify-content-center'>
@@ -303,7 +328,7 @@ const deleteCollection = async () => {
                 >
                   <Button variant="link" onClick={(e) => {
                     e.stopPropagation();
-                    
+                    setSharingCollection(collection);
                   }}><FiShare2 /></Button>
                 </OverlayTrigger>
                 </Accordion.Header>
@@ -410,6 +435,15 @@ const deleteCollection = async () => {
           handleClose={handleCloseModal}
           handleSave={(updatedNote, cambios) => saveEditedNote(updatedNote)}
           note={editingNote}
+        />
+      )}
+      {sharingCollection && (
+        <ShareModal
+          show={!!sharingCollection}
+          handleClose={() => setSharingCollection(null)}
+          friends={friends}
+          selectedFriendEmails={sharingCollection.sharedWith || []}
+          shareNote={shareCollection}
         />
       )}
 
