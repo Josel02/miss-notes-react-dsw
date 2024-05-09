@@ -4,7 +4,7 @@ import '../styles/NoteCard.css';
 import '../styles/Card.css';
 import { FiShare2 } from 'react-icons/fi';
 
-const NoteCard = ({ note, onEdit, onDelete, onShare, status="nonShared", sharedWith=[] }) => {
+const NoteCard = ({ note, onEdit, onDelete, onShare, status="nonShared", sharedWith=[], editable=true }) => {
 
   const renderNoteContent = (content) => {
     switch (content.type){
@@ -82,7 +82,9 @@ const NoteCard = ({ note, onEdit, onDelete, onShare, status="nonShared", sharedW
           {note.content.map(renderNoteContent)}
         </div>
         <div className="action-buttons mt-3">
+          { editable && 
           <Button variant="primary" className='btn-primary-custom' onClick={() => onEdit(note)}>Edit</Button>
+          }
           { status !== "inSharedCollection" &&
             <Button variant="outline-primary" onClick={onDelete}>Delete</Button>
           }
@@ -107,6 +109,9 @@ const NoteCard = ({ note, onEdit, onDelete, onShare, status="nonShared", sharedW
               </div>
             </OverlayTrigger>
             ))}
+            { !editable &&
+              <i className='mt-3'>This note is not shared with you</i>
+            }
           </div>
         </>
       )}
