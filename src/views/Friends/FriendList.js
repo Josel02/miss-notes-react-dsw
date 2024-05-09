@@ -43,14 +43,12 @@ const FriendList = () => {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 await setPendingRequests(response.data);
-                console.log("Response requests: ", response.data);
             } catch (error) {
-                console.error('Error fetching friends:', error);
+                handleAPIError(error);
             }
         };
 
         fetchFriendsAndPendingRequests();
-        console.log(friends);
     }, []);
 
     const onRemove = async (friendshipId) => {
@@ -127,7 +125,7 @@ const FriendList = () => {
                 {searchTerm ? "No friends match your search." : "You have no friends added."}
             </Alert>
         )}
-        <h2>Your requests</h2>
+        <h2>Your sent requests</h2>
         {filteredRequests.length > 0 ? (
             <Masonry columns={{ xs: 1, sm: 2, md: 3, lg: 4 }} spacing={2}>
                 {filteredRequests.map(request => (
