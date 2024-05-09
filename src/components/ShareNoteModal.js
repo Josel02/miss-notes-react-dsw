@@ -1,12 +1,12 @@
 // ShareModal.js actualizado
 import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form, FormControl, FormCheck } from 'react-bootstrap';
-import useSearchBar from './SearchBar';  // Asegúrate de tener este hook implementado correctamente
+import useSearchBar from './SearchBar';  // Asegúrate de que este hook está implementado correctamente
 
 const ShareModal = ({ show, handleClose, friends, selectedFriendEmails, handleFriendSelection, shareNote }) => {
   const [selectAll, setSelectAll] = useState(false);
   const [filteredFriends, setSearchTerm] = useSearchBar(friends, {
-    keys: ['name'],  // Asume que cada amigo tiene una propiedad 'name'
+    keys: ['email'],  // Cambio para buscar por email en lugar de por nombre
     threshold: 0.3
   });
 
@@ -30,7 +30,7 @@ const ShareModal = ({ show, handleClose, friends, selectedFriendEmails, handleFr
       <Modal.Body>
         <FormControl
           type="text"
-          placeholder="Search friends"
+          placeholder="Search by email"
           onChange={(e) => setSearchTerm(e.target.value)}
           className="mb-3"
         />
@@ -46,7 +46,7 @@ const ShareModal = ({ show, handleClose, friends, selectedFriendEmails, handleFr
             <FormCheck
               key={friend._id}
               type="checkbox"
-              label={friend.name}
+              label={friend.email}  // Muestra el email en lugar del nombre
               checked={selectedFriendEmails.includes(friend.email)}
               onChange={() => handleFriendSelection(friend.email)}
               className="mb-2"
