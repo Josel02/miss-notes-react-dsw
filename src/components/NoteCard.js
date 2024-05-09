@@ -81,7 +81,7 @@ const NoteCard = ({ note, onEdit, onDelete, onShare, status="nonShared", sharedW
         <div>
           {note.content.map(renderNoteContent)}
         </div>
-        <div className="action-buttons">
+        <div className="action-buttons mt-3">
           <Button variant="primary" className='btn-primary-custom' onClick={() => onEdit(note)}>Edit</Button>
           <Button variant="outline-primary" onClick={onDelete}>Delete</Button>
         </div>
@@ -91,9 +91,19 @@ const NoteCard = ({ note, onEdit, onDelete, onShare, status="nonShared", sharedW
           <h6>Shared with:</h6>
           <div className="friend-card-container"> {/* Contenedor para los círculos */}
             {sharedWith.map(email => (
-              <div key={email} className='friend-card-header-circle' style={{ backgroundColor: stringToColor(email) }}>
+              <OverlayTrigger
+              key={email}
+              placement="top"
+              overlay={
+                <Tooltip id={`tooltip-${email}`}>
+                  {email}
+                </Tooltip>
+              }
+            >
+              <div className='friend-card-header-circle' style={{ backgroundColor: stringToColor(email) }}>
                 <div className="friend-card-initials-circle">{getInitials(email)}</div>
               </div>
+            </OverlayTrigger>
             ))}
           </div>
         </>
