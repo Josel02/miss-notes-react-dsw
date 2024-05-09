@@ -89,17 +89,27 @@ const NoteListPage = () => {
   }
   
   const updateNote = async (updatedNote) => {
-    try{
+    try {
       const token = localStorage.getItem('token');
-      const response = await axios.put(`http://localhost:3000/notes/${updatedNote._id}`, updatedNote, {
+      // Asegurarse de enviar solo el título y el contenido, ya que el backend ha sido ajustado para solo permitir la actualización de estos campos
+      const updateData = {
+        title: updatedNote.title,
+        content: updatedNote.content
+      };
+      const response = await axios.put(`http://localhost:3000/notes/${updatedNote._id}`, updateData, {
         headers: { Authorization: `Bearer ${token}` }
       });
+      // Si necesitas hacer algo con la respuesta, como actualizar el estado local...
+      if (response.data) {
+        enqueueSnackbar('Note updated successfully', { variant: 'success' });
+      }
     }
-    catch(error){
+    catch(error) {
       handleAPIError(error);
     }
-
   };
+
+  
 
   const deleteNote = async (noteId) => {
     try {
