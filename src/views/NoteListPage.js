@@ -84,8 +84,10 @@ const NoteListPage = () => {
       });
       updateSharedUsersInNote(selectedNote._id, selectedFriendEmails);
       handleCloseShareModal();
+      enqueueSnackbar('Note shared successfully', { variant: 'success' });
     } catch (error) {
       console.error('Failed to share note:', error);
+      enqueueSnackbar('Failed to share note. Please try again.', { variant: 'error' });
     }
   };
 
