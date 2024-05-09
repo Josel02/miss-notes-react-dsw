@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Alert, Accordion, Button, Modal, Tooltip, OverlayTrigger, FormControl } from 'react-bootstrap';
-import { FiEdit, FiTrash2, FiPlusCircle } from 'react-icons/fi';
+import { FiEdit, FiTrash2, FiPlusCircle, FiShare2 } from 'react-icons/fi';
 import Masonry from '@mui/lab/Masonry';
 import NoteCard from '../../components/NoteCard';
 import AddCollectionModal from './AddCollectionModal';
@@ -12,12 +12,12 @@ import EditNoteModal from '../EditNoteModal';
 import AddNotesToCollectionModal from '../../components/AddNotesToCollectionModal';
 import axios from 'axios';
 import { useNotes } from '../../context/NotesContext';
-import useSearchBar from '../../components/SearchBar';
+import useSharedSearchBar from '../../components/SaredSearchBar';
 import '../../styles/CollectionListPage.css'
+import ShareModal from '../../components/ShareNoteModal';
 
 const CollectionListPage = () => {
   const [collections, setCollections] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [currentCollection, setCurrentCollection] = useState({ id: '', name: '' });
@@ -29,10 +29,20 @@ const CollectionListPage = () => {
   const { logout } = useAuth();
   const { enqueueSnackbar } = useSnackbar();
   const { updateNote } = useNotes();
-  const [filteredCollections, setSearchTerm] = useSearchBar(collections, {
+  const [friends, setFriends] = useState([]);
+  const [sharingCollection, setSharingCollection] = useState(false);
+  const [sharedCollections, setSharedCollections] = useState([]);
+  const [sharedNotes, setSharedNotes] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filteredCollections] = useSharedSearchBar(collections, {
     keys: ['name'],
     threshold: 0.3
-  });
+  }, searchTerm);
+
+  const [filteredSharedCollections] = useSharedSearchBar(sharedCollections, {
+    keys: ['name'],
+    threshold: 0.3
+  }, searchTerm);
 
   useEffect(() => {
     const fetchCollectionsAndNotes = async () => { 
@@ -45,16 +55,39 @@ const CollectionListPage = () => {
         response = await axios.get(`http://localhost:3000/notes/user`, {
           headers: { Authorization: `Bearer ${token}` }});
         await setAllNotes(response.data);
-        setLoading(false);
       } catch (error) {
-        if (error.response && error.response.status === 403) {
-          navigate('/', { replace: true });
-          enqueueSnackbar('Session expired. Please login again.', { variant: 'warning' });
-          logout();
-        }
+        handleAPIError(error);
       }
     };
+
+    const fetchFriends = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await axios.get('http://localhost:3000/friends/listFriends', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        setFriends(response.data);
+      }
+      catch (error) {
+        handleAPIError(error);
+      }
+    };
+
+    const fetchSharedCollections = async () => {
+    try {
+      const response = await axios.get('http://localhost:3000/collections/shared', {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+      });
+      setSharedCollections(response.data);
+    }
+    catch (error) {
+      handleAPIError(error);
+    }
+    };
+
     fetchCollectionsAndNotes();
+    fetchFriends();
+    fetchSharedCollections();
   }, []);
 
   const handleAPIError = (error) => {
@@ -85,13 +118,15 @@ const CollectionListPage = () => {
         noteIds: selectedNotes
       };
   
-      const response = await axios.put(
-        `http://localhost:3000/collections/${currentCollection.id}/notes/add`,
+      const response = await axios.patch(
+        `http://localhost:3000/collections/update-notes/${currentCollection.id}`,
         payload,
         config
       );
 
-      const updatedNoteIds = response.data.notes;
+      const updatedNoteIds = response.data.noteIds;
+      console.log("---- Response.data: " + response.data.notes)
+      //const updatedNotes = allNotes.filter(note => updatedNoteIds.includes(note._id));
       const updatedNotes = allNotes.filter(note => updatedNoteIds.includes(note._id));
 
       setCollections(collections.map(collection => {
@@ -113,7 +148,7 @@ const CollectionListPage = () => {
   const handleEditCollection = async (newName) => {
     try {
       const token = localStorage.getItem('token');
-      await axios.put(`http://localhost:3000/collections/${currentCollection.id}`, {
+      await axios.patch(`http://localhost:3000/collections/update-name/${currentCollection.id}`, {
         name: newName
       }, {
         headers: { Authorization: `Bearer ${token}` }
@@ -207,6 +242,29 @@ const deleteCollection = async () => {
     }
   };
 
+  const shareCollection = async (selectedFriends) => {
+    try{
+      const token = localStorage.getItem('token');
+      const friendIds = friends.filter(friend => selectedFriends.includes(friend.email)).map(friend => friend.userId);
+      await axios.post('http://localhost:3000/collections/share', {
+        collectionId: sharingCollection._id, 
+        friendIds
+      }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setCollections(prevCollections =>
+        prevCollections.map(collection =>
+          collection._id === sharingCollection._id ? { ...collection, sharedWith: selectedFriends.map(email => ({ email })) } : collection
+        )
+      );
+      setSharingCollection(null);
+      enqueueSnackbar('Collection shared successfully', { variant: 'success' });
+    }
+    catch(error){
+      handleAPIError(error);
+    }
+  };
+
   return (
     <>
       <div className='d-flex justify-content-center'>
@@ -217,10 +275,19 @@ const deleteCollection = async () => {
           className="mb-3 mt-2 rounded-pill w-50"
         />
       </div>
-      {loading ? (
-        <div>Loading collections...</div>
-      ) : collections.length > 0 ? (
-        filteredCollections.map((collection) => (
+      <Button variant="outline-primary" 
+          style={{ 
+          position: 'fixed', right: '20px', 
+          bottom: '20px', zIndex: '1000', 
+          borderRadius: '50%', width: '55px', 
+          height: '55px', fontSize: '28px' }}
+          onClick={() => setShowAddModal(true)}>
+          +
+      </Button>
+      <h2>My collections</h2>
+      {filteredCollections.length > 0 ? (
+        <>
+        {filteredCollections.map((collection) => (
           <Accordion defaultActiveKey="0" key={collection._id} className="collection-item">
             <Accordion.Item eventKey="0">
               <Accordion.Header className="collection-header">
@@ -255,6 +322,15 @@ const deleteCollection = async () => {
                     setShowAddNotesModal(true);
                   }}><FiPlusCircle /></Button> 
                 </OverlayTrigger>
+                <OverlayTrigger
+                  placement="top"
+                  overlay={<Tooltip id={`tooltip-share-${collection._id}`}>Share</Tooltip>}
+                >
+                  <Button variant="link" onClick={(e) => {
+                    e.stopPropagation();
+                    setSharingCollection(collection);
+                  }}><FiShare2 /></Button>
+                </OverlayTrigger>
                 </Accordion.Header>
               <Accordion.Body>
                 <Masonry columns={{ xs: 1, sm: 2, md: 3, lg: 4 }} spacing={2}>
@@ -264,6 +340,7 @@ const deleteCollection = async () => {
                         note={note}
                         onEdit={() => handleEditNote(note)}
                         onDelete={() => deleteNote(note._id)}
+                        status="inCollection"
                       />
                     </div>
                   ))}
@@ -271,13 +348,77 @@ const deleteCollection = async () => {
               </Accordion.Body>
             </Accordion.Item>
           </Accordion>
-        ))
+        ))}
+        <hr />
+        </>
       ) : (
-        <Alert variant="info">No collections available.</Alert>
+        <Alert variant="info">
+          {searchTerm ? "No collections match your search." : "You have no collections created."}
+        </Alert>
       )}
-      <Button style={{ position: 'fixed', right: '20px', bottom: '20px', zIndex: '1000', borderRadius: '50%' }} onClick={() => setShowAddModal(true)} className="collection-add-btn">
-        +
-      </Button>
+
+      <h2>Collections Shared with Me</h2>
+      {filteredSharedCollections.length > 0 ? (
+        <>
+        {filteredSharedCollections.map((collection) => (
+          <Accordion defaultActiveKey="0" key={collection._id} className="collection-item">
+            <Accordion.Item eventKey="0">
+              <Accordion.Header className="collection-header">
+                {collection.name}
+                <OverlayTrigger
+                  placement="top"
+                  overlay={<Tooltip id={`tooltip-edit-${collection._id}`}>Edit</Tooltip>}
+                >
+                  <Button variant="link" onClick={(e) => {
+                    e.stopPropagation();
+                    setCurrentCollection({ id: collection._id, name: collection.name });
+                    setShowEditModal(true);
+                  }}><FiEdit /></Button>
+                </OverlayTrigger>
+                <OverlayTrigger
+                  placement="top"
+                  overlay={<Tooltip id={`tooltip-delete-${collection._id}`}>Delete</Tooltip>}
+                >
+                  <Button variant="link" onClick={(e) => {
+                    e.stopPropagation();
+                    setCurrentCollection({ id: collection._id, name: collection.name });
+                    setShowDeleteModal(true);
+                  }}><FiTrash2 /></Button>
+                </OverlayTrigger>
+                <OverlayTrigger
+                  placement="top"
+                  overlay={<Tooltip id={`tooltip-add-${collection._id}`}>Add notes</Tooltip>}
+                >
+                <Button variant="link" onClick={(e) => {
+                    e.stopPropagation();
+                    setCurrentCollection({ id: collection._id, name: collection.name, notes: collection.notes });
+                    setShowAddNotesModal(true);
+                  }}><FiPlusCircle /></Button>
+                </OverlayTrigger>
+                </Accordion.Header>
+              <Accordion.Body>
+                <Masonry columns={{ xs: 1, sm: 2, md: 3, lg: 4 }} spacing={2}>
+                  {collection.notes.map(note => (
+                    <div key={note._id}>
+                      <NoteCard
+                        note={note}
+                        onEdit={() => handleEditNote(note)}
+                        onDelete={() => deleteNote(note._id)}
+                        status="inSharedCollection"
+                      />
+                    </div>
+                  ))}
+                </Masonry>
+              </Accordion.Body>
+            </Accordion.Item>
+          </Accordion>
+        ))}
+        </>
+      ) : (
+        <Alert variant="info">
+          {searchTerm ? "No collections shared with you match your search." : "You have no collections shared with you."}
+        </Alert>
+      )}
       <AddCollectionModal
         key={showAddModal}
         show={showAddModal}
@@ -317,10 +458,18 @@ const deleteCollection = async () => {
           note={editingNote}
         />
       )}
+      {sharingCollection && (
+        <ShareModal
+          show={!!sharingCollection}
+          handleClose={() => setSharingCollection(null)}
+          friends={friends}
+          selectedFriendEmails={sharingCollection.sharedWith || []}
+          shareNote={shareCollection}
+        />
+      )}
 
    </>
-);
-
-}
+   );
+};
 
 export default CollectionListPage;
