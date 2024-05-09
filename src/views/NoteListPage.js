@@ -29,6 +29,15 @@ const NoteListPage = () => {
     threshold: 0.3
   });
 
+    // Función que maneja el cierre del modal y decide si guardar
+    const handleCloseModal = (note, hasChanges) => {
+      if (hasChanges) {
+        handleSaveNote(note, true);  // Aquí pasamos 'true' para simular que siempre hay cambios.
+      }
+      setEditingNote(null);
+      setIsEditingExistingNote(false);
+    };
+
   const handleShareClick = (note) => {
     setSelectedNote(note);
     setShowShareModal(true);
@@ -91,11 +100,63 @@ const NoteListPage = () => {
     }
   };
 
+  const handleSaveNote = (updatedNote, hasChanges) => {
+    if (hasChanges) {
+      if (isEditingExistingNote) {
+        updateNote(updatedNote);
+      } else {
+        createNote(updatedNote);
+      }
+    }
+  };
+
+  const processWithoutTempIds = (jsonData) => {
+    return {
+      ...jsonData,
+      content: jsonData.content.map(item => {
+        const { tempId, ...newItem } = item;
+        return newItem;
+      }).filter(item => !(item.type === 'image' && (!item.data || item.data === '')))
+    };
+  };
+
+  const createNote = async (note) => {
+    const token = localStorage.getItem('token');
+    try {
+      const response = await axios.post(`http://localhost:3000/notes/`, note, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setNotes(prevNotes => [...prevNotes, response.data]);
+      enqueueSnackbar('Note added successfully', { variant: 'success' });
+    } catch (error) {
+      console.error('Error creating note:', error);
+      enqueueSnackbar('Error adding note. Please try again.', { variant: 'error' });
+    }
+  };
+
+  const updateNote = async (updatedNote) => {
+    const token = localStorage.getItem('token');
+    try {
+      await axios.put(`http://localhost:3000/notes/${updatedNote._id}`, updatedNote, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setNotes(prevNotes =>
+        prevNotes.map(note =>
+          note._id === updatedNote._id ? { ...updatedNote } : note
+        )
+      );
+      enqueueSnackbar('Note updated successfully', { variant: 'success' });
+    } catch (error) {
+      console.error('Error saving note:', error);
+      enqueueSnackbar('Error updating note. Please try again.', { variant: 'error' });
+    }
+  };
+
   useEffect(() => {
     const fetchNotes = async () => {
       try {
         const token = localStorage.getItem('token');
-        const response = await axios.get('http://localhost:3000/notes/user', {
+        const response = await axios.get(`http://localhost:3000/notes/user`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setNotes(response.data);
@@ -147,8 +208,10 @@ const NoteListPage = () => {
                     headers: { Authorization: `Bearer ${token}` }
                   });
                   setNotes(prevNotes => prevNotes.filter(n => n._id !== noteId));
+                  enqueueSnackbar('Note deleted successfully', { variant: 'success' });
                 } catch (error) {
                   console.error('Error deleting note:', error);
+                  enqueueSnackbar('Error deleting note. Please try again.', { variant: 'error' });
                 }
               }}
               onShare={handleShareClick}
@@ -161,8 +224,9 @@ const NoteListPage = () => {
       {editingNote && (
         <EditNoteModal
           show={!!editingNote}
-          handleClose={() => { setEditingNote(null); setIsEditingExistingNote(false); }}
+          handleClose={(note, hasChanges) => handleCloseModal(note, hasChanges)}
           note={editingNote}
+          onSave={handleSaveNote}
         />
       )}
       {showShareModal && selectedNote && (
