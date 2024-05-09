@@ -367,6 +367,26 @@ const deleteCollection = async () => {
                 {collection.name}
                 <OverlayTrigger
                   placement="top"
+                  overlay={<Tooltip id={`tooltip-edit-${collection._id}`}>Edit</Tooltip>}
+                >
+                  <Button variant="link" onClick={(e) => {
+                    e.stopPropagation();
+                    setCurrentCollection({ id: collection._id, name: collection.name });
+                    setShowEditModal(true);
+                  }}><FiEdit /></Button>
+                </OverlayTrigger>
+                <OverlayTrigger
+                  placement="top"
+                  overlay={<Tooltip id={`tooltip-delete-${collection._id}`}>Delete</Tooltip>}
+                >
+                  <Button variant="link" onClick={(e) => {
+                    e.stopPropagation();
+                    setCurrentCollection({ id: collection._id, name: collection.name });
+                    setShowDeleteModal(true);
+                  }}><FiTrash2 /></Button>
+                </OverlayTrigger>
+                <OverlayTrigger
+                  placement="top"
                   overlay={<Tooltip id={`tooltip-add-${collection._id}`}>Add notes</Tooltip>}
                 >
                 <Button variant="link" onClick={(e) => {
@@ -384,6 +404,7 @@ const deleteCollection = async () => {
                         note={note}
                         onEdit={() => handleEditNote(note)}
                         onDelete={() => deleteNote(note._id)}
+                        status="inSharedCollection"
                       />
                     </div>
                   ))}
