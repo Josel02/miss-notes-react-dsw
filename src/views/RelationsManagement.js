@@ -108,12 +108,11 @@ const RelationsManagement = () => {
             handleAPIError(error);
         }
     };
-    
 
       const onReject = async (friendshipId) => {
         try {
           const token = localStorage.getItem('token');
-          await rejectFriendRequest(friendshipId, token, enqueueSnackbar);
+          await rejectFriendRequest(friendshipId, token, enqueueSnackbar, true, userId);
 
           const remainingRequests = receivedRequests.filter(pendingRequest => pendingRequest._id !== friendshipId);
           setReceivedRequests(remainingRequests);
