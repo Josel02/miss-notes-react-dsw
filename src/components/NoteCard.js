@@ -85,17 +85,19 @@ const NoteCard = ({ note, onEdit, onDelete, onShare, status="nonShared", sharedW
           <Button variant="primary" className='btn-primary-custom' onClick={() => onEdit(note)}>Edit</Button>
           <Button variant="outline-primary" onClick={onDelete}>Delete</Button>
         </div>
-        { status === "shared" && (
-          <>
-            <hr />
-            <h6>Shared with:</h6>
+        {status === "shared" && (
+        <>
+          <hr />
+          <h6>Shared with:</h6>
+          <div className="friend-card-container"> {/* Contenedor para los círculos */}
             {sharedWith.map(email => (
               <div key={email} className='friend-card-header-circle' style={{ backgroundColor: stringToColor(email) }}>
                 <div className="friend-card-initials-circle">{getInitials(email)}</div>
               </div>
             ))}
-          </>
-        )}
+          </div>
+        </>
+      )}
       </Card.Body>
     </Card>
   );
