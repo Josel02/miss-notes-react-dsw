@@ -12,8 +12,8 @@ import useSharedSearchBar from '../components/SaredSearchBar';
 
 const RelationsManagement = () => {
     const [friends, setFriends] = useState([]);
-    const [sentRequests, setsentRequests] = useState([]);
-    const [receivedRequests, setreceivedRequests] = useState([]);
+    const [sentRequests, setSentRequests] = useState([]);
+    const [receivedRequests, setReceivedRequests] = useState([]);
     const { logout } = useAuth();
     const { userId } = useParams();
     const { enqueueSnackbar } = useSnackbar();
@@ -28,9 +28,14 @@ const RelationsManagement = () => {
     }, searchTerm);
 
     // Búsqueda para solicitudes pendientes
-    const [filteredRequests] = useSharedSearchBar(sentRequests, {
+    const [filteredSentRequests] = useSharedSearchBar(sentRequests, {
         keys: ['receiver.name'],
         threshold: 0.3
+    }, searchTerm);
+
+    const [filteredReceivedRequests] = useSharedSearchBar(receivedRequests, {
+        keys: ['requester.name'], 
+        threshold: 0.3 
     }, searchTerm);
 
     useEffect(() => {
@@ -45,7 +50,13 @@ const RelationsManagement = () => {
                 response = await axios.get(`http://localhost:3000/friends/listFriendshipsRequested/${userId}`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
-                await setsentRequests(response.data);
+                await setSentRequests(response.data);
+
+                // TODO: Fix the endpoint to list received requests
+                response = await axios.get(`http://localhost:3000/friends/listPendingRequests`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                await setReceivedRequests(response.data);
             } catch (error) {
                 handleAPIError(error);
             }
@@ -72,7 +83,7 @@ const RelationsManagement = () => {
           // Filtrar las solicitudes pendientes para eliminar la que se ha revocado.
           const updatedRequests = sentRequests.filter(request => request._id !== friendshipId);
           // Actualizar el estado con la nueva lista de solicitudes pendientes.
-          setsentRequests(updatedRequests);
+          setSentRequests(updatedRequests);
         } catch (error) {
           handleAPIError(error);
         }
@@ -98,17 +109,17 @@ const RelationsManagement = () => {
 
       return (
         <>
-        <div className='d-flex justify-content-center'>
-          <FormControl
-            type="text"
-            placeholder="Search users"
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="mb-3 mt-2 rounded-pill w-50"
-          />
-        </div>
-        <h2>User friends</h2>
-        {filteredFriends.length > 0 ? (
-            <>
+            <div className='d-flex justify-content-center'>
+                <FormControl
+                    type="text"
+                    placeholder="Search users"
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="mb-3 mt-2 rounded-pill w-50"
+                />
+            </div>
+            <h2>User Friends</h2>
+            {filteredFriends.length > 0 ? (
+                <>
                 <Masonry columns={{ xs: 1, sm: 2, md: 3, lg: 4 }} spacing={2}>
                     {filteredFriends.map(friend => (
                         <div key={friend._id}>
@@ -122,32 +133,49 @@ const RelationsManagement = () => {
                     ))}
                 </Masonry>
                 <hr/>
-            </>
-        ) : (
-            <Alert variant="info">
-                {searchTerm ? "No friends match your search." : "This user has no friends."}
-            </Alert>
-        )}
-        <h2>User sent requests</h2>
-        {filteredRequests.length > 0 ? (
-            <Masonry columns={{ xs: 1, sm: 2, md: 3, lg: 4 }} spacing={2}>
-                {filteredRequests.map(request => (
-                    <div key={request._id}>
-                        <FriendCard 
-                            name={request.receiver.name}
-                            email={request.receiver.email}
-                            onClick={() => onRevoke(request._id)}
-                            status={"requested"}
-                        />
-                    </div>
-                ))}
-            </Masonry>
-        ) : (
-            <Alert variant="info">No pending friend requests for this user.</Alert>
-        )}
+                </>
+            ) : (
+                <Alert variant="info">{searchTerm ? "No friends match your search." : "This user has no friends."}</Alert>
+            )}
+            <h2>Sent Requests</h2>
+            {filteredSentRequests.length > 0 ? (
+                <>
+                <Masonry columns={{ xs: 1, sm: 2, md: 3, lg: 4 }} spacing={2}>
+                    {filteredSentRequests.map(request => (
+                        <div key={request._id}>
+                            <FriendCard 
+                                name={request.receiver.name}
+                                email={request.receiver.email}
+                                onClick={() => onRevoke(request._id)}
+                                status={"requested"}
+                            />
+                        </div>
+                    ))}
+                </Masonry>
+                <hr/>
+                </>
+            ) : (
+                <Alert variant="info">{searchTerm ? "No requests found." : "No pending friend requests for this user."}</Alert>
+            )}
+            <h2>Received Requests</h2>
+            {filteredReceivedRequests.length > 0 ? (
+                <Masonry columns={{ xs: 1, sm: 2, md: 3, lg: 4 }} spacing={2}>
+                    {filteredReceivedRequests.map(request => (
+                        <div key={request._id}>
+                            <FriendCard 
+                                name={request.requester.name}
+                                email={request.requester.email}
+                                onClick={null}
+                                status={"received"}
+                            />
+                        </div>
+                    ))}
+                </Masonry>
+            ) : (
+                <Alert variant="info">{searchTerm ? "No received requests found." : "No received friend requests for this user."}</Alert>
+            )}
         </>
     );
-    
 };
 
 export default RelationsManagement;
