@@ -32,6 +32,7 @@ const CollectionListPage = () => {
   const [friends, setFriends] = useState([]);
   const [sharingCollection, setSharingCollection] = useState(false);
   const [sharedCollections, setSharedCollections] = useState([]);
+  const [isShared, setIsShared] = useState(false);
   const [sharedNotes, setSharedNotes] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredCollections] = useSharedSearchBar(collections, {
@@ -153,13 +154,23 @@ const CollectionListPage = () => {
       }, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      const updatedCollections = collections.map(collection => {
-        if (collection._id === currentCollection.id) {
-          return { ...collection, name: newName };
-        }
-        return collection;
-      });
-      setCollections(updatedCollections);
+      if (!isShared) {
+        const updatedCollections = collections.map(collection => {
+          if (collection._id === currentCollection.id) {
+            return { ...collection, name: newName };
+          }
+          return collection;
+        });
+        setCollections(updatedCollections);
+      } else {
+        const updatedSharedCollections = sharedCollections.map(collection => {
+          if (collection._id === currentCollection.id) {
+            return { ...collection, name: newName };
+          }
+          return collection;
+        });
+        setSharedCollections(updatedSharedCollections);
+      }
       setShowEditModal(false);
       enqueueSnackbar('Collection name successfully updated.', { variant: 'success' });
     } catch (error) {
@@ -299,6 +310,7 @@ const deleteCollection = async () => {
                   <Button variant="link" onClick={(e) => {
                     e.stopPropagation();
                     setCurrentCollection({ id: collection._id, name: collection.name });
+                    setIsShared(false);
                     setShowEditModal(true);
                   }}><FiEdit /></Button>
                 </OverlayTrigger>
@@ -309,6 +321,7 @@ const deleteCollection = async () => {
                   <Button variant="link" onClick={(e) => {
                     e.stopPropagation();
                     setCurrentCollection({ id: collection._id, name: collection.name });
+                    setIsShared(false);
                     setShowDeleteModal(true);
                   }}><FiTrash2 /></Button>
                 </OverlayTrigger>
@@ -319,6 +332,7 @@ const deleteCollection = async () => {
                 <Button variant="link" onClick={(e) => {
                     e.stopPropagation();
                     setCurrentCollection({ id: collection._id, name: collection.name, notes: collection.notes });
+                    setIsShared(false);
                     setShowAddNotesModal(true);
                   }}><FiPlusCircle /></Button> 
                 </OverlayTrigger>
@@ -373,6 +387,7 @@ const deleteCollection = async () => {
                   <Button variant="link" onClick={(e) => {
                     e.stopPropagation();
                     setCurrentCollection({ id: collection._id, name: collection.name });
+                    setIsShared(true);
                     setShowEditModal(true);
                   }}><FiEdit /></Button>
                 </OverlayTrigger>
@@ -383,6 +398,7 @@ const deleteCollection = async () => {
                   <Button variant="link" onClick={(e) => {
                     e.stopPropagation();
                     setCurrentCollection({ id: collection._id, name: collection.name });
+                    setIsShared(true);
                     setShowDeleteModal(true);
                   }}><FiTrash2 /></Button>
                 </OverlayTrigger>
@@ -393,6 +409,7 @@ const deleteCollection = async () => {
                 <Button variant="link" onClick={(e) => {
                     e.stopPropagation();
                     setCurrentCollection({ id: collection._id, name: collection.name, notes: collection.notes });
+                    setIsShared(true);
                     setShowAddNotesModal(true);
                   }}><FiPlusCircle /></Button>
                 </OverlayTrigger>
