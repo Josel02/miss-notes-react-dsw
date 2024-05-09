@@ -207,7 +207,6 @@ const NoteListPage = () => {
           handleClose={() => setSharingNote(null)}
           friends={friends}
           selectedFriendEmails={sharingNote.sharedWith || []}
-          handleFriendSelection={null}
           shareNote={null}
         />
       )}
