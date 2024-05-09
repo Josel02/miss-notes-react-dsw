@@ -206,6 +206,15 @@ const NoteListPage = () => {
         className="mb-3 mt-2 rounded-pill w-50"
       />
     </div>
+    <Button variant="outline-primary" 
+          style={{ 
+          position: 'fixed', right: '20px', 
+          bottom: '20px', zIndex: '1000', 
+          borderRadius: '50%', width: '55px', 
+          height: '55px', fontSize: '28px' }}
+          onClick={addNewNote}>
+          +
+    </Button>
     <h2>My Notes</h2>
     {filteredNotes.length > 0 ? (
       <>
