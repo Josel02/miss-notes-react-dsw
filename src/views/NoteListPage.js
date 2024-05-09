@@ -128,7 +128,6 @@ const NoteListPage = () => {
     try{
       const token = localStorage.getItem('token');
       const friendIds = friends.filter(friend => selectedFriends.includes(friend.email)).map(friend => friend.userId);
-      console.log("FriendIds: ", friendIds)
       await axios.post('http://localhost:3000/notes/share-note', {
         noteId: sharingNote._id, 
         friendIds
@@ -140,6 +139,7 @@ const NoteListPage = () => {
           note._id === sharingNote._id ? { ...note, sharedWith: selectedFriends.map(email => ({ email })) } : note
         )
       );
+      setSharingNote(null);
       enqueueSnackbar('Note shared successfully', { variant: 'success' });
     }
     catch(error){
