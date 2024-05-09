@@ -73,7 +73,7 @@ const ShareModal = ({ show, handleClose, friends, selectedFriendEmails, shareNot
       </Modal.Body>
       <Modal.Footer>
         <Button variant="outline-primary" onClick={handleClose}>Close</Button>
-        <Button variant="primary"  className="btn-primary-custom" onClick={shareNote}>Share</Button>
+        <Button variant="primary"  className="btn-primary-custom" onClick={() => shareNote(Array.from(selectedFriends))}>Share</Button>
       </Modal.Footer>
     </Modal>
   );

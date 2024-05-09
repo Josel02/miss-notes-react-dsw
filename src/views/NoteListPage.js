@@ -123,6 +123,34 @@ const NoteListPage = () => {
       }
     }
   };
+
+  const shareNote = async (selectedFriends) => {
+    try{
+      const token = localStorage.getItem('token');
+      const friendIds = friends.filter(friend => selectedFriends.includes(friend.email)).map(friend => friend.userId);
+      console.log("FriendIds: ", friendIds)
+      await axios.post('http://localhost:3000/notes/share-note', {
+        noteId: sharingNote._id, 
+        friendIds
+      }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setNotes(prevNotes =>
+        prevNotes.map(note =>
+          note._id === sharingNote._id ? { ...note, sharedWith: selectedFriends.map(email => ({ email })) } : note
+        )
+      );
+      enqueueSnackbar('Note shared successfully', { variant: 'success' });
+    }
+    catch(error){
+      console.error('Error sharing note:', error);
+      if (error.response && error.response.status === 403) {
+        navigate('/', { replace: true });
+        enqueueSnackbar('Session expired. Please login again.', { variant: 'warning' });
+        logout();
+      }
+    }
+  }
   
   useEffect(() => {
     const fetchNotesAndFriends = async () => {
@@ -207,7 +235,7 @@ const NoteListPage = () => {
           handleClose={() => setSharingNote(null)}
           friends={friends}
           selectedFriendEmails={sharingNote.sharedWith || []}
-          shareNote={null}
+          shareNote={shareNote}
         />
       )}
       </>
