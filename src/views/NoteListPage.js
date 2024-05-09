@@ -7,7 +7,7 @@ import { Alert, Button, FormControl } from 'react-bootstrap';
 import { useSnackbar } from 'notistack';
 import { useNavigate } from 'react-router-dom';
 import EditNoteModal from './EditNoteModal';
-import useSearchBar from '../components/SearchBar';
+import useSharedSearchBar from '../components/SaredSearchBar';
 import ShareModal from '../components/ShareNoteModal';
 
 const NoteListPage = () => {
@@ -22,14 +22,21 @@ const NoteListPage = () => {
   const navigate = useNavigate();
   const { logout } = useAuth();
   const { enqueueSnackbar } = useSnackbar();
+  // Estado compartido para la barra de búsqueda
+  const [searchTerm, setSearchTerm] = useState('');
   const emptyNote = {
     title: '',
     content: []
   }
-  const [filteredNotes, setSearchTerm] = useSearchBar(notes, {
+  const [filteredNotes] = useSharedSearchBar(notes, {
     keys: ['title'],
     threshold: 0.3
-  });
+  }, searchTerm);
+
+  const [filteredSharedNotes] = useSharedSearchBar(sharedNotes, {
+    keys: ['title'],
+    threshold: 0.3
+  }, searchTerm);
 
   const addNewNote = () => {
     setEditingNote(emptyNote);
@@ -236,7 +243,7 @@ const NoteListPage = () => {
         <h2 className='ms-2'>Shared with me</h2>
         {sharedNotes.length > 0 ? (
           <Masonry columns={{ xs: 1, sm: 2, md: 3, lg: 4 }} spacing={2}>
-            {sharedNotes.map(note => (
+            {filteredSharedNotes.map(note => (
               <div key={note._id}>
                 <NoteCard 
                   note={note} 
