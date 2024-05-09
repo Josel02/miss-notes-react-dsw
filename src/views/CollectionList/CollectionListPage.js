@@ -85,13 +85,15 @@ const CollectionListPage = () => {
         noteIds: selectedNotes
       };
   
-      const response = await axios.put(
-        `http://localhost:3000/collections/${currentCollection.id}/notes/add`,
+      const response = await axios.patch(
+        `http://localhost:3000/collections/update-notes/${currentCollection.id}`,
         payload,
         config
       );
 
-      const updatedNoteIds = response.data.notes;
+      const updatedNoteIds = response.data.noteIds;
+      console.log("---- Response.data: " + response.data.notes)
+      //const updatedNotes = allNotes.filter(note => updatedNoteIds.includes(note._id));
       const updatedNotes = allNotes.filter(note => updatedNoteIds.includes(note._id));
 
       setCollections(collections.map(collection => {
@@ -113,7 +115,7 @@ const CollectionListPage = () => {
   const handleEditCollection = async (newName) => {
     try {
       const token = localStorage.getItem('token');
-      await axios.put(`http://localhost:3000/collections/${currentCollection.id}`, {
+      await axios.patch(`http://localhost:3000/collections/update-name/${currentCollection.id}`, {
         name: newName
       }, {
         headers: { Authorization: `Bearer ${token}` }
@@ -320,7 +322,6 @@ const deleteCollection = async () => {
 
    </>
 );
-
 }
 
 export default CollectionListPage;
