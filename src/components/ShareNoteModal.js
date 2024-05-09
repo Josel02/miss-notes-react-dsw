@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { Modal, Button, ListGroup, FormCheck } from 'react-bootstrap';
 import axios from 'axios';
 
-const ShareModal = ({ show, handleClose, noteId }) => {
+const ShareModal = ({ show, handleClose, noteId, sharedWith, onSharedUsersUpdate }) => {
   const [friends, setFriends] = useState([]);
-  const [selectedFriendUserIds, setSelectedFriendUserIds] = useState([]);
+  const [selectedFriendEmails, setSelectedFriendEmails] = useState([]);
+
 
   useEffect(() => {
     const fetchFriends = async () => {
@@ -14,20 +15,21 @@ const ShareModal = ({ show, handleClose, noteId }) => {
           headers: { Authorization: `Bearer ${token}` }
         });
         setFriends(response.data);
+        setSelectedFriendEmails(sharedWith); // Configurar inicialmente los amigos seleccionados
       } catch (error) {
         console.error('Failed to fetch friends:', error);
       }
     };
 
     fetchFriends();
-  }, []);
+  }, [show, sharedWith]);
 
-  const handleFriendSelection = (userId) => {
-    setSelectedFriendUserIds(prev => {
-      if (prev.includes(userId)) {
-        return prev.filter(id => id !== userId);
+  const handleFriendSelection = (email) => {
+    setSelectedFriendEmails(prev => {
+      if (prev.includes(email)) {
+        return prev.filter(e => e !== email);
       } else {
-        return [...prev, userId];
+        return [...prev, email];
       }
     });
   };
@@ -35,17 +37,20 @@ const ShareModal = ({ show, handleClose, noteId }) => {
   const shareNote = async () => {
     try {
       const token = localStorage.getItem('token');
+      const friendIds = friends.filter(friend => selectedFriendEmails.includes(friend.email)).map(friend => friend.userId);
       await axios.post('http://localhost:3000/notes/share-note', {
         noteId, 
-        friendIds: selectedFriendUserIds  // Cambiado a userId de los amigos
+        friendIds
       }, {
         headers: { Authorization: `Bearer ${token}` }
       });
+      onSharedUsersUpdate(noteId, selectedFriendEmails);  // Actualizar la lista de usuarios compartidos en el estado local
       handleClose();
     } catch (error) {
       console.error('Failed to share note:', error);
     }
   };
+  
 
   return (
     <Modal show={show} onHide={handleClose} centered>
@@ -59,8 +64,8 @@ const ShareModal = ({ show, handleClose, noteId }) => {
               <FormCheck 
                 type="checkbox" 
                 label={friend.name} 
-                onChange={() => handleFriendSelection(friend.userId)}
-                checked={selectedFriendUserIds.includes(friend.userId)}
+                onChange={() => handleFriendSelection(friend.email)}
+                checked={selectedFriendEmails.includes(friend.email)}
               />
             </ListGroup.Item>
           ))}

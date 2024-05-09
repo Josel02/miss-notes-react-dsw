@@ -23,6 +23,15 @@ const NoteListPage = () => {
   const [selectedNote, setSelectedNote] = useState(null);
 
 
+  const updateSharedUsersInNote = (noteId, sharedWithEmails) => {
+    setNotes(prevNotes =>
+      prevNotes.map(note =>
+        note._id === noteId ? { ...note, sharedWith: sharedWithEmails.map(email => ({ email })) } : note
+      )
+    );
+  };
+  
+
   const handleShareClick = (note) => {
     setSelectedNote(note);
     setShowShareModal(true);
@@ -32,7 +41,6 @@ const NoteListPage = () => {
     setShowShareModal(false);
     setSelectedNote(null);
   };
-
 
 
   const emptyNote = {
@@ -213,7 +221,9 @@ const NoteListPage = () => {
           show={showShareModal}
           handleClose={handleCloseShareModal}
           noteId={selectedNote._id}
-        />
+          sharedWith={selectedNote.sharedWith.map(user => user.email)} // Pasando los correos de los usuarios compartidos
+          onSharedUsersUpdate={updateSharedUsersInNote}
+          />
       )}
     </>
   );
