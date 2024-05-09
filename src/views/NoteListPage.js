@@ -238,7 +238,7 @@ const NoteListPage = () => {
               onEdit={() => handleEditNote(note)} 
               onDelete={() => deleteNote(note._id)} 
               status="shared"
-              sharedWith={note.sharedWith.map(friend => friend.name).concat(note.owner.name)}
+              sharedWith={note.sharedWith.map(friend => friend.email).concat(note.owner.email)}
               />
           </div>
         ))}

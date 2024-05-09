@@ -41,9 +41,13 @@ const NoteCard = ({ note, onEdit, onDelete, onShare, status="nonShared", sharedW
   };
 
   const stringToColor = (string) => {
+    // Extraer la parte del nombre antes del '@' y asegurar que la primera letra sea mayúscula
+    const namePart = string.split('@')[0];
+    const formattedName = namePart.charAt(0).toUpperCase() + namePart.slice(1);
+  
     let hash = 0;
-    for (let i = 0; i < string.length; i++) {
-        hash = string.charCodeAt(i) + ((hash << 5) - hash);
+    for (let i = 0; i < formattedName.length; i++) {
+        hash = formattedName.charCodeAt(i) + ((hash << 5) - hash); // Usa `formattedName` aquí
     }
     let colour = '#';
     for (let i = 0; i < 3; i++) {
@@ -84,9 +88,10 @@ const NoteCard = ({ note, onEdit, onDelete, onShare, status="nonShared", sharedW
         { status === "shared" && (
           <>
             <hr />
-            {sharedWith.map(name => (
-              <div key={name} className='friend-card-header-circle' style={{ backgroundColor: stringToColor(name) }}>
-                <div className="friend-card-initials-circle">{getInitials(name)}</div>
+            <h6>Shared with:</h6>
+            {sharedWith.map(email => (
+              <div key={email} className='friend-card-header-circle' style={{ backgroundColor: stringToColor(email) }}>
+                <div className="friend-card-initials-circle">{getInitials(email)}</div>
               </div>
             ))}
           </>

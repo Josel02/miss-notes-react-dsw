@@ -4,9 +4,13 @@ import '../styles/Friends/FriendCard.css';
 import '../styles/Card.css';
 
 const stringToColor = (string) => {
+    // Extraer la parte del nombre antes del '@' y asegurar que la primera letra sea mayúscula
+    const namePart = string.split('@')[0];
+    const formattedName = namePart.charAt(0).toUpperCase() + namePart.slice(1);
+  
     let hash = 0;
-    for (let i = 0; i < string.length; i++) {
-        hash = string.charCodeAt(i) + ((hash << 5) - hash);
+    for (let i = 0; i < formattedName.length; i++) {
+        hash = formattedName.charCodeAt(i) + ((hash << 5) - hash); // Usa `formattedName` aquí
     }
     let colour = '#';
     for (let i = 0; i < 3; i++) {
@@ -14,7 +18,7 @@ const stringToColor = (string) => {
         colour += ('00' + value.toString(16)).substr(-2);
     }
     return colour;
-};
+  };
 
 const getInitials = (name) => {
     return name.split(' ').map((n) => n[0]).join('').toUpperCase();
@@ -46,8 +50,8 @@ const FriendCard = ({ name, email, onClick, onReject=null, status }) => {
         <Card
             className="text-center friend-card"
         >
-            <Card.Header className="friend-card-header-circle" style={{ backgroundColor: stringToColor(name) }}>
-                <div className="friend-card-initials-circle">{getInitials(name)}</div>
+            <Card.Header className="friend-card-header-circle" style={{ backgroundColor: stringToColor(email) }}>
+                <div className="friend-card-initials-circle">{getInitials(email)}</div>
             </Card.Header>
             <Card.Body>
                 <Card.Title>{name}</Card.Title>
