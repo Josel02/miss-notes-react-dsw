@@ -341,6 +341,7 @@ const deleteCollection = async () => {
                         onEdit={() => handleEditNote(note)}
                         onDelete={() => deleteNote(note._id)}
                         status="inCollection"
+                        sharedWith={note.sharedWith ? note.sharedWith.map(friend => friend.email) : []}
                       />
                     </div>
                   ))}
@@ -405,6 +406,7 @@ const deleteCollection = async () => {
                         onEdit={() => handleEditNote(note)}
                         onDelete={() => deleteNote(note._id)}
                         status="inSharedCollection"
+                        sharedWith={note.sharedWith.map(friend => friend.email).concat(note.userId.email)}
                       />
                     </div>
                   ))}
