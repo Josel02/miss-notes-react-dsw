@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Alert, Accordion, Button, Modal, Tooltip, OverlayTrigger, FormControl } from 'react-bootstrap';
-import { FiEdit, FiTrash2, FiPlusCircle } from 'react-icons/fi';
+import { FiEdit, FiTrash2, FiPlusCircle, FiShare2 } from 'react-icons/fi';
 import Masonry from '@mui/lab/Masonry';
 import NoteCard from '../../components/NoteCard';
 import AddCollectionModal from './AddCollectionModal';
@@ -12,12 +12,11 @@ import EditNoteModal from '../EditNoteModal';
 import AddNotesToCollectionModal from '../../components/AddNotesToCollectionModal';
 import axios from 'axios';
 import { useNotes } from '../../context/NotesContext';
-import useSearchBar from '../../components/SearchBar';
+import useSharedSearchBar from '../../components/SaredSearchBar';
 import '../../styles/CollectionListPage.css'
 
 const CollectionListPage = () => {
   const [collections, setCollections] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [currentCollection, setCurrentCollection] = useState({ id: '', name: '' });
@@ -29,10 +28,19 @@ const CollectionListPage = () => {
   const { logout } = useAuth();
   const { enqueueSnackbar } = useSnackbar();
   const { updateNote } = useNotes();
-  const [filteredCollections, setSearchTerm] = useSearchBar(collections, {
+  const [friends, setFriends] = useState([]);
+  const [sharedCollections, setSharedCollections] = useState([]);
+  const [sharedNotes, setSharedNotes] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filteredCollections] = useSharedSearchBar(collections, {
     keys: ['name'],
     threshold: 0.3
-  });
+  }, searchTerm);
+
+  const [filteredSharedCollections] = useSharedSearchBar(sharedCollections, {
+    keys: ['name'],
+    threshold: 0.3
+  }, searchTerm);
 
   useEffect(() => {
     const fetchCollectionsAndNotes = async () => { 
@@ -45,16 +53,39 @@ const CollectionListPage = () => {
         response = await axios.get(`http://localhost:3000/notes/user`, {
           headers: { Authorization: `Bearer ${token}` }});
         await setAllNotes(response.data);
-        setLoading(false);
       } catch (error) {
-        if (error.response && error.response.status === 403) {
-          navigate('/', { replace: true });
-          enqueueSnackbar('Session expired. Please login again.', { variant: 'warning' });
-          logout();
-        }
+        handleAPIError(error);
       }
     };
+
+    const fetchFriends = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await axios.get('http://localhost:3000/friends/listFriends', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        setFriends(response.data);
+      }
+      catch (error) {
+        handleAPIError(error);
+      }
+    };
+
+    const fetchSharedCollections = async () => {
+    try {
+      const response = await axios.get('http://localhost:3000/collections/shared', {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+      });
+      setSharedCollections(response.data);
+    }
+    catch (error) {
+      handleAPIError(error);
+    }
+    };
+
     fetchCollectionsAndNotes();
+    fetchFriends();
+    fetchSharedCollections();
   }, []);
 
   const handleAPIError = (error) => {
@@ -219,10 +250,19 @@ const deleteCollection = async () => {
           className="mb-3 mt-2 rounded-pill w-50"
         />
       </div>
-      {loading ? (
-        <div>Loading collections...</div>
-      ) : collections.length > 0 ? (
-        filteredCollections.map((collection) => (
+      <Button variant="outline-primary" 
+          style={{ 
+          position: 'fixed', right: '20px', 
+          bottom: '20px', zIndex: '1000', 
+          borderRadius: '50%', width: '55px', 
+          height: '55px', fontSize: '28px' }}
+          onClick={() => setShowAddModal(true)}>
+          +
+      </Button>
+      <h2>My collections</h2>
+      {filteredCollections.length > 0 ? (
+        <>
+        {filteredCollections.map((collection) => (
           <Accordion defaultActiveKey="0" key={collection._id} className="collection-item">
             <Accordion.Item eventKey="0">
               <Accordion.Header className="collection-header">
@@ -257,6 +297,59 @@ const deleteCollection = async () => {
                     setShowAddNotesModal(true);
                   }}><FiPlusCircle /></Button> 
                 </OverlayTrigger>
+                <OverlayTrigger
+                  placement="top"
+                  overlay={<Tooltip id={`tooltip-share-${collection._id}`}>Share</Tooltip>}
+                >
+                  <Button variant="link" onClick={(e) => {
+                    e.stopPropagation();
+                    
+                  }}><FiShare2 /></Button>
+                </OverlayTrigger>
+                </Accordion.Header>
+              <Accordion.Body>
+                <Masonry columns={{ xs: 1, sm: 2, md: 3, lg: 4 }} spacing={2}>
+                  {collection.notes.map(note => (
+                    <div key={note._id}>
+                      <NoteCard
+                        note={note}
+                        onEdit={() => handleEditNote(note)}
+                        onDelete={() => deleteNote(note._id)}
+                        status="inCollection"
+                      />
+                    </div>
+                  ))}
+                </Masonry>
+              </Accordion.Body>
+            </Accordion.Item>
+          </Accordion>
+        ))}
+        <hr />
+        </>
+      ) : (
+        <Alert variant="info">
+          {searchTerm ? "No collections match your search." : "You have no collections created."}
+        </Alert>
+      )}
+
+      <h2>Collections Shared with Me</h2>
+      {filteredSharedCollections.length > 0 ? (
+        <>
+        {filteredSharedCollections.map((collection) => (
+          <Accordion defaultActiveKey="0" key={collection._id} className="collection-item">
+            <Accordion.Item eventKey="0">
+              <Accordion.Header className="collection-header">
+                {collection.name}
+                <OverlayTrigger
+                  placement="top"
+                  overlay={<Tooltip id={`tooltip-add-${collection._id}`}>Add notes</Tooltip>}
+                >
+                <Button variant="link" onClick={(e) => {
+                    e.stopPropagation();
+                    setCurrentCollection({ id: collection._id, name: collection.name, notes: collection.notes });
+                    setShowAddNotesModal(true);
+                  }}><FiPlusCircle /></Button>
+                </OverlayTrigger>
                 </Accordion.Header>
               <Accordion.Body>
                 <Masonry columns={{ xs: 1, sm: 2, md: 3, lg: 4 }} spacing={2}>
@@ -273,13 +366,13 @@ const deleteCollection = async () => {
               </Accordion.Body>
             </Accordion.Item>
           </Accordion>
-        ))
+        ))}
+        </>
       ) : (
-        <Alert variant="info">No collections available.</Alert>
+        <Alert variant="info">
+          {searchTerm ? "No collections shared with you match your search." : "You have no collections shared with you."}
+        </Alert>
       )}
-      <Button style={{ position: 'fixed', right: '20px', bottom: '20px', zIndex: '1000', borderRadius: '50%' }} onClick={() => setShowAddModal(true)} className="collection-add-btn">
-        +
-      </Button>
       <AddCollectionModal
         key={showAddModal}
         show={showAddModal}
@@ -321,7 +414,7 @@ const deleteCollection = async () => {
       )}
 
    </>
-);
-}
+   );
+};
 
 export default CollectionListPage;
