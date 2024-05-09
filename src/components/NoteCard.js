@@ -4,7 +4,7 @@ import '../styles/NoteCard.css';
 import '../styles/Card.css';
 import { FiShare2 } from 'react-icons/fi';
 
-const NoteCard = ({ note, onEdit, onDelete, onShare }) => {
+const NoteCard = ({ note, onEdit, onDelete, onShare, status="nonShared", sharedWith=[] }) => {
 
   const renderNoteContent = (content) => {
     switch (content.type){
@@ -19,13 +19,13 @@ const NoteCard = ({ note, onEdit, onDelete, onShare }) => {
       case 'checked list':
         return (
           <ListGroup key={content._id || content.tempId}>
-          <ListGroup.Item className={content.data[0].checked ? 'checked' : 'unchecked'}>
-            {content.data[0].checked && (
-              <span className="check-icon"></span>
-            )}
-            <span className="item-text">{content.data[0].text}</span>
-          </ListGroup.Item>
-        </ListGroup>
+            <ListGroup.Item className={content.data[0].checked ? 'checked' : 'unchecked'}>
+              {content.data[0].checked && (
+                <span className="check-icon"></span>
+              )}
+              <span className="item-text">{content.data[0].text}</span>
+            </ListGroup.Item>
+          </ListGroup>
         );
       case 'image':
         return (
@@ -34,10 +34,31 @@ const NoteCard = ({ note, onEdit, onDelete, onShare }) => {
               src={content.data}
               style={{ maxWidth: '100%' }}
           />
-      );
+        );
       default:
         return null;
     }
+  };
+
+  const stringToColor = (string) => {
+    // Extraer la parte del nombre antes del '@' y asegurar que la primera letra sea mayúscula
+    const namePart = string.split('@')[0];
+    const formattedName = namePart.charAt(0).toUpperCase() + namePart.slice(1);
+  
+    let hash = 0;
+    for (let i = 0; i < formattedName.length; i++) {
+        hash = formattedName.charCodeAt(i) + ((hash << 5) - hash); // Usa `formattedName` aquí
+    }
+    let colour = '#';
+    for (let i = 0; i < 3; i++) {
+        const value = (hash >> (i * 8)) & 0xFF;
+        colour += ('00' + value.toString(16)).substr(-2);
+    }
+    return colour;
+  };
+
+  const getInitials = (name) => {
+    return name.split(' ').map((n) => n[0]).join('').toUpperCase();
   };
 
   return (
@@ -45,23 +66,48 @@ const NoteCard = ({ note, onEdit, onDelete, onShare }) => {
       <Card.Body>
         <div className="d-flex justify-content-between align-items-center">
           <Card.Title>{note.title}</Card.Title>
-          <OverlayTrigger
-            placement="top"
-            overlay={<Tooltip id={`tooltip-share-${note._id}`}>Share</Tooltip>}
-          >
-            <Button variant="link" onClick={(e) => {
-              e.stopPropagation();
-              onShare(note);
-            }}><FiShare2 /></Button>
-          </OverlayTrigger>
+          { status === "nonShared" && (
+            <OverlayTrigger
+              placement="top"
+              overlay={<Tooltip id={`tooltip-share-${note._id}`}>Share</Tooltip>}
+            >
+              <Button variant="link" onClick={(e) => {
+                e.stopPropagation();
+                onShare(note);
+              }}><FiShare2 /></Button>
+            </OverlayTrigger>
+          )}
         </div>
         <div>
           {note.content.map(renderNoteContent)}
         </div>
-        <div className="action-buttons">
+        <div className="action-buttons mt-3">
           <Button variant="primary" className='btn-primary-custom' onClick={() => onEdit(note)}>Edit</Button>
           <Button variant="outline-primary" onClick={onDelete}>Delete</Button>
         </div>
+        {sharedWith.length !== 0 && (
+        <>
+          <hr />
+          <h6>Shared with:</h6>
+          <div className="friend-card-container"> {/* Contenedor para los círculos */}
+            {sharedWith.map(email => (
+              <OverlayTrigger
+              key={email}
+              placement="top"
+              overlay={
+                <Tooltip id={`tooltip-${email}`}>
+                  {email}
+                </Tooltip>
+              }
+            >
+              <div className='friend-card-header-circle' style={{ backgroundColor: stringToColor(email) }}>
+                <div className="friend-card-initials-circle">{getInitials(email)}</div>
+              </div>
+            </OverlayTrigger>
+            ))}
+          </div>
+        </>
+      )}
       </Card.Body>
     </Card>
   );
