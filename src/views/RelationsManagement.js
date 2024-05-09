@@ -52,8 +52,7 @@ const RelationsManagement = () => {
                 });
                 await setSentRequests(response.data);
 
-                // TODO: Fix the endpoint to list received requests
-                response = await axios.get(`http://localhost:3000/friends/listPendingRequests`, {
+                response = await axios.get(`http://localhost:3000/friends/listPendingRequests/${userId}`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 await setReceivedRequests(response.data);
