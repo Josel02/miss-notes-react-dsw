@@ -158,15 +158,14 @@ const CollectionListPage = () => {
 
       // Combinar notas actualizadas y existentes
       const finalNotes = [...updatedNotes, ...existingNotes];
-
       setSharedCollections(sharedCollections.map(collection => {
         if (collection._id === currentCollection.id) {
           return { ...collection, notes: finalNotes };
         }
         return collection;
       }));
-      }
-
+    }
+    
       setShowAddNotesModal(false);
     } catch (error) {
       console.error('Error adding notes to collection:', error);
@@ -367,6 +366,7 @@ const deleteCollection = async () => {
                   overlay={<Tooltip id={`tooltip-share-${collection._id}`}>Share</Tooltip>}
                 >
                   <Button variant="link" onClick={(e) => {
+                    setCurrentCollection({ id: collection._id, name: collection.name });
                     e.stopPropagation();
                     setSharingCollection(collection);
                   }}><FiShare2 /></Button>
@@ -450,7 +450,7 @@ const deleteCollection = async () => {
                         onDelete={() => deleteNote(note._id)}
                         status="inSharedCollection"
                         editable={note.isEditable}
-                        sharedWith={note.sharedWith.map(friend => friend.email).concat(note.userId?.email ?? note.owner?.email ?? note.email)}
+                        sharedWith={note.sharedWith.map(friend => friend.email).concat(note.userId?.email ?? note.owner?.email ?? [])}
                       />
                     </div>
                   ))}
