@@ -1,26 +1,27 @@
 /* NotifyCard.css */
-.notify-image {
-    width: 50px; /* Ajusta según sea necesario */
-    height: 50px; /* Mismo tamaño para mantener la proporción */
-    background-color: #f0f0f0; /* Color de fondo genérico */
-    border-radius: 50%; /* Hacer el div circular */
+.notify-card {
+    max-width: 90%; /* Limitar el ancho máximo */
+    margin: 5px auto; /* Centrado y con un margen más pequeño */
+}
+.notify-card-body {
+    padding: 10px; /* Ajustar padding según sea necesario */
+}
+
+  
+  .notify-card-text {
+    font-size: 16px; /* Ajusta el tamaño del texto principal */
+    font-weight: bold; /* Hacer el texto más legible */
   }
   
-  /*
-  .notify-icon.friendRequest,
-  .notify-icon.friendRequestAccepted {
-    background-image: url('/path/to/some-icon.png'); /* Cambia la ruta a la imagen apropiada
+  .notify-card-date {
+    font-size: 12px; /* Texto más pequeño para la fecha */
+    color: gray; /* Color grisáceo para la fecha */
+    margin-top: 5px; /* Espacio entre el texto principal y la fecha */
   }
-  */
   
-  /*
-  .notify-icon.noteShared,
-  .notify-icon.collectionShared {
-    background-image: url('/path/to/different-icon.png');
-  }
-  */
-  
-  .notify-actions {
-    margin-top: 10px;
-  }
+  .notify-button {
+    padding: 5px 15px; /* Ajusta el padding para hacer el botón más pequeño */
+    font-size: 14px; /* Reduce el tamaño de la fuente si es necesario */
+}
+
   

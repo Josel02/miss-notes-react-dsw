@@ -1,49 +1,26 @@
 import React from 'react';
 import { Card, Button } from 'react-bootstrap';
-import '../styles/NotifyCard.css'; // Asegúrate de definir los estilos necesarios
+import '../styles/NotifyCard.css'; // Asegúrate de que el path al CSS sea correcto
 
 const NotifyCard = ({ notification }) => {
-  const { type, message, date } = notification;
+  const { type, text, date } = notification;
 
   const formatDate = (dateString) => {
     const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
-    return new Date(dateString).toLocaleDateString('en-US', options);
+    return new Date(dateString).toLocaleDateString(undefined, options); // 'undefined' para usar la localización del usuario
   };
 
-  const renderActionButton = () => {
-    switch (type) {
-      case 'friendRequest':
-        return (
-          <>
-            <Button variant="success" onClick={() => console.log("Accept friend request")}>Accept</Button>
-            <Button variant="danger" onClick={() => console.log("Reject friend request")}>Reject</Button>
-          </>
-        );
-      case 'friendRequestAccepted':
-        return <Button onClick={() => console.log("View friends")}>View Friends</Button>;
-      case 'noteShared':
-        return <Button onClick={() => console.log("View notes")}>View Note</Button>;
-      case 'collectionShared':
-        return <Button onClick={() => console.log("View collection")}>View Collection</Button>;
-      default:
-        return null;
-    }
+  const renderActionButton = (type) => {
+    // Dependiendo del tipo de notificación, puedes personalizar el botón que aparece
+    return <Button className="notify-button" onClick={() => console.log("Action button clicked")}>View Note</Button>;
   };
 
   return (
-    <Card className="mb-2">
-      <Card.Body className="d-flex">
-        <div className="notify-image mr-3">
-          {/* Placeholder for the image based on type */}
-          <div className={`notify-icon ${type}`}></div>
-        </div>
-        <div className="flex-grow-1">
-          <Card.Text>{message}</Card.Text>
-          <Card.Text className="text-muted">{formatDate(date)}</Card.Text>
-          <div className="notify-actions">
-            {renderActionButton()}
-          </div>
-        </div>
+    <Card className="notify-card">
+      <Card.Body className="notify-card-body">
+        <Card.Text className="notify-card-text">{text}</Card.Text>
+        <Card.Text className="notify-card-date">{formatDate(date)}</Card.Text>
+        {renderActionButton(type)}
       </Card.Body>
     </Card>
   );
