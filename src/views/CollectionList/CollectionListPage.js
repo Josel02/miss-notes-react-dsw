@@ -18,6 +18,7 @@ import ShareModal from '../../components/ShareNoteModal';
 
 const CollectionListPage = () => {
   const [collections, setCollections] = useState([]);
+  const [userEmail, setUserEmail] = useState('');
   const [showAddModal, setShowAddModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [currentCollection, setCurrentCollection] = useState({ id: '', name: '' });
@@ -55,6 +56,7 @@ const CollectionListPage = () => {
 
         response = await axios.get(`http://localhost:3000/notes/user`, {
           headers: { Authorization: `Bearer ${token}` }});
+        console.log("response.data: ", response.data)
         await setAllNotes(response.data);
       } catch (error) {
         handleAPIError(error);
@@ -79,6 +81,7 @@ const CollectionListPage = () => {
       const response = await axios.get('http://localhost:3000/collections/shared', {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       });
+      console.log("response.data: ", response.data)
       setSharedCollections(response.data);
     }
     catch (error) {
@@ -99,10 +102,24 @@ const CollectionListPage = () => {
       }
     };
 
+    const getUserEmail = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await axios.get('http://localhost:3000/users/me', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        setUserEmail(response.data.email);
+        console.log("user email: ", response.data.email)
+      } catch (error) {
+        handleAPIError(error);
+      }
+    };
+
     fetchCollectionsAndNotes();
     fetchFriends();
     fetchSharedCollections();
     fetchSharedNotes();
+    getUserEmail();
     console.log("shared notes: ", sharedNotes)
   }, []);
 
@@ -165,7 +182,7 @@ const CollectionListPage = () => {
         return collection;
       }));
     }
-    
+      console.log("shared collections: ", sharedCollections)
       setShowAddNotesModal(false);
     } catch (error) {
       console.error('Error adding notes to collection:', error);
@@ -450,7 +467,9 @@ const deleteCollection = async () => {
                         onDelete={() => deleteNote(note._id)}
                         status="inSharedCollection"
                         editable={note.isEditable}
-                        sharedWith={note.sharedWith.map(friend => friend.email).concat(note.userId?.email ?? note.owner?.email ?? [])}
+                        sharedWith={note.sharedWith.map(friend => friend.email)
+                          .concat(note.userId?.email ?? note.owner?.email ?? [])
+                          .filter(email => email !== userEmail)}
                       />
                     </div>
                   ))}
