@@ -11,6 +11,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import '../styles/layout.css';
 import NotifyCard from '../components/NotifyCard';
+import NotificationBell from '../components/NotificationBell';
 
 const Layout = ({ children }) => {
   const { isAuthenticated, logout, role } = useAuth();
@@ -96,7 +97,7 @@ const Layout = ({ children }) => {
                     </Link>
                   </li>
                   <li className="nav-item">
-                    <NavDropdown title={<NotificationsIcon />} id="navbarScrollingDropdown" className="notifications-dropdown">
+                    <NavDropdown title={<NotificationBell />} id="navbarScrollingDropdown" className="notifications-dropdown">
                       {notifications.length > 0 ? (
                         notifications.map(notification => (
                           <NotificationItem key={notification.id} notification={notification} />
