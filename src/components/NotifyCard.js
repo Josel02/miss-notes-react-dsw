@@ -23,7 +23,7 @@ const getInitials = (name) => {
     return name.charAt(0).toUpperCase();
 };
 
-const NotifyCard = ({ notification }) => {
+const NotifyCard = ({ notification, onDelete }) => {
     const { type, text, data, date } = notification;
     const navigate = useNavigate();
     const backgroundColor = stringToColor(data.friendId.email); // Determine background color
@@ -70,7 +70,7 @@ const NotifyCard = ({ notification }) => {
             <div className="notify-card-header" >
               <div style={{ backgroundColor }} className="notify-card-initials">{getInitials(data.friendId.name)}</div>
             </div>
-            <Button variant="link" className="notify-card-close" onClick={null}>X</Button>
+            <Button variant="link" className="notify-card-close" onClick={() => onDelete(notification._id)}>X</Button>
           </div>
       </Card.Header>
       <Card.Body className="notify-card-body ms-1">

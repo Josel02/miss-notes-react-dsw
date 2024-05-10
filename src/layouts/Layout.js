@@ -17,7 +17,7 @@ const Layout = ({ children }) => {
   const { isAuthenticated, logout, role } = useAuth();
   const navigate = useNavigate();
   const [adminView, setAdminView] = useState(false);
-  const { notifications, fetchNotifications } = useNotifications();
+  const { notifications, fetchNotifications, deleteNotification } = useNotifications();
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -40,7 +40,7 @@ const Layout = ({ children }) => {
   };
 
   const NotificationItem = ({ notification }) => (
-    <NotifyCard notification={notification} />
+    <NotifyCard notification={notification} onDelete={() => deleteNotification(notification._id)}/>
   );
 
   return (
