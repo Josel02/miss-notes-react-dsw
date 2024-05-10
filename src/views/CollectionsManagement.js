@@ -243,6 +243,15 @@ const CollectionsManagement = () => {
           className="mb-3 mt-2 rounded-pill w-50"
         />
       </div>
+      <Button variant="outline-primary" 
+          style={{ 
+          position: 'fixed', right: '20px', 
+          bottom: '20px', zIndex: '1000', 
+          borderRadius: '50%', width: '55px', 
+          height: '55px', fontSize: '28px' }}
+          onClick={() => setShowAddModal(true)}>
+          +
+      </Button>
       {loading ? (
         <div>Loading collections...</div>
       ) : collections.length > 0 ? (
@@ -302,9 +311,6 @@ const CollectionsManagement = () => {
       ) : (
         <Alert variant="info">This user has no collections.</Alert>
       )}
-      <Button style={{ position: 'fixed', right: '20px', bottom: '20px', zIndex: '1000', borderRadius: '50%' }} onClick={() => setShowAddModal(true)} className="collection-add-btn">
-        +
-      </Button>
       <AddCollectionModal
         key={showAddModal}
         show={showAddModal}
@@ -332,8 +338,8 @@ const CollectionsManagement = () => {
         </Modal.Header>
         <Modal.Body>Are you sure you want to delete this collection?</Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>Cancel</Button>
-          <Button variant="danger" onClick={deleteCollection}>Delete</Button>
+          <Button variant="outline-primary" onClick={() => setShowDeleteModal(false)}>Cancel</Button>
+          <Button variant="primary" className='btn-primary-custom' onClick={deleteCollection}>Delete</Button>
         </Modal.Footer>
       </Modal>
       {editingNote && (
