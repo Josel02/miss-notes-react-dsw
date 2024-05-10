@@ -1,0 +1,31 @@
+.friend-card .friend-card-header-circle {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    margin: 10px auto;
+    overflow: hidden;
+    border: none;
+}
+
+.friend-card .friend-card-initials-circle {
+    font-size: 1.5em;
+    color: white;
+    line-height: 40px; /* Esto debe ser igual a height y width para centrar el texto verticalmente */
+}
+
+
+.friend-card-delete-button {
+    height: 0;
+    overflow: hidden;
+    visibility: hidden;
+    transition: visibility 0s 0.3s, height 0s 0.3s; /* Asegura que la transición sea limpia */
+}
+
+.friend-card-delete-button-visible {
+    height: auto; /* Restablece a la altura natural */
+    visibility: visible; /* Hace visible el botón */
+    transition: visibility 0s, height 0s; /* Hace la transición inmediata cuando se muestra */
+}

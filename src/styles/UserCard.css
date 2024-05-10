@@ -1,0 +1,15 @@
+/* Estilos para los enlaces dentro de links-container */
+.links-enhanced {
+    display: flex;
+    justify-content: space-around;
+  }
+  
+  .link-btn-enhanced {
+    font-weight: bold; /* Añade negrita sin cambiar otros estilos */
+  }
+  
+  .link-btn-enhanced:hover {
+    text-decoration: underline; /* Añade subrayado al pasar el mouse */
+  }
+
+  

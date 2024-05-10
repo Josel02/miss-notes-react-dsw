@@ -1,25 +1,3 @@
-.note-card:hover .action-buttons {
-    opacity: 1;
-    transition: opacity 0.5s ease;
-  }
-  
-  .action-buttons {
-    opacity: 0;
-    transition: opacity 0.5s ease;
-    display: flex;
-    justify-content: space-evenly;
-  }
-
-  .note-card {
-    width: 100%; 
-    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); 
-    transition: 0.3s; 
-  }
-  
-  .note-card:hover {
-    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2); 
-  }
-
   .note-card .list-group {
     list-style: none;
   }
@@ -57,3 +35,29 @@
     text-decoration: line-through; 
     color: #6c757d; 
   }
+
+  .note-card .friend-card-header-circle {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 30px; /* Reducido de 40px a 30px */
+    width: 30px; /* Reducido de 40px a 30px */
+    border-radius: 50%;
+    margin: 5px; /* Reducido para menos espacio entre círculos */
+    overflow: hidden;
+    border: none;
+}
+
+.note-card .friend-card-initials-circle {
+    font-size: 1em; /* Ajustado para un círculo más pequeño */
+    color: white;
+    line-height: 30px; /* Ajustado para coincidir con las nuevas dimensiones */
+}
+
+.note-card .friend-card-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items: center;
+  margin-top: 10px;
+}

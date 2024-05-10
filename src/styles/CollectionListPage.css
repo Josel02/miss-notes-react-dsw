@@ -1,0 +1,51 @@
+/* CollectionListPage.css */
+@import 'variables.css';
+
+.collection-list-page {
+    color: var(--davys-gray);
+    background-color: var(--lavender-blush);
+}
+
+
+/* Asegúrate de que los estilos se aplican al botón y al contenedor del encabezado del acordeón */
+.collection-list-page .accordion-button,
+.collection-list-page .accordion-header {
+    background-color: red !important; /* Color rojo para prueba */
+    color: var(--davys-gray) !important;
+    padding: 0 !important; /* Elimina el padding para que el color de fondo se extienda a todo el botón */
+    margin: 0 !important; /* Elimina los márgenes para que el color de fondo se extienda al área completa */
+    border: none !important; /* Elimina el borde para evitar espacios blancos */
+}
+
+/* Estilos para cuando el acordeón está expandido */
+.collection-list-page .accordion-button:not(.collapsed) {
+    background-color: red !important; /* Mantener el color rojo cuando el acordeón está expandido */
+    color: var(--davys-gray) !important;
+}
+
+/* Resto de los estilos de tu CollectionListPage.css */
+.collection-item {
+    background-color: var(--white);
+    border: 1px solid var(--pale-purple);
+}
+
+.collection-item:hover {
+    background-color: var(--pink-lavender);
+}
+
+.collection-add-btn {
+    background-color: var(--amaranth-pink);
+    color: var(--white);
+    border: none;
+}
+
+.collection-add-btn:hover {
+    background-color: var(--pink-lavender);
+    color: var(--lavender-blush);
+}
+
+.collection-alert {
+    background-color: var(--lavender-blush);
+    color: var(--davys-gray);
+    border-color: var(--amaranth-pink);
+}
