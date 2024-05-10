@@ -60,7 +60,7 @@ const LoginPage = () => {
                         />
                     </div>
                     {loginError && <div className="alert alert-danger" role="alert">{loginError}</div>}
-                    <button type="submit" className="btn btn-primary-custom btn-login-register">Log In</button>
+                    <button type="submit" style={{ margin: '20px auto 0', display: 'block', width: 'auto' }} className="btn btn-primary-custom btn-login-register">Log In</button>
                     <div className="mt-3 text-center">
                         <Link to="/register" className="text-decoration-underline text-decoration-underline-login-register">Don't have an account? Sign Up</Link>
                     </div>
