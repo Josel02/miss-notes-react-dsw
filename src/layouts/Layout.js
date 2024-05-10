@@ -52,43 +52,70 @@ const Layout = ({ children }) => {
         </button>
         <div id="navbarNav" className="collapse navbar-collapse">
           <ul className="navbar-nav me-auto">
-            {isAuthenticated && !adminView && (
+            {isAuthenticated && (
+              <>
+                {!adminView && (
+                  <>
+                    <li className="nav-item">
+                      <Link className="nav-link" to="/notes">Notes</Link>
+                    </li>
+                    <li className="nav-item">
+                      <Link className="nav-link" to="/collections">Collections</Link>
+                    </li>
+                    <NavDropdown title="My Friends">
+                      <NavDropdown.Item as={Link} to="/friends/requests">Friend Requests</NavDropdown.Item>
+                      <NavDropdown.Item as={Link} to="/friends/list">Friend List</NavDropdown.Item>
+                      <NavDropdown.Item as={Link} to="/friends/add">Add Friends</NavDropdown.Item>
+                    </NavDropdown>
+                  </>
+                )}
+                {adminView && role === 'Admin' && (
+                  <li className="nav-item">
+                    <Link className="nav-link" to="/management">Management Panel</Link>
+                  </li>
+                )}
+              </>
+            )}
+            {!isAuthenticated && (
               <>
                 <li className="nav-item">
-                  <Link className="nav-link" to="/notes">Notes</Link>
+                  <Link className="nav-link" to="/login">Log In</Link>
                 </li>
                 <li className="nav-item">
-                  <Link className="nav-link" to="/collections">Collections</Link>
+                  <Link className="nav-link" to="/register">Sign Up</Link>
                 </li>
-                <NavDropdown title="My Friends">
-                  <NavDropdown.Item as={Link} to="/friends/requests">Friend Requests</NavDropdown.Item>
-                  <NavDropdown.Item as={Link} to="/friends/list">Friend List</NavDropdown.Item>
-                  <NavDropdown.Item as={Link} to="/friends/add">Add Friends</NavDropdown.Item>
-                </NavDropdown>
-                <li className="nav-item">
-                  <Link className="nav-link" to="/profile">
-                    <i className="bi bi-person-circle"></i> Profile
-                  </Link>
-                </li>
-                <NavDropdown title={<NotificationsIcon />} id="navbarScrollingDropdown">
-                  {notifications.length > 0 ? notifications.map(notification => 
-                    <NotificationItem key={notification.id} notification={notification} />
-                  ) : <NavDropdown.Item>No new notifications</NavDropdown.Item>}
-                </NavDropdown>
               </>
             )}
           </ul>
           {isAuthenticated && (
-            <>
-              {role === 'Admin' && (
-                <button className="btn btn-outline-primary me-2 navbar-button" onClick={toggleAdminView}>
-                  {adminView ? <><PersonIcon /> Switch to User</> : <><ManageAccountsIcon /> Switch to Admin</>}
-                </button>
+            <ul className="navbar-nav ms-auto">
+              {!adminView && (
+                <>
+                  <li className="nav-item">
+                    <Link className="nav-link" to="/profile">
+                      <PersonIcon /> Profile
+                    </Link>
+                  </li>
+                  <li className="nav-item">
+                  <NavDropdown title={<NotificationsIcon />} id="navbarScrollingDropdown">
+                    {notifications.length > 0 ? notifications.map(notification => 
+                      <NotificationItem key={notification.id} notification={notification} />
+                    ) : <NavDropdown.Item>No new notifications</NavDropdown.Item>}
+                </NavDropdown>
+                  </li>
+                </>
               )}
-              <button className="btn btn-outline-primary me-2 navbar-button" onClick={handleLogout}>
-                <LogoutIcon /> Log Out
-              </button>
-            </>
+              <li className="nav-item">
+                {role === 'Admin' && (
+                  <button className="btn btn-outline-primary me-2 navbar-button" onClick={toggleAdminView}>
+                    {adminView ? <><PersonIcon /> Switch to User</> : <><ManageAccountsIcon /> Switch to Admin</>}
+                  </button>
+                )}
+                <button className="btn btn-outline-primary navbar-button" onClick={handleLogout}>
+                  <LogoutIcon /> Log Out
+                </button>
+              </li>
+            </ul>
           )}
         </div>
       </nav>
@@ -96,7 +123,7 @@ const Layout = ({ children }) => {
         {children}
       </div>
     </>
-  );
+  );  
 };
 
 export default Layout;
