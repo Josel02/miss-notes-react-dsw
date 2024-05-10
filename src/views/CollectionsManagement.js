@@ -292,7 +292,7 @@ const CollectionsManagement = () => {
                         note={note}
                         onEdit={() => handleEditNote(note)}
                         onDelete={() => deleteNote(note._id)}
-                        status='onCollection'
+                        status='inSharedCollection'
                       />
                     </div>
                   ))}
