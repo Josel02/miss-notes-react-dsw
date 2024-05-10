@@ -97,10 +97,10 @@ const Layout = ({ children }) => {
                     </Link>
                   </li>
                   <li className="nav-item">
-                    <NavDropdown title={<NotificationsIcon />} id="navbarScrollingDropdown" className="notifications-dropdown">
+                    <NavDropdown title={<NotificationBell />} id="navbarScrollingDropdown" className="notifications-dropdown">
                       {notifications.length > 0 ? (
                         notifications.map(notification => (
-                          <NotificationItem key={notification.id} notification={notification} />
+                          <NotificationItem key={notification._id} notification={notification} />
                         ))
                       ) : (
                         <NavDropdown.Item>No new notifications</NavDropdown.Item>

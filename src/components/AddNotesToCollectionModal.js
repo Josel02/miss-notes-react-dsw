@@ -13,7 +13,6 @@ const AddNotesToCollectionModal = ({ show, handleClose, notes, handleSave, initi
 
     useEffect(() => {
         if (initialSelectedNotes) {
-            console.log(initialSelectedNotes, "notitas")
             const initialNotesSet = new Set(initialSelectedNotes.map(note => note._id));
             setSelectedNotes(initialNotesSet);
             setSelectAll(initialNotesSet.size === notes.length);
