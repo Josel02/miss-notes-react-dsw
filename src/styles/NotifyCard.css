@@ -28,5 +28,24 @@
     width: auto; /* Asegúrate de que el ancho se ajusta al contenido */
 }
 
+.notify-card .notify-card-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    margin: 10px auto;
+    overflow: hidden;
+    border: none;
+}
+
+.notify-card .notify-card-initials {
+    font-size: 1.5em;
+    color: white;
+    line-height: 40px; /* Esto debe ser igual a height y width para centrar el texto verticalmente */
+}
+
+
 
   

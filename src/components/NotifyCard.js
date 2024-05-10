@@ -3,8 +3,28 @@ import { Card, Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom'; // Usado para redirigir
 import '../styles/NotifyCard.css'; // Verifica la ruta
 
+// Funciones auxiliares para color e iniciales
+const stringToColor = (string) => {
+    const namePart = string.split('@')[0];
+    const formattedName = namePart.charAt(0).toUpperCase() + namePart.slice(1);
+    let hash = 0;
+    for (let i = 0; i < formattedName.length; i++) {
+        hash = formattedName.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    let colour = '#';
+    for (let i = 0; i < 3; i++) {
+        const value = (hash >> (i * 8)) & 0xFF;
+        colour += ('00' + value.toString(16)).substr(-2);
+    }
+    return colour;
+};
+
+const getInitials = (name) => {
+    return name.charAt(0).toUpperCase();
+};
+
 const NotifyCard = ({ notification }) => {
-  const { type, text, date } = notification;
+  const { type, text, data, date } = notification;
   const navigate = useNavigate();
 
   const formatDate = (dateString) => {
@@ -17,11 +37,11 @@ const NotifyCard = ({ notification }) => {
   };
 
   const handleViewNotes = () => {
-    navigate(`/notes`);
+    navigate('/notes');
   };
 
   const handleViewCollections = () => {
-    navigate(`/collections/`);
+    navigate('/collections/');
   };
 
   const handleViewFriendRequests = () => {
@@ -45,6 +65,9 @@ const NotifyCard = ({ notification }) => {
 
   return (
     <Card className="notify-card">
+      <Card.Header style={{ backgroundColor: stringToColor(data.friendId.email), display: 'flex', justifyContent: 'center', alignItems: 'center', height: '30px', width: '30px', borderRadius: '50%', margin: 'auto' }}>
+        <div style={{ color: 'white', fontSize: '1em', lineHeight: '30px' }}>{getInitials(data.friendId.name)}</div>
+      </Card.Header>
       <Card.Body className="notify-card-body">
         <Card.Text className="notify-card-text">{text}</Card.Text>
         <Card.Text className="notify-card-date">{formatDate(date)}</Card.Text>
