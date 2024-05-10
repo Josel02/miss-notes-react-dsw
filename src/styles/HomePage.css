@@ -1,0 +1,26 @@
+/* Main styles for HomePage */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #e0f2f1;
+    color: #606c76;
+    margin: 0;
+  }
+  
+  .home-title {
+    color: #009688;
+    text-align: center;
+  }
+  
+  .home-body {
+    color: #555;
+    text-align: center;
+    font-size: 18px;
+  }
+  
+  .image-logo {
+    display: block;
+    margin: 0 auto;
+    width: 150px; 
+    padding-bottom: 20px;
+  }
+  

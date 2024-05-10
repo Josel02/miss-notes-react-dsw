@@ -1,0 +1,86 @@
+@import 'variables.css';
+
+.login-container {
+    width: 60%;
+    max-width: 700px;
+    min-height: 500px;
+    margin: 0 auto;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 50px;
+    border-radius: 20px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+    background-color: var(--lavender-blush);
+}
+
+.login-title {
+    text-align: center;
+    margin-bottom: 40px;
+    color: var(--davys-gray);
+    font-size: 28px;
+}
+
+.btn-login-register{
+    font-size: 18px;
+    padding: 10px 20px;
+    height: 50px;
+    margin: 20px auto 0;
+    display: block;
+}
+
+.form-label-login-register {
+    color: var(--davys-gray);
+    font-size: 20px;
+}
+
+.form-control-login-register {
+    padding: 10px;
+    height: 50px;
+    font-size: 18px;
+    padding-right: 40px;
+}
+
+.text-decoration-underline-login-register {
+    font-size: 14px;
+    margin-top: 20px;
+    display: inline-block;
+}
+
+.text-decoration-underline-login-register:hover {
+    color: var(--amaranth-pink);
+    cursor: pointer;
+}
+
+.password-error {
+    color: var(--amaranth-pink);
+    margin-top: 5px;
+}
+
+.error-message {
+    color: var(--red);
+    margin-top: 5px;
+    font-size: 0.8rem;
+}
+
+.password-visibility {
+    position: absolute;
+    right: 4px;
+    top: calc(50% - 14px);
+    background-color: white;
+    border:none;
+    z-index: 2000;
+}
+
+.password-visibility {
+    border-radius: 0;
+}
+
+.form-control.is-invalid {
+    border: 2px solid var(--white);
+}
+
+.password-input-group {
+    position: relative;
+}

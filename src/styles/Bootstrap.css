@@ -1,0 +1,46 @@
+.btn-primary-custom{
+    background-color: var(--amaranth-pink);
+    color: var(--white);
+    font-weight: bold; /* Texto en negrita */
+    border: none;
+}
+
+.btn-outline-primary{
+    color: var(--amaranth-pink);
+    background-color: white;
+    font-weight: bold; /* Texto en negrita */
+    border: var(--amaranth-pink) 2px solid; 
+}
+
+.btn-primary-custom:hover {
+    background-color: var(--pink-lavender);
+    color: var(--lavender-blush);
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--amaranth-pink);
+    border: var(--amaranth-pink) 2px solid; 
+    color: var(--white);
+}
+
+body {
+    background-color: var(--anti-flash-white);
+    /*background-color: var(--celeste);*/
+}
+
+.form-control {
+    background-color: var(--white);
+    border: 2px solid var(--pale-purple);
+    border-radius: 5px;
+}
+
+.form-control:focus {
+    box-shadow: none;
+    border-color: none;
+} 
+
+.text-decoration-underline{
+    text-decoration: underline;
+    color: var(--davys-gray);
+    font-weight: bold;
+}

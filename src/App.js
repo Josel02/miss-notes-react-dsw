@@ -1,17 +1,50 @@
 // App.js
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { NotesProvider } from './context/NotesContext';
+import { NotificationsProvider } from './context/NotificationsContext'; // Importa NotificationsProvider
 import HomePage from './views/HomePage';
 import NotePage from './views/NoteListPage';
+import LoginPage from './views/LoginPage';
+import Management from './views/Management';
+import RegisterPage from './views/RegisterPage';
+import { SnackbarProvider } from 'notistack';
+import Layout from './layouts/Layout';
+import CollectionListPage from './views/CollectionList/CollectionListPage';
+import './styles/Bootstrap.css';
+import NotesManagement from './views/NotesManagement';
+import UserProfile from './views/UserProfile';
+import CollectionsManagement from './views/CollectionsManagement';
+import FriendList from './views/Friends/FriendList';
+import AddFriends from './views/Friends/AddFriends';
+import FriendRequests from './views/Friends/FriendRequests';
+import RelationsManagement from './views/RelationsManagement';
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/notes" element={<NotePage />} />
-      </Routes>
-    </Router>
+    <SnackbarProvider maxSnack={3} anchorOrigin={{ vertical: 'bottom', horizontal: 'center', }}>
+      <Router>
+        <NotesProvider>
+          <NotificationsProvider> {/* Envolver todas las rutas con NotificationsProvider también */}
+            <Routes>
+              <Route path="/" element={<Layout><HomePage /></Layout>} />
+              <Route path="/notes" element={<Layout><NotePage /></Layout>} />
+              <Route path="/login" element={<Layout><LoginPage /></Layout>} />
+              <Route path="/register" element={<Layout><RegisterPage /></Layout>} />
+              <Route path="/collections" element={<Layout><CollectionListPage /></Layout>} />
+              <Route path="/management" element={<Layout><Management /></Layout>} />
+              <Route path="/notesManagement/:userId" element={<Layout><NotesManagement /></Layout>} />
+              <Route path="/collectionsManagement/:userId" element={<Layout><CollectionsManagement /></Layout>} />
+              <Route path="/relationsManagement/:userId" element={<Layout><RelationsManagement /></Layout>} />
+              <Route path="/profile" element={<Layout><UserProfile /></Layout>} />
+              <Route path="/friends/list" element={<Layout><FriendList /></Layout>} />
+              <Route path="/friends/add" element={<Layout><AddFriends /></Layout>} />
+              <Route path="/friends/requests" element={<Layout><FriendRequests /></Layout>} />
+            </Routes>
+          </NotificationsProvider>
+        </NotesProvider>
+      </Router>
+    </SnackbarProvider>
   );
 }
 

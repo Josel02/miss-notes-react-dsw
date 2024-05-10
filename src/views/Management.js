@@ -1,0 +1,131 @@
+import React, { useEffect, useState } from 'react';
+import UserCard from '../components/UserCard';
+import Masonry from '@mui/lab/Masonry';
+import { Alert, FormControl } from 'react-bootstrap';
+import { useSnackbar } from 'notistack';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../components/AuthContext';
+import axios from 'axios';
+import useSearchBar from '../components/SearchBar';
+import EditUserModal from './EditUserModal';
+
+const Management = () => {
+  const [users, setUsers] = useState([]);
+  const [editingUser, setEditingUser] = useState(null);
+  const navigate = useNavigate();
+  const { logout } = useAuth();
+  const [loading, setLoading] = useState(true);
+  const { enqueueSnackbar } = useSnackbar();
+  const [filteredUsers, setSearchTerm, searchTerm] = useSearchBar(users, {
+    keys: ['name'],
+    threshold: 0.3
+  });
+
+    useEffect(() => {
+        fetchUsers();
+        }, []);
+
+        const handleAPIError = (error) => {
+        console.error('API error:', error);
+        if (error.response && error.response.status === 403) {
+        navigate('/', { replace: true });
+        enqueueSnackbar('Session expired. Please login again.', { variant: 'warning' });
+        logout();
+        } else {
+            enqueueSnackbar('Error processing request.', { variant: 'error' });
+        }
+    };
+
+    const fetchUsers = async () => {
+      try{
+          const token = localStorage.getItem('token');
+          const response = await axios.get(`http://localhost:3000/users/`, {
+              headers: { Authorization: `Bearer ${token}` }
+            });
+            await setUsers(response.data);
+            setLoading(false);
+      }
+      catch(error){
+        handleAPIError(error);
+      }
+    };
+
+    const handleEditUser = (user) => {
+    setEditingUser(user);
+    };
+
+    const handleDelete = async (user) => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.delete(`http://localhost:3000/users/${user._id}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            enqueueSnackbar('User deleted successfully.', { variant: 'success' });
+            // Filter out the deleted user from the users state
+            const filteredUsers = users.filter(item => item._id !== user._id);
+            setUsers(filteredUsers);
+        } catch (error) {
+            handleAPIError(error);
+        }
+    };
+    
+
+    const handleChangeUser = async (user) => {
+        if (user){
+            try {
+                const token = localStorage.getItem('token');
+                const response = await axios.put(`http://localhost:3000/users/${editingUser._id}`, user, {
+                  headers: { Authorization: `Bearer ${token}` }
+                });
+                enqueueSnackbar('User updated successfully.', { variant: 'success' });
+    
+                const updatedUsers = users.map(item => item._id === editingUser._id ? { ...item, ...response.data.user } : item);
+                setUsers(updatedUsers);
+                setEditingUser(null);
+            } catch (error) {
+                handleAPIError(error);
+            }
+        }
+        setEditingUser(null);
+    };
+
+  return (
+    <div>
+      {loading ? (
+        <div>Loading users...</div>
+      ) : users.length > 0 ? (
+        <>
+        <div className='d-flex justify-content-center'>
+          <FormControl
+            type="text"
+            placeholder="Search users"
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="mb-3 mt-2 rounded-pill w-50"
+          />
+          </div>
+          <Masonry columns={{ xs: 1, sm: 1, md: 2, lg: 3 }} spacing={1} className='mt-2'>
+          {filteredUsers.map(user => (
+                  <UserCard
+                    key={user._id}
+                    user={user}
+                    onEdit={() => handleEditUser(user)}
+                    onDelete={() => handleDelete(user)}
+                  />
+            ))}
+        </Masonry>
+        </>
+      ) : (
+        <Alert className="mt-2" variant="info">No registered users.</Alert>
+      )}
+      {editingUser && (
+          <EditUserModal
+            show={!!editingUser}
+            handleClose={(user) => handleChangeUser(user)}
+            user={editingUser}
+          />
+        )}
+    </div>
+  );
+};
+
+export default Management;

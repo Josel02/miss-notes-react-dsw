@@ -1,0 +1,67 @@
+/* Estilos generales para la tarjeta de notificación */
+.notify-card {
+    max-width: 90%; 
+    margin: 5px auto;
+}
+
+.notify-card-body {
+    padding: 10px;
+}
+
+.notify-card-text {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.notify-card-date {
+    font-size: 12px;
+    color: gray;
+    margin-top: 5px;
+}
+
+.notify-button {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 5px 10px;
+    font-size: 14px;
+    width: auto;
+}
+
+/* Estilos específicos para la cabecera, manteniendo las iniciales en forma circular */
+.notify-card-header {
+    display: flex;
+    align-items: center;
+    height: 50px; /* Ajustado para dar más espacio */
+    position: relative;
+}
+
+.notify-card-header .notify-card-initials {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 30px; /* Anchura igual a la altura para mantener la forma de círculo */
+    height: 30px; /* Mantén la altura */
+    border-radius: 50%; /* Crea bordes redondos */
+    color: white;
+    font-size: 1em;
+}
+
+.notify-card-header {
+    margin: 0;
+    padding: 0;
+    font-size: 1rem;
+    font-weight: bold;
+    color: black;
+    text-align: left;
+    width: 100%;
+}
+
+.notify-card-close {
+    border: none;
+    text-decoration: none; /* Elimina el subrayado del texto */
+    color: black;
+    background: none;
+    font-size: 1rem;
+    cursor: pointer; /* Añade el cursor de mano para indicar interactividad */
+}

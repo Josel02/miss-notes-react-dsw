@@ -4,4 +4,24 @@ body {
   
   a {
     color: #00B7FF;
-  }  
+  }
+
+  .navbar-button{
+    font-size: 0.78rem;
+  }
+
+
+  .navbar {
+    background-color: #f8f9fa; /* color de fondo, ajusta según necesites */
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* sombra abajo */
+}
+
+
+.notifications-dropdown .dropdown-menu {
+  width: 400px; /* Mantén o ajusta la anchura según sea necesario */
+  max-height: 800px; /* Establece una altura máxima */
+  overflow-y: auto; /* Habilita el desplazamiento vertical */
+  overflow-x: hidden; /* Oculta el desplazamiento horizontal */
+}
+
+
