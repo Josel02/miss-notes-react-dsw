@@ -28,6 +28,7 @@ const CollectionsManagement = () => {
   const [allNotes, setAllNotes] = useState([]);
   const navigate = useNavigate();
   const { logout } = useAuth();
+  const [sharedNotes, setSharedNotes] = useState([]);
   const { enqueueSnackbar } = useSnackbar();
   const [filteredCollections, setSearchTerm] = useSearchBar(collections, {
     keys: ['name'],
@@ -38,7 +39,7 @@ const CollectionsManagement = () => {
     const fetchCollectionsAndNotes = async () => { 
         try {
             const token = localStorage.getItem('token');
-            let response = await axios.get(`http://localhost:3000/collections/admin-get`, {
+            let response = await axios.get(`http://localhost:3000/collections/admin/collections`, {
                 headers: { Authorization: `Bearer ${token}` },
                 params: { userId }
             });
@@ -54,6 +55,21 @@ const CollectionsManagement = () => {
         handleAPIError(error);
       }
     };
+    const fetchSharedNotes = async () => {
+      try{
+        const token = localStorage.getItem('token');
+        const response = await axios.get('http://localhost:3000/notes/shared-with-me', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        console.log("response.data: ", response.data)
+        setSharedNotes(response.data);
+      }
+      catch(error){
+        handleAPIError(error);
+      }
+    };
+
+    fetchSharedNotes();
     fetchCollectionsAndNotes();
   }, []);
 
@@ -75,7 +91,6 @@ const CollectionsManagement = () => {
 
   const handleAddNotesToCollection = async (selectedNotes) => {
     const token = localStorage.getItem('token');
-  
     try {
       const config = {
         headers: { Authorization: `Bearer ${token}` }
@@ -85,19 +100,25 @@ const CollectionsManagement = () => {
         noteIds: selectedNotes,
         userId: userId // Adding userId to payload
       };
-  
       const response = await axios.put(
-        `http://localhost:3000/collections/${currentCollection.id}/notes/admin-add`,
+        `http://localhost:3000/collections/admin-add/collections/${currentCollection.id}`,
         payload,
         config
       );
-  
       const updatedNoteIds = response.data.notes;
-      const updatedNotes = allNotes.filter(note => updatedNoteIds.includes(note._id));
-  
+      console.log('updatedNoteIds:', updatedNoteIds);
+      // Filtrar las notas necesarias de allNotes y sharedNotes
+      const allRelevantNotes = [...allNotes, ...sharedNotes];
+      const updatedNotes = allRelevantNotes.filter(note => updatedNoteIds.includes(note._id));
+
+      // Mantener las notas existentes que no están en allNotes ni sharedNotes pero están en la colección
+      const existingNotes = currentCollection.notes.filter(note => !allRelevantNotes.some(n => n._id === note._id));
+
+      // Combinar notas actualizadas y existentes
+      const finalNotes = [...updatedNotes, ...existingNotes];
       setCollections(collections.map(collection => {
         if (collection._id === currentCollection.id) {
-          return { ...collection, notes: updatedNotes };
+          return { ...collection, notes: finalNotes };
         }
         return collection;
       }));
@@ -111,7 +132,7 @@ const CollectionsManagement = () => {
   const handleEditCollection = async (newName) => {
     try {
       const token = localStorage.getItem('token');
-      await axios.put(`http://localhost:3000/collections/admin-update/${currentCollection.id}`, {
+      await axios.put(`http://localhost:3000/collections/admin/collections/${currentCollection.id}`, {
         userId: userId,
         name: newName
       }, {
@@ -150,7 +171,7 @@ const CollectionsManagement = () => {
   const deleteCollection = async () => {
     try {
       const token = localStorage.getItem('token');
-      await axios.delete(`http://localhost:3000/collections/admin-delete/${currentCollection.id}`, {
+      await axios.delete(`http://localhost:3000/collections/admin/collections/${currentCollection.id}`, {
         headers: { Authorization: `Bearer ${token}` },
         data: { userId: userId }
       });
@@ -196,7 +217,7 @@ const CollectionsManagement = () => {
   const handleCreateCollection = async (collectionName) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.post('http://localhost:3000/collections/admin-add', {
+      const response = await axios.post('http://localhost:3000/collections/admin/collections', {
         name: collectionName,
         userId: userId
       }, {
@@ -271,6 +292,7 @@ const CollectionsManagement = () => {
                         note={note}
                         onEdit={() => handleEditNote(note)}
                         onDelete={() => deleteNote(note._id)}
+                        status='inSharedCollection'
                       />
                     </div>
                   ))}
