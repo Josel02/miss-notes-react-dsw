@@ -112,6 +112,7 @@ const NoteListPage = () => {
   
 
   const deleteNote = async (noteId) => {
+    if (window.confirm("Are you sure you want to delete this note? This action cannot be undone.")) {
     try {
       const token = localStorage.getItem('token');
 
@@ -127,6 +128,7 @@ const NoteListPage = () => {
     } catch (error) {
       handleAPIError(error);
     }
+  }
   };
 
   const shareNote = async (selectedFriends) => {
@@ -153,6 +155,7 @@ const NoteListPage = () => {
   }
 
   const rejectSharedNote = async (noteId) => {
+    if (window.confirm("Are you sure you want to unshare this note? This action cannot be undone.")) {
     try{
       const token = localStorage.getItem('token');
       await axios.post('http://localhost:3000/notes/unshare-note', {
@@ -166,6 +169,7 @@ const NoteListPage = () => {
     catch(error){
       handleAPIError(error);
     }
+  }
   };
 
   const handleAPIError = (error) => {
