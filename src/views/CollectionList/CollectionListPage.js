@@ -119,7 +119,6 @@ const CollectionListPage = () => {
     fetchSharedCollections();
     fetchSharedNotes();
     getUserEmail();
-    console.log("shared notes: ", sharedNotes)
   }, []);
 
   const handleAPIError = (error) => {

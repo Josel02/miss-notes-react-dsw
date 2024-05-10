@@ -23,7 +23,7 @@ const getInitials = (name) => {
     return name.charAt(0).toUpperCase();
 };
 
-const NotifyCard = ({ notification }) => {
+const NotifyCard = ({ notification, onDelete }) => {
     const { type, text, data, date } = notification;
     const navigate = useNavigate();
     const backgroundColor = stringToColor(data.friendId.email); // Determine background color
@@ -34,18 +34,22 @@ const NotifyCard = ({ notification }) => {
     };
     const handleViewFriends = () => {
         navigate('/friends/list');
+        onDelete(notification._id);
       };
     
       const handleViewNotes = () => {
         navigate('/notes');
+        onDelete(notification._id);
       };
     
       const handleViewCollections = () => {
         navigate('/collections/');
+        onDelete(notification._id);
       };
     
       const handleViewFriendRequests = () => {
         navigate('/friends/requests');
+        onDelete(notification._id);
       };
     
       const renderActionButton = (type) => {
@@ -64,16 +68,21 @@ const NotifyCard = ({ notification }) => {
       };
 
     return (
-        <Card className="notify-card">
-            <Card.Header className="notify-card-header" style={{ backgroundColor }}>
-                <div className="notify-card-initials">{getInitials(data.friendId.name)}</div>
-            </Card.Header>
-            <Card.Body className="notify-card-body">
-                <Card.Text className="notify-card-text">{text}</Card.Text>
-                <Card.Text className="notify-card-date">{formatDate(date)}</Card.Text>
-                {renderActionButton(type, navigate)}
-            </Card.Body>
-        </Card>
+      <Card className="notify-card">
+      <Card.Header >
+        <div className='notify-card-header'>
+            <div className="notify-card-header" >
+              <div style={{ backgroundColor }} className="notify-card-initials">{getInitials(data.friendId.name)}</div>
+            </div>
+            <Button variant="link" className="notify-card-close" onClick={() => onDelete(notification._id)}>X</Button>
+          </div>
+      </Card.Header>
+      <Card.Body className="notify-card-body ms-1">
+          <Card.Text className="notify-card-text">{text}</Card.Text>
+          <Card.Text className="notify-card-date">{formatDate(date)}</Card.Text>
+          {renderActionButton(type)}
+      </Card.Body>
+  </Card>
     );
 };
 

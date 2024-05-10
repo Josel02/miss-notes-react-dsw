@@ -17,7 +17,7 @@ const Layout = ({ children }) => {
   const { isAuthenticated, logout, role } = useAuth();
   const navigate = useNavigate();
   const [adminView, setAdminView] = useState(false);
-  const { notifications, fetchNotifications } = useNotifications();
+  const { notifications, fetchNotifications, deleteNotification } = useNotifications();
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -40,7 +40,7 @@ const Layout = ({ children }) => {
   };
 
   const NotificationItem = ({ notification }) => (
-    <NotifyCard notification={notification} />
+    <NotifyCard notification={notification} onDelete={() => deleteNotification(notification._id)}/>
   );
 
   return (
@@ -97,10 +97,10 @@ const Layout = ({ children }) => {
                     </Link>
                   </li>
                   <li className="nav-item">
-                    <NavDropdown title={<NotificationsIcon />} id="navbarScrollingDropdown" className="notifications-dropdown">
+                    <NavDropdown title={<NotificationBell />} id="navbarScrollingDropdown" className="notifications-dropdown">
                       {notifications.length > 0 ? (
                         notifications.map(notification => (
-                          <NotificationItem key={notification.id} notification={notification} />
+                          <NotificationItem key={notification._id} notification={notification} />
                         ))
                       ) : (
                         <NavDropdown.Item>No new notifications</NavDropdown.Item>

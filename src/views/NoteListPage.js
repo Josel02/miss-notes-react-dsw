@@ -212,7 +212,6 @@ const NoteListPage = () => {
         const response = await axios.get('http://localhost:3000/notes/shared-with-me', {
           headers: { Authorization: `Bearer ${token}` }
         });
-        console.log("Shared notes: ", response.data)
         setSharedNotes(response.data);
       }
       catch(error){

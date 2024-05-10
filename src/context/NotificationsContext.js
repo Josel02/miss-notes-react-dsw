@@ -15,31 +15,35 @@ export const NotificationsProvider = ({ children }) => {
                 headers: { Authorization: `Bearer ${token}`}
             });
             setNotifications(response.data);
+            await setUnreadCount(response.data.length); // Actualizar el conteo de notificaciones no leídas
         } catch (error) {
             console.error('Error fetching notifications:', error);
         }
     };
 
-    // Función para obtener el conteo de notificaciones sin leer
-    const fetchUnreadCount = async () => {
-        try {
-            const token = localStorage.getItem('token');
-            const response = await axios.get('http://localhost:3000/notifications/count', {
-                headers: { Authorization: `Bearer ${token}`}
-            });
-            setUnreadCount(response.data.unread);  // Actualizar el estado con el número de notificaciones no leídas
-        } catch (error) {
-            console.error('Error fetching unread notifications count:', error);
-        }
-    };
-
     useEffect(() => {
         fetchNotifications(); // Llamar a fetchNotifications al montar el componente
-        fetchUnreadCount();  // Llamar a fetchUnreadCount al montar el componente
     }, []);
 
+    const deleteNotification = async (notificationId) => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.put(`http://localhost:3000/notifications/${notificationId}/read`, {}, {
+                headers: { Authorization: `Bearer ${token}`}
+            });
+    
+            // Actualiza el estado para reflejar que la notificación ha sido leída y descartada de la vista
+            const updatedNotifications = notifications.filter(notification => notification._id !== notificationId);
+            await setNotifications(updatedNotifications);
+    
+            await setUnreadCount(prevCount => prevCount - 1);
+        } catch (error) {
+            console.error('Error dismissing notification:', error);
+        }
+    };
+    
     return (
-        <NotificationsContext.Provider value={{ notifications, fetchNotifications, unreadCount }}>
+        <NotificationsContext.Provider value={{ notifications, fetchNotifications, unreadCount, deleteNotification }}>
             {children}
         </NotificationsContext.Provider>
     );

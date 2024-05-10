@@ -6,27 +6,27 @@ const NotificationBell = () => {
   const { unreadCount } = useNotifications();
 
   return (
-    <div style={{ position: 'relative' }}>
+    <div style={{ position: 'relative', display: 'inline-block' }}>
       <NotificationsIcon />
       <span style={{
-        position: 'absolute',
-        top: '-10px',
-        right: '-10px',
-        padding: '5px 7px',
+        position: 'absolute', // Posición absoluta respecto a su contenedor relativo
+        top: '0',
+        right: '0',
         borderRadius: '50%',
         background: 'red',
         color: 'white',
         fontSize: '0.8rem',
+        minWidth: '20px',
+        height: '20px',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        minWidth: '20px', // Asegúrate de que el globo es visible y legible
-        height: '20px'
+        transform: 'translate(50%, -50%)' // Centra el contenido y lo desplaza hacia fuera del icono
       }}>
         {unreadCount}
       </span>
     </div>
-  );
+  );  
 };
 
 export default NotificationBell;
