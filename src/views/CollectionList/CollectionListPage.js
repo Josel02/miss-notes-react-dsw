@@ -18,6 +18,7 @@ import ShareModal from '../../components/ShareNoteModal';
 
 const CollectionListPage = () => {
   const [collections, setCollections] = useState([]);
+  const [userEmail, setUserEmail] = useState('');
   const [showAddModal, setShowAddModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [currentCollection, setCurrentCollection] = useState({ id: '', name: '' });
@@ -32,6 +33,7 @@ const CollectionListPage = () => {
   const [friends, setFriends] = useState([]);
   const [sharingCollection, setSharingCollection] = useState(false);
   const [sharedCollections, setSharedCollections] = useState([]);
+  const [isShared, setIsShared] = useState(false);
   const [sharedNotes, setSharedNotes] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredCollections] = useSharedSearchBar(collections, {
@@ -85,9 +87,39 @@ const CollectionListPage = () => {
     }
     };
 
+    const fetchSharedNotes = async () => {
+      try{
+        const token = localStorage.getItem('token');
+        const response = await axios.get('http://localhost:3000/notes/shared-with-me', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        console.log("response.data: ", response.data)
+        setSharedNotes(response.data);
+      }
+      catch(error){
+        handleAPIError(error);
+      }
+    };
+
+    const getUserEmail = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await axios.get('http://localhost:3000/users/me', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        setUserEmail(response.data.email);
+        console.log("user email: ", response.data.email)
+      } catch (error) {
+        handleAPIError(error);
+      }
+    };
+
     fetchCollectionsAndNotes();
     fetchFriends();
     fetchSharedCollections();
+    fetchSharedNotes();
+    getUserEmail();
+    console.log("shared notes: ", sharedNotes)
   }, []);
 
   const handleAPIError = (error) => {
@@ -123,19 +155,41 @@ const CollectionListPage = () => {
         payload,
         config
       );
-
       const updatedNoteIds = response.data.noteIds;
-      console.log("---- Response.data: " + response.data.notes)
-      //const updatedNotes = allNotes.filter(note => updatedNoteIds.includes(note._id));
-      const updatedNotes = allNotes.filter(note => updatedNoteIds.includes(note._id));
+      if (!isShared) {
+      // Filtrar las notas necesarias de allNotes y sharedNotes
+      const allRelevantNotes = [...allNotes, ...sharedNotes];
+      const updatedNotes = allRelevantNotes.filter(note => updatedNoteIds.includes(note._id));
 
+      // Mantener las notas existentes que no están en allNotes ni sharedNotes pero están en la colección
+      const existingNotes = currentCollection.notes.filter(note => !allRelevantNotes.some(n => n._id === note._id));
+
+      // Combinar notas actualizadas y existentes
+      const finalNotes = [...updatedNotes, ...existingNotes];
       setCollections(collections.map(collection => {
         if (collection._id === currentCollection.id) {
-          return { ...collection, notes: updatedNotes };
+          return { ...collection, notes: finalNotes };
         }
         return collection;
       }));
+      } else {
+      // Filtrar las notas necesarias de allNotes y sharedNotes
+      const allRelevantNotes = [...allNotes, ...sharedNotes];
+      const updatedNotes = allRelevantNotes.filter(note => updatedNoteIds.includes(note._id));
 
+      // Mantener las notas existentes que no están en allNotes ni sharedNotes pero están en la colección
+      const existingNotes = currentCollection.notes.filter(note => !allRelevantNotes.some(n => n._id === note._id));
+
+      // Combinar notas actualizadas y existentes
+      const finalNotes = [...updatedNotes, ...existingNotes];
+      setSharedCollections(sharedCollections.map(collection => {
+        if (collection._id === currentCollection.id) {
+          return { ...collection, notes: finalNotes };
+        }
+        return collection;
+      }));
+    }
+      console.log("shared collections: ", sharedCollections)
       setShowAddNotesModal(false);
     } catch (error) {
       console.error('Error adding notes to collection:', error);
@@ -153,13 +207,23 @@ const CollectionListPage = () => {
       }, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      const updatedCollections = collections.map(collection => {
-        if (collection._id === currentCollection.id) {
-          return { ...collection, name: newName };
-        }
-        return collection;
-      });
-      setCollections(updatedCollections);
+      if (!isShared) {
+        const updatedCollections = collections.map(collection => {
+          if (collection._id === currentCollection.id) {
+            return { ...collection, name: newName };
+          }
+          return collection;
+        });
+        setCollections(updatedCollections);
+      } else {
+        const updatedSharedCollections = sharedCollections.map(collection => {
+          if (collection._id === currentCollection.id) {
+            return { ...collection, name: newName };
+          }
+          return collection;
+        });
+        setSharedCollections(updatedSharedCollections);
+      }
       setShowEditModal(false);
       enqueueSnackbar('Collection name successfully updated.', { variant: 'success' });
     } catch (error) {
@@ -185,11 +249,22 @@ const CollectionListPage = () => {
 const deleteCollection = async () => {
     try {
       const token = localStorage.getItem('token');
+      if(!isShared){
         await axios.delete(`http://localhost:3000/collections/${currentCollection.id}`, {
             headers: { Authorization: `Bearer ${token}` },
         });
         // Update state to remove the collection from local state
         setCollections(prevCollections => prevCollections.filter(collection => collection._id !== currentCollection.id));
+      }
+      else{
+        await axios.patch(`http://localhost:3000/collections/unshare`, {
+            collectionId: currentCollection.id
+        },{
+            headers: { Authorization: `Bearer ${token}` },
+        });
+        // Update state to remove the collection from local state
+        setSharedCollections(prevCollections => prevCollections.filter(collection => collection._id !== currentCollection.id));
+      }
         setShowDeleteModal(false);
         enqueueSnackbar('Collection successfully deleted.', { variant: 'success' });
     } catch (error) {
@@ -208,14 +283,10 @@ const deleteCollection = async () => {
         ...collection,
         notes: collection.notes.map(note => note._id === updatedNote._id ? { ...note, ...updatedNote } : note)
       })));
+      enqueueSnackbar('Note successfully updated.', { variant: 'success' });
     })
     .catch(error => {
-      console.error('Error saving note:', error);
-      if (error.response && error.response.status === 403) {
-        navigate('/', { replace: true });
-        enqueueSnackbar('Session expired. Please login again.', { variant: 'warning' });
-        logout();
-      }
+      handleAPIError(error);
     });
   };
 
@@ -299,6 +370,7 @@ const deleteCollection = async () => {
                   <Button variant="link" onClick={(e) => {
                     e.stopPropagation();
                     setCurrentCollection({ id: collection._id, name: collection.name });
+                    setIsShared(false);
                     setShowEditModal(true);
                   }}><FiEdit /></Button>
                 </OverlayTrigger>
@@ -309,6 +381,7 @@ const deleteCollection = async () => {
                   <Button variant="link" onClick={(e) => {
                     e.stopPropagation();
                     setCurrentCollection({ id: collection._id, name: collection.name });
+                    setIsShared(false);
                     setShowDeleteModal(true);
                   }}><FiTrash2 /></Button>
                 </OverlayTrigger>
@@ -319,6 +392,7 @@ const deleteCollection = async () => {
                 <Button variant="link" onClick={(e) => {
                     e.stopPropagation();
                     setCurrentCollection({ id: collection._id, name: collection.name, notes: collection.notes });
+                    setIsShared(false);
                     setShowAddNotesModal(true);
                   }}><FiPlusCircle /></Button> 
                 </OverlayTrigger>
@@ -327,6 +401,7 @@ const deleteCollection = async () => {
                   overlay={<Tooltip id={`tooltip-share-${collection._id}`}>Share</Tooltip>}
                 >
                   <Button variant="link" onClick={(e) => {
+                    setCurrentCollection({ id: collection._id, name: collection.name });
                     e.stopPropagation();
                     setSharingCollection(collection);
                   }}><FiShare2 /></Button>
@@ -340,8 +415,11 @@ const deleteCollection = async () => {
                         note={note}
                         onEdit={() => handleEditNote(note)}
                         onDelete={() => deleteNote(note._id)}
-                        status="inCollection"
-                      />
+                        status="inSharedCollection"
+                        editable={note.isEditable}
+                        sharedWith={note.sharedWith.map(friend => friend.email)
+                          .concat(note.userId?.email ?? note.owner?.email ?? [])
+                          .filter(email => email !== userEmail)}/>
                     </div>
                   ))}
                 </Masonry>
@@ -372,6 +450,7 @@ const deleteCollection = async () => {
                   <Button variant="link" onClick={(e) => {
                     e.stopPropagation();
                     setCurrentCollection({ id: collection._id, name: collection.name });
+                    setIsShared(true);
                     setShowEditModal(true);
                   }}><FiEdit /></Button>
                 </OverlayTrigger>
@@ -382,6 +461,7 @@ const deleteCollection = async () => {
                   <Button variant="link" onClick={(e) => {
                     e.stopPropagation();
                     setCurrentCollection({ id: collection._id, name: collection.name });
+                    setIsShared(true);
                     setShowDeleteModal(true);
                   }}><FiTrash2 /></Button>
                 </OverlayTrigger>
@@ -390,6 +470,7 @@ const deleteCollection = async () => {
                   overlay={<Tooltip id={`tooltip-add-${collection._id}`}>Add notes</Tooltip>}
                 >
                 <Button variant="link" onClick={(e) => {
+                    setIsShared(true);
                     e.stopPropagation();
                     setCurrentCollection({ id: collection._id, name: collection.name, notes: collection.notes });
                     setShowAddNotesModal(true);
@@ -405,6 +486,10 @@ const deleteCollection = async () => {
                         onEdit={() => handleEditNote(note)}
                         onDelete={() => deleteNote(note._id)}
                         status="inSharedCollection"
+                        editable={note.isEditable}
+                        sharedWith={note.sharedWith.map(friend => friend.email)
+                          .concat(note.userId?.email ?? note.owner?.email ?? [])
+                          .filter(email => email !== userEmail)}
                       />
                     </div>
                   ))}
@@ -436,7 +521,7 @@ const deleteCollection = async () => {
         key={showAddNotesModal}
         show={showAddNotesModal}
         handleClose={() => setShowAddNotesModal(false)}
-        notes={allNotes}
+        notes={allNotes.concat(sharedNotes)}
         handleSave={handleAddNotesToCollection}
         initialSelectedNotes={currentCollection.notes || []}
       />
