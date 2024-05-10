@@ -6,7 +6,6 @@ import { Container, Form, Button, Alert, InputGroup, FormControl } from 'react-b
 import { EyeSlash, Eye } from 'react-bootstrap-icons';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-
 const RegisterPage = () => {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
@@ -62,9 +61,21 @@ const RegisterPage = () => {
             setErrors(rest);
         }
     };
+
     const handleRegister = async (e) => {
         e.preventDefault();
-        setErrors(prevErrors => ({ ...prevErrors, form: '' })); // Clear previous errors
+        // Clear previous errors
+        setErrors(prevErrors => ({ ...prevErrors, form: '' }));
+
+        // Check for any validation errors
+        if (!name || !email || !password || !confirmPassword) {
+            setErrors(prevErrors => ({ ...prevErrors, form: 'All fields are required.' }));
+            return;
+        }
+        if (Object.keys(errors).length > 0) {
+            setErrors(prevErrors => ({ ...prevErrors, form: 'Please fix the errors in the form.' }));
+            return;
+        }
         
         try {
             await axios.post('http://localhost:3000/users/register', { name, email, password });
@@ -86,7 +97,7 @@ const RegisterPage = () => {
             setErrors(prevErrors => ({ ...prevErrors, form: errorMessage }));
         }
     };
-    
+
     return (
         <>
         <Container className="login-container">
@@ -114,6 +125,7 @@ const RegisterPage = () => {
                         value={email} 
                         onChange={handleEmailChange}
                         className='form-control-login-register'
+                        autoComplete="off"
                         required
                     />
                     {errors.email && <div className="error-message">{errors.email}</div>}
@@ -128,6 +140,7 @@ const RegisterPage = () => {
                             value={password} 
                             onChange={handlePasswordChange}
                             className='form-control-login-register'
+                            autoComplete='new-password'
                             required 
                         />
                         <InputGroup.Text onClick={togglePasswordVisibility} className='password-visibility'>
@@ -155,7 +168,7 @@ const RegisterPage = () => {
                     {errors.confirmPassword && <div className="error-message">{errors.confirmPassword}</div>}
                 </Form.Group>
     
-                <Button variant="primary" type="submit" className='btn-login-register btn-primary-custom'>Register</Button>
+                <Button variant="primary" type="submit" style={{ margin: '20px auto 0', display: 'block', width: 'auto' }} className='btn-login-register btn-primary-custom'>Register</Button>
                 <div className="mt-3 text-center">
                     <Link to="/login" className="text-decoration-underline text-decoration-underline-login-register">Already have an account? Log in</Link>
                 </div>
