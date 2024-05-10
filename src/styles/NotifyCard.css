@@ -20,8 +20,13 @@
   }
   
   .notify-button {
-    padding: 5px 15px; /* Ajusta el padding para hacer el botón más pequeño */
-    font-size: 14px; /* Reduce el tamaño de la fuente si es necesario */
+    white-space: nowrap; /* Previene que el texto se divida en varias líneas */
+    overflow: hidden; /* Mantiene el contenido dentro del botón */
+    text-overflow: ellipsis; /* Añade puntos suspensivos si el texto es demasiado largo */
+    padding: 5px 10px; /* Ajusta el acolchado para dar más espacio al texto */
+    font-size: 14px; /* Ajusta el tamaño de la fuente según sea necesario */
+    width: auto; /* Asegúrate de que el ancho se ajusta al contenido */
 }
+
 
   

@@ -1,18 +1,46 @@
 import React from 'react';
 import { Card, Button } from 'react-bootstrap';
-import '../styles/NotifyCard.css'; // Asegúrate de que el path al CSS sea correcto
+import { useNavigate } from 'react-router-dom'; // Usado para redirigir
+import '../styles/NotifyCard.css'; // Verifica la ruta
 
 const NotifyCard = ({ notification }) => {
   const { type, text, date } = notification;
+  const navigate = useNavigate();
 
   const formatDate = (dateString) => {
     const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
-    return new Date(dateString).toLocaleDateString(undefined, options); // 'undefined' para usar la localización del usuario
+    return new Date(dateString).toLocaleDateString(undefined, options);
+  };
+
+  const handleViewFriends = () => {
+    navigate('/friends/list');
+  };
+
+  const handleViewNotes = () => {
+    navigate(`/notes`);
+  };
+
+  const handleViewCollections = () => {
+    navigate(`/collections/`);
+  };
+
+  const handleViewFriendRequests = () => {
+    navigate('/friends/requests');
   };
 
   const renderActionButton = (type) => {
-    // Dependiendo del tipo de notificación, puedes personalizar el botón que aparece
-    return <Button className="notify-button" onClick={() => console.log("Action button clicked")}>View Note</Button>;
+    switch (type) {
+      case 'friendRequestAccepted':
+        return <Button className="notify-button" onClick={handleViewFriends}>View Friends</Button>;
+      case 'friendRequest':
+        return <Button className="notify-button" onClick={handleViewFriendRequests}>View Requests</Button>;
+      case 'noteShared':
+        return <Button className="notify-button" onClick={handleViewNotes}>View Note</Button>;
+      case 'collectionShared':
+        return <Button className="notify-button" onClick={handleViewCollections}>View Collection</Button>;
+      default:
+        return <Button className="notify-button">Default Action</Button>;
+    }
   };
 
   return (
