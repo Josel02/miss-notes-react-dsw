@@ -56,7 +56,6 @@ const CollectionListPage = () => {
 
         response = await axios.get(`http://localhost:3000/notes/user`, {
           headers: { Authorization: `Bearer ${token}` }});
-        console.log("response.data: ", response.data)
         await setAllNotes(response.data);
       } catch (error) {
         handleAPIError(error);
@@ -81,7 +80,6 @@ const CollectionListPage = () => {
       const response = await axios.get('http://localhost:3000/collections/shared', {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       });
-      console.log("response.data: ", response.data)
       setSharedCollections(response.data);
     }
     catch (error) {
@@ -95,6 +93,7 @@ const CollectionListPage = () => {
         const response = await axios.get('http://localhost:3000/notes/shared-with-me', {
           headers: { Authorization: `Bearer ${token}` }
         });
+        console.log("response.data: ", response.data)
         setSharedNotes(response.data);
       }
       catch(error){
@@ -158,13 +157,21 @@ const CollectionListPage = () => {
       );
       const updatedNoteIds = response.data.noteIds;
       if (!isShared) {
-        const updatedNotes = allNotes.filter(note => updatedNoteIds.includes(note._id));
-        setCollections(collections.map(collection => {
-          if (collection._id === currentCollection.id) {
-            return { ...collection, notes: updatedNotes };
-          }
-          return collection;
-        }));
+      // Filtrar las notas necesarias de allNotes y sharedNotes
+      const allRelevantNotes = [...allNotes, ...sharedNotes];
+      const updatedNotes = allRelevantNotes.filter(note => updatedNoteIds.includes(note._id));
+
+      // Mantener las notas existentes que no están en allNotes ni sharedNotes pero están en la colección
+      const existingNotes = currentCollection.notes.filter(note => !allRelevantNotes.some(n => n._id === note._id));
+
+      // Combinar notas actualizadas y existentes
+      const finalNotes = [...updatedNotes, ...existingNotes];
+      setCollections(collections.map(collection => {
+        if (collection._id === currentCollection.id) {
+          return { ...collection, notes: finalNotes };
+        }
+        return collection;
+      }));
       } else {
       // Filtrar las notas necesarias de allNotes y sharedNotes
       const allRelevantNotes = [...allNotes, ...sharedNotes];
@@ -513,7 +520,7 @@ const deleteCollection = async () => {
         key={showAddNotesModal}
         show={showAddNotesModal}
         handleClose={() => setShowAddNotesModal(false)}
-        notes={isShared ? allNotes.concat(sharedNotes) : allNotes}
+        notes={allNotes.concat(sharedNotes)}
         handleSave={handleAddNotesToCollection}
         initialSelectedNotes={currentCollection.notes || []}
       />
