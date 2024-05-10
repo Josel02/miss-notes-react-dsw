@@ -75,7 +75,7 @@ const AddNotesToCollectionModal = ({ show, handleClose, notes, handleSave, initi
                 </Form>
             </Modal.Body>
             <Modal.Footer>
-                <Button variant="secondary" onClick={handleClose}>
+                <Button variant="outline-primary" onClick={handleClose}>
                     Close
                 </Button>
                 <Button variant="primary" className='btn-primary-custom' onClick={() => handleSave(Array.from(selectedNotes))}>

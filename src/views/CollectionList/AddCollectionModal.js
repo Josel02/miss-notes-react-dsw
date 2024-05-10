@@ -45,7 +45,7 @@ const AddCollectionModal = ({ show, handleClose, handleSave }) => {
         </Form>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={closeModal}>Close</Button>
+        <Button variant="outline-primary" onClick={closeModal}>Close</Button>
         <Button variant="primary" className='btn-primary-custom' onClick={saveCollection}>Save</Button>
       </Modal.Footer>
     </Modal>

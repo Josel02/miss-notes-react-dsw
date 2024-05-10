@@ -36,7 +36,7 @@ const EditCollectionModal = ({ show, handleClose, handleSave, initialName }) => 
         </Form>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={handleClose}>Close</Button>
+        <Button variant="outline-primary" onClick={handleClose}>Close</Button>
         <Button variant="primary" className='btn-primary-custom' onClick={saveChanges}>Save Changes</Button>
       </Modal.Footer>
     </Modal>
