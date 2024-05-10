@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import LogoutIcon from '@mui/icons-material/Logout';
-import { NavDropdown } from 'react-bootstrap';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import PersonIcon from '@mui/icons-material/Person';
+import NotificationsIcon from '@mui/icons-material/Notifications';
+import { Nav, NavDropdown } from 'react-bootstrap';
 import { useAuth } from '../components/AuthContext';
+import { useNotifications } from '../context/NotificationsContext';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import '../styles/layout.css';
@@ -12,7 +14,14 @@ import '../styles/layout.css';
 const Layout = ({ children }) => {
   const { isAuthenticated, logout, role } = useAuth();
   const navigate = useNavigate();
-  const [adminView, setAdminView] = useState(false); // State to control admin or user view
+  const [adminView, setAdminView] = useState(false);
+  const { notifications, fetchNotifications } = useNotifications();
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchNotifications();
+    }
+  }, [isAuthenticated]);
 
   const handleLogout = () => {
     logout();
@@ -20,13 +29,19 @@ const Layout = ({ children }) => {
   };
 
   const toggleAdminView = async () => {
-    await setAdminView(!adminView); // Switches between admin and user views
+    await setAdminView(!adminView);
     if(!adminView) {
       navigate('/management', { replace: true });
     } else {
       navigate('/notes', { replace: true });
     }
   };
+
+  const NotificationItem = ({ notification }) => (
+    <NavDropdown.Item onClick={() => console.log("Notification clicked:", notification)}>
+      {notification.text}
+    </NavDropdown.Item>
+  );
 
   return (
     <>
@@ -37,46 +52,7 @@ const Layout = ({ children }) => {
         </button>
         <div id="navbarNav" className="collapse navbar-collapse">
           <ul className="navbar-nav me-auto">
-            {isAuthenticated && role === 'Admin' && (
-              <>
-                {adminView && (
-                  <>
-                    <li className="nav-item">
-                      <Link className="nav-link" to="/management">Management Panel</Link>
-                    </li>
-                  </>
-                )}
-                {/* Notes and Collections for regular user view are outside the adminView block */}
-                {!adminView && (
-                  <>
-                    <li className="nav-item">
-                      <Link className="nav-link" to="/notes">Notes</Link>
-                    </li>
-                    <li className="nav-item">
-                      <Link className="nav-link" to="/collections">Collections</Link>
-                    </li>
-                    <NavDropdown title="My Friends">
-                        <NavDropdown.Item as={Link} to="/friends/requests">
-                          Friend Requests
-                        </NavDropdown.Item>
-                        <NavDropdown.Item as={Link} to="/friends/list">
-                          Friend List
-                        </NavDropdown.Item>
-                        <NavDropdown.Item as={Link} to="/friends/add">
-                          Add Friends
-                        </NavDropdown.Item>
-                    </NavDropdown>
-                    <li className="nav-item">
-                      <Link className="nav-link" to="/profile">
-                        <i className="bi bi-person-circle"></i> Profile
-                      </Link>
-                    </li>
-
-                  </>
-                )}
-              </>
-            )}
-            {isAuthenticated && role !== 'Admin' && (
+            {isAuthenticated && !adminView && (
               <>
                 <li className="nav-item">
                   <Link className="nav-link" to="/notes">Notes</Link>
@@ -85,43 +61,34 @@ const Layout = ({ children }) => {
                   <Link className="nav-link" to="/collections">Collections</Link>
                 </li>
                 <NavDropdown title="My Friends">
-                  <NavDropdown.Item as={Link} to="/friends/requests">
-                    Friend Requests
-                  </NavDropdown.Item>
-                  <NavDropdown.Item as={Link} to="/friends/list">
-                    Friend List
-                  </NavDropdown.Item>
-                  <NavDropdown.Item as={Link} to="/friends/add">
-                    Add Friends
-                  </NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="/friends/requests">Friend Requests</NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="/friends/list">Friend List</NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="/friends/add">Add Friends</NavDropdown.Item>
                 </NavDropdown>
                 <li className="nav-item">
                   <Link className="nav-link" to="/profile">
                     <i className="bi bi-person-circle"></i> Profile
                   </Link>
                 </li>
-              </>
-            )}
-            {!isAuthenticated && (
-              <>
-                <li className="nav-item">
-                  <Link className="nav-link" to="/login">Log In</Link>
-                </li>
-                <li className="nav-item">
-                  <Link className="nav-link" to="/register">Sign Up</Link>
-                </li>
+                <NavDropdown title={<NotificationsIcon />} id="navbarScrollingDropdown">
+                  {notifications.length > 0 ? notifications.map(notification => 
+                    <NotificationItem key={notification.id} notification={notification} />
+                  ) : <NavDropdown.Item>No new notifications</NavDropdown.Item>}
+                </NavDropdown>
               </>
             )}
           </ul>
-          {isAuthenticated && role === 'Admin' && (
-            <button className="btn btn-outline-primary me-2 navbar-button" onClick={toggleAdminView}>
-              {adminView ? <><PersonIcon /> Switch to User</> : <><ManageAccountsIcon /> Switch to Admin</>}
-            </button>
-          )}
           {isAuthenticated && (
-            <button className="btn btn-outline-primary me-2 navbar-button" type="button" onClick={handleLogout}>
-              <LogoutIcon /> Log Out
-            </button>
+            <>
+              {role === 'Admin' && (
+                <button className="btn btn-outline-primary me-2 navbar-button" onClick={toggleAdminView}>
+                  {adminView ? <><PersonIcon /> Switch to User</> : <><ManageAccountsIcon /> Switch to Admin</>}
+                </button>
+              )}
+              <button className="btn btn-outline-primary me-2 navbar-button" onClick={handleLogout}>
+                <LogoutIcon /> Log Out
+              </button>
+            </>
           )}
         </div>
       </nav>
