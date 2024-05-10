@@ -34,18 +34,22 @@ const NotifyCard = ({ notification, onDelete }) => {
     };
     const handleViewFriends = () => {
         navigate('/friends/list');
+        onDelete(notification._id);
       };
     
       const handleViewNotes = () => {
         navigate('/notes');
+        onDelete(notification._id);
       };
     
       const handleViewCollections = () => {
         navigate('/collections/');
+        onDelete(notification._id);
       };
     
       const handleViewFriendRequests = () => {
         navigate('/friends/requests');
+        onDelete(notification._id);
       };
     
       const renderActionButton = (type) => {
