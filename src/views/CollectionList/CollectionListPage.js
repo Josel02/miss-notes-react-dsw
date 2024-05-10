@@ -409,8 +409,9 @@ const deleteCollection = async () => {
                         onEdit={() => handleEditNote(note)}
                         onDelete={() => deleteNote(note._id)}
                         status="inCollection"
-                        sharedWith={note.sharedWith ? note.sharedWith.map(friend => friend.email) : []}
-                      />
+                        sharedWith={note.sharedWith.map(friend => friend.email)
+                          .concat(note.userId?.email ?? note.owner?.email ?? [])
+                          .filter(email => email !== userEmail)}/>
                     </div>
                   ))}
                 </Masonry>
