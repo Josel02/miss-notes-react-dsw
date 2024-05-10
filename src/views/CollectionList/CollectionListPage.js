@@ -86,9 +86,24 @@ const CollectionListPage = () => {
     }
     };
 
+    const fetchSharedNotes = async () => {
+      try{
+        const token = localStorage.getItem('token');
+        const response = await axios.get('http://localhost:3000/notes/shared-with-me', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        setSharedNotes(response.data);
+      }
+      catch(error){
+        handleAPIError(error);
+      }
+    };
+
     fetchCollectionsAndNotes();
     fetchFriends();
     fetchSharedCollections();
+    fetchSharedNotes();
+    console.log("shared notes: ", sharedNotes)
   }, []);
 
   const handleAPIError = (error) => {
@@ -124,18 +139,33 @@ const CollectionListPage = () => {
         payload,
         config
       );
-
       const updatedNoteIds = response.data.noteIds;
-      console.log("---- Response.data: " + response.data.notes)
-      //const updatedNotes = allNotes.filter(note => updatedNoteIds.includes(note._id));
-      const updatedNotes = allNotes.filter(note => updatedNoteIds.includes(note._id));
+      if (!isShared) {
+        const updatedNotes = allNotes.filter(note => updatedNoteIds.includes(note._id));
+        setCollections(collections.map(collection => {
+          if (collection._id === currentCollection.id) {
+            return { ...collection, notes: updatedNotes };
+          }
+          return collection;
+        }));
+      } else {
+      // Filtrar las notas necesarias de allNotes y sharedNotes
+      const allRelevantNotes = [...allNotes, ...sharedNotes];
+      const updatedNotes = allRelevantNotes.filter(note => updatedNoteIds.includes(note._id));
 
-      setCollections(collections.map(collection => {
+      // Mantener las notas existentes que no están en allNotes ni sharedNotes pero están en la colección
+      const existingNotes = currentCollection.notes.filter(note => !allRelevantNotes.some(n => n._id === note._id));
+
+      // Combinar notas actualizadas y existentes
+      const finalNotes = [...updatedNotes, ...existingNotes];
+
+      setSharedCollections(sharedCollections.map(collection => {
         if (collection._id === currentCollection.id) {
-          return { ...collection, notes: updatedNotes };
+          return { ...collection, notes: finalNotes };
         }
         return collection;
       }));
+      }
 
       setShowAddNotesModal(false);
     } catch (error) {
@@ -403,9 +433,9 @@ const deleteCollection = async () => {
                   overlay={<Tooltip id={`tooltip-add-${collection._id}`}>Add notes</Tooltip>}
                 >
                 <Button variant="link" onClick={(e) => {
+                    setIsShared(true);
                     e.stopPropagation();
                     setCurrentCollection({ id: collection._id, name: collection.name, notes: collection.notes });
-                    setIsShared(true);
                     setShowAddNotesModal(true);
                   }}><FiPlusCircle /></Button>
                 </OverlayTrigger>
@@ -416,11 +446,11 @@ const deleteCollection = async () => {
                     <div key={note._id}>
                       <NoteCard
                         note={note}
-                        onEdit={note.isEditable ? () => handleEditNote(note) : null}
+                        onEdit={() => handleEditNote(note)}
                         onDelete={() => deleteNote(note._id)}
                         status="inSharedCollection"
                         editable={note.isEditable}
-                        sharedWith={note.sharedWith.map(friend => friend.email).concat(note.userId.email)}
+                        sharedWith={note.sharedWith.map(friend => friend.email).concat(note.userId?.email ?? note.owner?.email ?? note.email)}
                       />
                     </div>
                   ))}
@@ -452,7 +482,7 @@ const deleteCollection = async () => {
         key={showAddNotesModal}
         show={showAddNotesModal}
         handleClose={() => setShowAddNotesModal(false)}
-        notes={allNotes}
+        notes={isShared ? allNotes.concat(sharedNotes) : allNotes}
         handleSave={handleAddNotesToCollection}
         initialSelectedNotes={currentCollection.notes || []}
       />
