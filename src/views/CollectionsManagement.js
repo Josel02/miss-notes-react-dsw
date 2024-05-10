@@ -19,7 +19,6 @@ const CollectionsManagement = () => {
   const [collections, setCollections] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showAddModal, setShowAddModal] = useState(false);
-  const [message, setMessage] = useState('');
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [currentCollection, setCurrentCollection] = useState({ id: '', name: '' });
   const [showEditModal, setShowEditModal] = useState(false);
@@ -122,7 +121,8 @@ const CollectionsManagement = () => {
         }
         return collection;
       }));
-  
+
+      enqueueSnackbar('Notes updated from collection successfully.', { variant: 'success' });
       setShowAddNotesModal(false); // Assuming there's a modal that needs to be closed
     } catch (error) {
       handleAPIError(error);
@@ -146,7 +146,7 @@ const CollectionsManagement = () => {
       });
       setCollections(updatedCollections);
       setShowEditModal(false);
-      setMessage('Collection name updated successfully.');
+      enqueueSnackbar('Collection updated successfully.', { variant: 'success' });
     } catch (error) {
         handleAPIError(error);
     }
@@ -162,7 +162,7 @@ const CollectionsManagement = () => {
         ...collection,
         notes: collection.notes.filter(note => note._id !== noteId)
       })));
-      setMessage({ text: 'Note deleted successfully.', type: 'success' });
+      enqueueSnackbar('Note deleted successfully.', { variant: 'success' });
     } catch (error) {
         handleAPIError(error);
     }
@@ -178,7 +178,7 @@ const CollectionsManagement = () => {
       // Update state to remove collection from local state
       setCollections(prevCollections => prevCollections.filter(collection => collection._id !== currentCollection.id));
       setShowDeleteModal(false);
-      setMessage({ text: 'Collection deleted successfully.', type: 'success' });
+      enqueueSnackbar('Collection deleted successfully.', { variant: 'success' });
     } catch (error) {
       handleAPIError(error);
     }
@@ -201,6 +201,7 @@ const CollectionsManagement = () => {
         ...collection,
         notes: collection.notes.map(note => note._id === updatedNote._id ? { ...note, ...updatedNote } : note)
       })));
+      enqueueSnackbar('Note updated successfully.', { variant: 'success' });
     }
     catch(error){
       handleAPIError(error);
@@ -225,7 +226,7 @@ const CollectionsManagement = () => {
       });
       setCollections([...collections, response.data]);
       setShowAddModal(false);
-      setMessage('Collection added successfully.');
+      enqueueSnackbar('Collection created successfully.', { variant: 'success' });
     } catch (error) {
       handleAPIError(error);
     }
@@ -234,9 +235,6 @@ const CollectionsManagement = () => {
   return (
     <>
       <h2 className='mt-2 ms-2'>User Collections</h2>
-      {message && <Alert variant={message.type === 'success' ? 'success' : 'danger'} className="collection-alert">
-        {message.text}
-      </Alert>}
       <div className='d-flex justify-content-center'>
         <FormControl
           type="text"
