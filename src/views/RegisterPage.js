@@ -125,6 +125,7 @@ const RegisterPage = () => {
                         value={email} 
                         onChange={handleEmailChange}
                         className='form-control-login-register'
+                        autoComplete="off"
                         required
                     />
                     {errors.email && <div className="error-message">{errors.email}</div>}
@@ -139,6 +140,7 @@ const RegisterPage = () => {
                             value={password} 
                             onChange={handlePasswordChange}
                             className='form-control-login-register'
+                            autoComplete='new-password'
                             required 
                         />
                         <InputGroup.Text onClick={togglePasswordVisibility} className='password-visibility'>
