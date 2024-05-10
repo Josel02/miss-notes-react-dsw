@@ -9,3 +9,12 @@ body {
   .navbar-button{
     font-size: 0.78rem;
   }
+
+/* Ajustes en layout.css */
+.notifications-dropdown .dropdown-menu {
+  width: 400px; /* Mantén o ajusta la anchura según sea necesario */
+  max-height: 800px; /* Establece una altura máxima */
+  overflow-y: auto; /* Habilita el desplazamiento vertical */
+  overflow-x: hidden; /* Oculta el desplazamiento horizontal */
+}
+
