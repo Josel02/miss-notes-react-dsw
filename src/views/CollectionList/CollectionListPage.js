@@ -531,7 +531,7 @@ const deleteCollection = async () => {
         </Modal.Header>
         <Modal.Body>Are you sure you want to delete this collection?</Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>Cancel</Button>
+          <Button variant="outline-primary" onClick={() => setShowDeleteModal(false)}>Cancel</Button>
           <Button variant="primary" className='btn-primary-custom' onClick={deleteCollection}>Delete</Button>
         </Modal.Footer
       ></Modal>
