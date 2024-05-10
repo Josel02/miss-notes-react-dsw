@@ -21,7 +21,7 @@ const LoginPage = () => {
                 localStorage.setItem('token', response.data.token);
                 localStorage.setItem('userId', response.data.userId);
                 login(response.data.userId, response.data.token, response.data.role);
-                navigate('/');
+                navigate('/notes');
             })
             .catch((error) => {
                 // Make sure to capture the server error message or set a default one
