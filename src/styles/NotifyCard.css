@@ -1,0 +1,26 @@
+/* NotifyCard.css */
+.notify-image {
+    width: 50px; /* Ajusta según sea necesario */
+    height: 50px; /* Mismo tamaño para mantener la proporción */
+    background-color: #f0f0f0; /* Color de fondo genérico */
+    border-radius: 50%; /* Hacer el div circular */
+  }
+  
+  /*
+  .notify-icon.friendRequest,
+  .notify-icon.friendRequestAccepted {
+    background-image: url('/path/to/some-icon.png'); /* Cambia la ruta a la imagen apropiada
+  }
+  */
+  
+  /*
+  .notify-icon.noteShared,
+  .notify-icon.collectionShared {
+    background-image: url('/path/to/different-icon.png');
+  }
+  */
+  
+  .notify-actions {
+    margin-top: 10px;
+  }
+  

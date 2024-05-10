@@ -10,6 +10,7 @@ import { useNotifications } from '../context/NotificationsContext';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import '../styles/layout.css';
+import NotifyCard from '../components/NotifyCard';
 
 const Layout = ({ children }) => {
   const { isAuthenticated, logout, role } = useAuth();
@@ -30,7 +31,7 @@ const Layout = ({ children }) => {
 
   const toggleAdminView = async () => {
     await setAdminView(!adminView);
-    if(!adminView) {
+    if (!adminView) {
       navigate('/management', { replace: true });
     } else {
       navigate('/notes', { replace: true });
@@ -38,15 +39,13 @@ const Layout = ({ children }) => {
   };
 
   const NotificationItem = ({ notification }) => (
-    <NavDropdown.Item onClick={() => console.log("Notification clicked:", notification)}>
-      {notification.text}
-    </NavDropdown.Item>
+    <NotifyCard notification={notification} />
   );
 
   return (
     <>
       <nav className="navbar navbar-expand-lg navbar-light bg-light sticky-top">
-        <Link className="navbar-brand ms-2" style={{color:"#009688"}} to="/">MissNotes</Link>
+        <Link className="navbar-brand ms-2" style={{ color: "#009688" }} to="/">MissNotes</Link>
         <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
           <span className="navbar-toggler-icon" />
         </button>
@@ -97,11 +96,15 @@ const Layout = ({ children }) => {
                     </Link>
                   </li>
                   <li className="nav-item">
-                  <NavDropdown title={<NotificationsIcon />} id="navbarScrollingDropdown">
-                    {notifications.length > 0 ? notifications.map(notification => 
-                      <NotificationItem key={notification.id} notification={notification} />
-                    ) : <NavDropdown.Item>No new notifications</NavDropdown.Item>}
-                </NavDropdown>
+                    <NavDropdown title={<NotificationsIcon />} id="navbarScrollingDropdown">
+                      {notifications.length > 0 ? (
+                        notifications.map(notification => (
+                          <NotificationItem key={notification.id} notification={notification} />
+                        ))
+                      ) : (
+                        <NavDropdown.Item>No new notifications</NavDropdown.Item>
+                      )}
+                    </NavDropdown>
                   </li>
                 </>
               )}
@@ -123,7 +126,7 @@ const Layout = ({ children }) => {
         {children}
       </div>
     </>
-  );  
+  );
 };
 
 export default Layout;
