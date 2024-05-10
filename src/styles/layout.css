@@ -9,3 +9,7 @@ body {
   .navbar-button{
     font-size: 0.78rem;
   }
+
+  .notifications-dropdown .dropdown-menu {
+    width: 400px;  /* Ajusta este valor según tus necesidades para aumentar el ancho del dropdown */
+}

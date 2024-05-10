@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card, Button } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom'; // Usado para redirigir
-import '../styles/NotifyCard.css'; // Verifica la ruta
+import { useNavigate } from 'react-router-dom';
+import '../styles/NotifyCard.css';
 
 // Funciones auxiliares para color e iniciales
 const stringToColor = (string) => {
@@ -24,57 +24,57 @@ const getInitials = (name) => {
 };
 
 const NotifyCard = ({ notification }) => {
-  const { type, text, data, date } = notification;
-  const navigate = useNavigate();
+    const { type, text, data, date } = notification;
+    const navigate = useNavigate();
+    const backgroundColor = stringToColor(data.friendId.email); // Determine background color
 
-  const formatDate = (dateString) => {
-    const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
-    return new Date(dateString).toLocaleDateString(undefined, options);
-  };
+    const formatDate = (dateString) => {
+        const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+        return new Date(dateString).toLocaleDateString(undefined, options);
+    };
+    const handleViewFriends = () => {
+        navigate('/friends/list');
+      };
+    
+      const handleViewNotes = () => {
+        navigate('/notes');
+      };
+    
+      const handleViewCollections = () => {
+        navigate('/collections/');
+      };
+    
+      const handleViewFriendRequests = () => {
+        navigate('/friends/requests');
+      };
+    
+      const renderActionButton = (type) => {
+        switch (type) {
+          case 'friendRequestAccepted':
+            return <Button className="notify-button" onClick={handleViewFriends}>View Friends</Button>;
+          case 'friendRequest':
+            return <Button className="notify-button" onClick={handleViewFriendRequests}>View Requests</Button>;
+          case 'noteShared':
+            return <Button className="notify-button" onClick={handleViewNotes}>View Note</Button>;
+          case 'collectionShared':
+            return <Button className="notify-button" onClick={handleViewCollections}>View Collection</Button>;
+          default:
+            return <Button className="notify-button">Default Action</Button>;
+        }
+      };
 
-  const handleViewFriends = () => {
-    navigate('/friends/list');
-  };
-
-  const handleViewNotes = () => {
-    navigate('/notes');
-  };
-
-  const handleViewCollections = () => {
-    navigate('/collections/');
-  };
-
-  const handleViewFriendRequests = () => {
-    navigate('/friends/requests');
-  };
-
-  const renderActionButton = (type) => {
-    switch (type) {
-      case 'friendRequestAccepted':
-        return <Button className="notify-button" onClick={handleViewFriends}>View Friends</Button>;
-      case 'friendRequest':
-        return <Button className="notify-button" onClick={handleViewFriendRequests}>View Requests</Button>;
-      case 'noteShared':
-        return <Button className="notify-button" onClick={handleViewNotes}>View Note</Button>;
-      case 'collectionShared':
-        return <Button className="notify-button" onClick={handleViewCollections}>View Collection</Button>;
-      default:
-        return <Button className="notify-button">Default Action</Button>;
-    }
-  };
-
-  return (
-    <Card className="notify-card">
-      <Card.Header style={{ backgroundColor: stringToColor(data.friendId.email), display: 'flex', justifyContent: 'center', alignItems: 'center', height: '30px', width: '30px', borderRadius: '50%', margin: 'auto' }}>
-        <div style={{ color: 'white', fontSize: '1em', lineHeight: '30px' }}>{getInitials(data.friendId.name)}</div>
-      </Card.Header>
-      <Card.Body className="notify-card-body">
-        <Card.Text className="notify-card-text">{text}</Card.Text>
-        <Card.Text className="notify-card-date">{formatDate(date)}</Card.Text>
-        {renderActionButton(type)}
-      </Card.Body>
-    </Card>
-  );
+    return (
+        <Card className="notify-card">
+            <Card.Header className="notify-card-header" style={{ backgroundColor }}>
+                <div className="notify-card-initials">{getInitials(data.friendId.name)}</div>
+            </Card.Header>
+            <Card.Body className="notify-card-body">
+                <Card.Text className="notify-card-text">{text}</Card.Text>
+                <Card.Text className="notify-card-date">{formatDate(date)}</Card.Text>
+                {renderActionButton(type, navigate)}
+            </Card.Body>
+        </Card>
+    );
 };
 
 export default NotifyCard;

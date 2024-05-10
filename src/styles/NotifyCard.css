@@ -1,51 +1,50 @@
 /* NotifyCard.css */
 .notify-card {
-    max-width: 90%; /* Limitar el ancho máximo */
-    margin: 5px auto; /* Centrado y con un margen más pequeño */
+    max-width: 90%; 
+    margin: 5px auto;
 }
+
 .notify-card-body {
-    padding: 10px; /* Ajustar padding según sea necesario */
+    padding: 10px;
 }
 
-  
-  .notify-card-text {
-    font-size: 16px; /* Ajusta el tamaño del texto principal */
-    font-weight: bold; /* Hacer el texto más legible */
-  }
-  
-  .notify-card-date {
-    font-size: 12px; /* Texto más pequeño para la fecha */
-    color: gray; /* Color grisáceo para la fecha */
-    margin-top: 5px; /* Espacio entre el texto principal y la fecha */
-  }
-  
-  .notify-button {
-    white-space: nowrap; /* Previene que el texto se divida en varias líneas */
-    overflow: hidden; /* Mantiene el contenido dentro del botón */
-    text-overflow: ellipsis; /* Añade puntos suspensivos si el texto es demasiado largo */
-    padding: 5px 10px; /* Ajusta el acolchado para dar más espacio al texto */
-    font-size: 14px; /* Ajusta el tamaño de la fuente según sea necesario */
-    width: auto; /* Asegúrate de que el ancho se ajusta al contenido */
+.notify-card-text {
+    font-size: 16px;
+    font-weight: bold;
 }
 
-.notify-card .notify-card-header {
+.notify-card-date {
+    font-size: 12px;
+    color: gray;
+    margin-top: 5px;
+}
+
+.notify-button {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 5px 10px;
+    font-size: 14px;
+    width: auto;
+}
+
+/* Aumentar la especificidad para asegurar que los estilos se apliquen correctamente */
+div.notify-card .notify-card-header {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 40px;
-    width: 40px;
+    height: 30px;
+    width: 30px;
     border-radius: 50%;
-    margin: 10px auto;
+    margin: 20px auto 10px;
     overflow: hidden;
     border: none;
+    background-color: var(--notify-card-header-bg); /* Se manejará con variable CSS */
 }
 
-.notify-card .notify-card-initials {
-    font-size: 1.5em;
+div.notify-card .notify-card-header .notify-card-initials {
     color: white;
-    line-height: 40px; /* Esto debe ser igual a height y width para centrar el texto verticalmente */
+    font-size: 1em;
+    line-height: 30px;
 }
 
-
-
-  
