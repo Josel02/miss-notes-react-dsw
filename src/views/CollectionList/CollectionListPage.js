@@ -242,11 +242,22 @@ const CollectionListPage = () => {
 const deleteCollection = async () => {
     try {
       const token = localStorage.getItem('token');
+      if(!isShared){
         await axios.delete(`http://localhost:3000/collections/${currentCollection.id}`, {
             headers: { Authorization: `Bearer ${token}` },
         });
         // Update state to remove the collection from local state
         setCollections(prevCollections => prevCollections.filter(collection => collection._id !== currentCollection.id));
+      }
+      else{
+        await axios.patch(`http://localhost:3000/collections/unshare`, {
+            collectionId: currentCollection.id
+        },{
+            headers: { Authorization: `Bearer ${token}` },
+        });
+        // Update state to remove the collection from local state
+        setSharedCollections(prevCollections => prevCollections.filter(collection => collection._id !== currentCollection.id));
+      }
         setShowDeleteModal(false);
         enqueueSnackbar('Collection successfully deleted.', { variant: 'success' });
     } catch (error) {
