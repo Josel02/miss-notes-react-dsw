@@ -415,7 +415,8 @@ const deleteCollection = async () => {
                         note={note}
                         onEdit={() => handleEditNote(note)}
                         onDelete={() => deleteNote(note._id)}
-                        status="inCollection"
+                        status="inSharedCollection"
+                        editable={note.isEditable}
                         sharedWith={note.sharedWith.map(friend => friend.email)
                           .concat(note.userId?.email ?? note.owner?.email ?? [])
                           .filter(email => email !== userEmail)}/>
